@@ -55,16 +55,19 @@ module base_motor() {
 module base() {
     difference() {
         union() {
-            rotate([180, 0, 0]) linear_extrude(58, scale=1.2) difference() {
-                circle(r=140);
-                circle(r=115);
-            }
-            translate([0, 0, -60]) linear_extrude(2) difference() {
-                circle(r=168);
-                circle(r=138);
+            difference() {
+                hull() {
+                    translate([0, 0, -1]) linear_extrude(1) circle(r=140);
+                    translate([0, 0, -60]) linear_extrude(2) squircle(r=160);
+                }
+                hull() {
+                    translate([0, 0, -3]) linear_extrude(1) circle(r=115);
+                    translate([0, 0, -61]) linear_extrude(2) squircle(r=130);
+                }
+                translate([0, 0, -3]) linear_extrude(4) circle(r=115);
             }
             translate([91, 0, -60]) difference() {
-                translate([15.5, 0, 0]) linear_extrude(45) rounded_square([78, 47], r=7, center=true);
+                translate([15, 0, 0]) linear_extrude(45) rounded_square([77, 47], r=7, center=true);
                 translate([50, 0, -2]) linear_extrude(45) rounded_square([143, 43], r=5, center=true);
                 translate([0, 0, -1]) cylinder(100, r=12);
                 for (i = [0, 1, 2, 3]) rotate([0, 0, i*90])
@@ -75,7 +78,13 @@ module base() {
             linear_extrude(10) square([100, 20], center=true);
             translate([0, 0, 10])  linear_extrude(2) square([100, 16], center=true);
         }
+        for (i = [0:3]) rotate([0, 0, 45 + i * 90]) {
+            translate([120, 0, -60]) cylinder(100, d=5);
+            translate([120, 0, -60]) cylinder(58, d=20);
+        }
     }
+    translate([151, 0, -40]) rotate([0, 70, 0]) linear_extrude(4) rotate([0, 0, 90])
+    text("S  E  A  C  A  L", size=12, halign="center", valign="center");
 }
 
 if ((part == "bearing") || (part == "all"))
