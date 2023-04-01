@@ -1,0 +1,6 @@
+version: "3"
+services:
+  cad:
+    image: openscad/openscad:latest
+    volumes:
+      - ./cad:/cad
