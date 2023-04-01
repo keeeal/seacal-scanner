@@ -1,7 +1,10 @@
 
 use <utils/gears.scad>
 
-$fn = 128;
+$fn = 64;
+
+// which part to render
+part="all"; // [bearing, inner-cog, all]
 
 module bearing() {
     linear_extrude(1)
@@ -32,5 +35,8 @@ module inner_cog() {
     }
 }
 
-// color([0.8, 0.8, 0.8]) bearing();
-inner_cog();
+if ((part == "bearing") || (part == "all"))
+    color([0.8, 0.8, 0.8]) bearing();
+
+if ((part == "inner-cog") || (part == "all"))
+    inner_cog();
