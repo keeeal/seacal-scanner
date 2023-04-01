@@ -1,3 +1,13 @@
+EPS = 1e-3;
+
+module rounded_square(size, r, center) {
+    _r = max(r, EPS);
+    dr = center ? 0 : _r;
+    translate([dr, dr]) minkowski() {
+        square([size[0] - 2 * _r, size[1] - 2 * _r], center);
+        circle(_r);
+    }
+}
 
 module superellipse(r, p, e=1) {
     function x(r,p,e,a) =   r*pow(abs(cos(a)),2/p)*sign(cos(a));
