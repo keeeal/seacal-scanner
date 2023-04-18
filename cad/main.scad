@@ -97,17 +97,8 @@ module base() {
     text("S  E  A  C  A  L", size=12, halign="center", valign="center");
 }
 
-if ((part == "bearing") || (part == "all"))
-    color([0.8, 0.8, 0.8]) bearing();
-
-if ((part == "plate-gear") || (part == "all"))
-    plate_gear();
-
-if ((part == "base-motor") || (part == "all"))
-    base_motor();
-
-if ((part == "base-gear") || (part == "all"))
-    base_gear();
-
-if ((part == "base") || (part == "all"))
-    base();
+if ((part == "bearing") || (part == "all")) color([0.8, 0.8, 0.8]) bearing();
+if ((part == "plate-gear") || (part == "all")) plate_gear();
+if ((part == "base-motor") || (part == "all")) base_motor();
+if ((part == "base-gear") || (part == "all")) base_gear();
+if ((part == "base") || (part == "all")) base();

@@ -1,0 +1,27 @@
+name: cad
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+
+jobs:
+  build-cad:
+    name: Build CAD
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Build parts
+      run: |
+        make all-parts
+
+    - name: Archive parts
+      uses: actions/upload-artifact@v3
+      with:
+        name: parts
+        path: |
+          cad/*.stl
