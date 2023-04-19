@@ -1,0 +1,23 @@
+name: Firmware
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+
+jobs:
+  build-firmware:
+    name: Build firmware
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Compile sketch
+      uses: arduino/compile-sketches@v1
+      with:
+        fqbn: arduino:avr:leonardo
+        sketch-paths:
+          - src
