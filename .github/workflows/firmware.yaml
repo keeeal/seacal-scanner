@@ -19,5 +19,4 @@ jobs:
       uses: arduino/compile-sketches@v1
       with:
         fqbn: arduino:avr:leonardo
-        sketch-paths: |
-          - src/
+        sketch-paths: src/MotorGoRound.ino
