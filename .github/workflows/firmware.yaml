@@ -24,10 +24,7 @@ jobs:
       with:
         fqbn: arduino:avr:leonardo
         sketch-paths: src/firmware
-        cli-compile-flags: |
-          - --export-binaries
-          - --output-dir
-          - output/firmware
+        cli-compile-flags: --export-binaries --output-dir output/firmware
 
     - name: Archive binary
       uses: actions/upload-artifact@v3
