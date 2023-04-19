@@ -25,5 +25,5 @@ jobs:
         fqbn: arduino:avr:leonardo
         sketch-paths: src/firmware
         cli-compile-flags: |
-          --export-binaries
-          --output-dir output/firmware
+          - --export-binaries
+          - --output-dir output/firmware
