@@ -3,7 +3,7 @@ name: CAD
 on:
   push:
     branches:
-      - 'main'
+      - main
   pull_request:
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
     - name: Archive parts
       uses: actions/upload-artifact@v3
       with:
-        name: parts
+        name: all-parts
         if-no-files-found: error
         path: |
-          output/cad/*.stl
+          output/parts/*.stl

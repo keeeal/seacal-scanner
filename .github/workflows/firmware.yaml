@@ -3,7 +3,7 @@ name: Firmware
 on:
   push:
     branches:
-      - 'main'
+      - main
   pull_request:
 
 jobs:
@@ -19,5 +19,4 @@ jobs:
       uses: arduino/compile-sketches@v1
       with:
         fqbn: arduino:avr:leonardo
-        sketch-paths:
-          - src
+        sketch-paths: src/firmware
