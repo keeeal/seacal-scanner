@@ -3,5 +3,5 @@ services:
   cad:
     image: openscad/openscad:latest
     volumes:
-      - ./cad:/cad
+      - ./src/cad:/cad
       - ./output:/output
