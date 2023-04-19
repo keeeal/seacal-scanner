@@ -21,7 +21,7 @@ jobs:
         fqbn: arduino:avr:leonardo
         sketch-paths: src/firmware
         cli-compile-flags: |
-          - --build-path=${GITHUB_WORKSPACE}/output/firmware
+          - --build-path=/home/runner/work/seacal-scanner/seacal-scanner/output/firmware
 
     - name: Archive binary
       uses: actions/upload-artifact@v3
