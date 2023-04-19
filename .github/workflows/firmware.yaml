@@ -15,16 +15,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Create output directory
-      run: |
-        mkdir -p output/firmware
-
     - name: Compile sketch
       uses: arduino/compile-sketches@v1
       with:
         fqbn: arduino:avr:leonardo
         sketch-paths: src/firmware
-        cli-compile-flags: --export-binaries --output-dir output/firmware
+        cli-compile-flags: |
+          - --export-binaries
+          - --output-dir=output/firmware
 
     - name: Archive binary
       uses: actions/upload-artifact@v3
