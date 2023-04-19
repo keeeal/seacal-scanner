@@ -27,4 +27,4 @@ jobs:
         name: all-parts
         if-no-files-found: error
         path: |
-          output/cad/*.stl
+          output/parts/*.stl

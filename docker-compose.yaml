@@ -4,4 +4,4 @@ services:
     image: openscad/openscad:latest
     volumes:
       - ./src/cad:/cad
-      - ./output:/output
+      - ./output/parts:/parts
