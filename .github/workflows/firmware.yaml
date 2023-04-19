@@ -15,18 +15,22 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Compile sketch
-      uses: arduino/compile-sketches@v1
-      with:
-        fqbn: arduino:avr:leonardo
-        sketch-paths: src/firmware
-        cli-compile-flags: |
-          - --build-path=output/firmware
+    - name: Echo
+      run: |
+        echo $GITHUB_WORKSPACE
 
-    - name: Archive binary
-      uses: actions/upload-artifact@v3
-      with:
-        name: firmware
-        if-no-files-found: error
-        path: |
-          output/firmware/*.hex
+    # - name: Compile sketch
+    #   uses: arduino/compile-sketches@v1
+    #   with:
+    #     fqbn: arduino:avr:leonardo
+    #     sketch-paths: src/firmware
+    #     cli-compile-flags: |
+    #       - --build-path=/output/firmware
+
+    # - name: Archive binary
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: firmware
+    #     if-no-files-found: error
+    #     path: |
+    #       output/firmware/*.hex
