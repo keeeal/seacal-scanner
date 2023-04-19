@@ -20,4 +20,4 @@ jobs:
       with:
         fqbn: arduino:avr:leonardo
         sketch-paths: |
-          - src
+          - src/
