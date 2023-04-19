@@ -28,3 +28,11 @@ jobs:
           - --export-binaries
           - --output-dir
           - output/firmware
+
+    - name: Archive binary
+      uses: actions/upload-artifact@v3
+      with:
+        name: firmware
+        if-no-files-found: error
+        path: |
+          output/firmware/*.hex
