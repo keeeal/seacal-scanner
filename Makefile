@@ -10,5 +10,8 @@ all-parts:
 	make part part="base-gear"
 	make part part="base"
 
+firmware:
+	arduino-cli compile --fqbn arduino:avr:leonardo src/firmware --build-path output/firmware
+
 clean:
 	rm -rf output

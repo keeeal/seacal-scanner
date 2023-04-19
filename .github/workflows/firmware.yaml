@@ -20,6 +20,10 @@ jobs:
       with:
         fqbn: arduino:avr:leonardo
         sketch-paths: src/firmware
+
+        # The cli-compile-flags needs to be a string that looks like a list but
+        # isn't one and also requires an absolute path due to peculiarities of
+        # the arduino/compile-sketches action...
         cli-compile-flags: |
           - --build-path=/home/runner/work/seacal-scanner/seacal-scanner/output/firmware
 
