@@ -26,4 +26,5 @@ jobs:
         sketch-paths: src/firmware
         cli-compile-flags: |
           - --export-binaries
-          - --output-dir output/firmware
+          - --output-dir
+          - output/firmware
