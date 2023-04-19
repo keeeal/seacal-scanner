@@ -22,7 +22,7 @@ jobs:
         sketch-paths: src/firmware
         cli-compile-flags: |
           - --export-binaries
-          - --output-dir=output/firmware
+          - --build-path=output/firmware
 
     - name: Archive binary
       uses: actions/upload-artifact@v3
