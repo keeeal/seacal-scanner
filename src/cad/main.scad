@@ -6,7 +6,7 @@ use <utils/2d.scad>
 $fn = 64;
 
 // which part to render
-part="all"; // [bearing, plate-gear, base-gear, base-motor, base, all]
+part="all"; // [bearing, plate-gear, base-gear, base-motor, base, foot, all]
 
 module bearing() {
     translate([0, 0, -8])
@@ -97,8 +97,42 @@ module base() {
     text("S  E  A  C  A  L", size=12, halign="center", valign="center");
 }
 
+module foot() {
+    module end(height) {
+        module wedge() hull() {
+            linear_extrude(height - 11) square([23, 6], center=true);
+            linear_extrude(height - 3) square([20, 6], center=true);
+        }
+        hull() {
+            linear_extrude(height) square([18, 18], center=true);
+            linear_extrude(height - 2) square([22, 22], center=true);
+        }
+        wedge();
+        rotate(90) wedge();
+    }
+    module profile(size) minkowski() {
+        square(size, center=true);
+        circle(2, $fn=4);
+    }
+    module a() translate([0, 0, -20]) linear_extrude(2, center=true) profile(18);
+    module b() translate([0, 0, -12]) linear_extrude(2, center=true) profile(22);
+    module c() translate([0, 0, 12]) linear_extrude(2, center=true) profile(22);
+    module d() translate([0, -13, 13]) rotate([30, 0, 0])
+        translate([0, 13, -1]) linear_extrude(2, center=true) profile(22);
+
+    hull() { a(); b(); }
+    hull() { b(); c(); }
+    hull() { c(); d(); }
+
+    rotate([90, 0, 0]) end(43);
+    rotate([0, 90, 0]) end(43);
+    translate([0, 0, 16.5]) rotate([30, 0, 0]) end(33);
+
+}
+
 if ((part == "bearing") || (part == "all")) color([0.8, 0.8, 0.8]) bearing();
 if ((part == "plate-gear") || (part == "all")) plate_gear();
 if ((part == "base-motor") || (part == "all")) base_motor();
 if ((part == "base-gear") || (part == "all")) base_gear();
 if ((part == "base") || (part == "all")) base();
+if ((part == "foot") || (part == "all")) foot();
