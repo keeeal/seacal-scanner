@@ -88,9 +88,9 @@ module base() {
             linear_extrude(10) square([100, 20], center=true);
             translate([0, 0, 10])  linear_extrude(2) square([100, 16], center=true);
         }
-        for (i = [0:3]) rotate([0, 0, 45 + i * 90]) {
-            translate([120, 0, -60]) cylinder(100, d=5);
-            translate([120, 0, -60]) cylinder(58, d=20);
+        for (i = [0:3]) rotate([0, 0, i * 90]) {
+            translate([85, 85, -60]) cylinder(100, d=5);
+            translate([85, 85, -60]) cylinder(58, d=20);
         }
     }
     translate([151, 0, -48]) rotate([0, 70, 0]) linear_extrude(4) rotate([0, 0, 90])
