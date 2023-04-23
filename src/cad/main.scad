@@ -6,7 +6,7 @@ use <utils/2d.scad>
 $fn = 64;
 
 // which part to render
-part="all"; // [bearing, plate-gear, base-gear, base-motor, base, foot, all]
+part="all"; // [bearing, plate-gear, base-gear, base-motor, base, foot, apex, all]
 
 module bearing() {
     linear_extrude(1) difference() {
@@ -146,6 +146,48 @@ module tube(height, center=false) {
     linear_extrude(height, center=center) profile();
 }
 
+module aluminium() {
+    translate([-300, -315, 21]) rotate([0, 90, 0]) tube(600);
+    translate([-300,  315, 21]) rotate([0, 90, 0]) tube(600);
+    translate([-289, 300, 21]) rotate([0, 90, -90]) tube(600);
+    translate([-289, 300, 21 + 25.5 / 2]) rotate([-60, 0, 0])
+        translate([0, 0, 25.5 / 2]) rotate([0, 90, -90]) tube(600);
+    translate([ 289, 300, 21]) rotate([0, 90, -90]) tube(600);
+    translate([ 289, 300, 21 + 25.5 / 2]) rotate([-60, 0, 0])
+        translate([0, 0, 25.5 / 2]) rotate([0, 90, -90]) tube(600);
+    mirror([0, 1, 0]) translate([ 289, 300, 21 + 25.5 / 2]) rotate([-60, 0, 0])
+        translate([0, 0, 25.5 / 2]) rotate([0, 90, -90]) tube(600);
+    mirror([0, 1, 0]) translate([-289, 300, 21 + 25.5 / 2]) rotate([-60, 0, 0])
+        translate([0, 0, 25.5 / 2]) rotate([0, 90, -90]) tube(600);
+}
+
+module apex() {
+    module wedge(height) hull() {
+        linear_extrude(height - 11) square([23, 6], center=true);
+        linear_extrude(height - 3) square([20, 6], center=true);
+    }
+    module end(height) {
+        hull() {
+            linear_extrude(height) square([18, 18], center=true);
+            linear_extrude(height - 2) square([22, 22], center=true);
+        }
+        wedge(height);
+        rotate(90) wedge(height);
+    }
+
+    difference() {
+        hull() {
+            rotate([0, -30, 0]) linear_extrude(28) translate([ 13, 0])
+                rounded_square([26, 26], r=2, center=true, $fn=4);
+            rotate([0,  30, 0]) linear_extrude(28) translate([-13, 0])
+                rounded_square([26, 26], r=2, center=true, $fn=4);
+        }
+        translate([0, 0, 20])  rotate([90, 0, 0]) cylinder(39, d=13, center=true);
+    }
+    rotate([0,  150, 0]) translate([-13, 0, -10]) end(43);
+    rotate([0, -150, 0]) translate([ 13, 0, -10]) end(43);
+}
+
 if (part == "all") {
     translate([0, 0, 60]) color([0.8, 0.8, 0.8]) bearing();
     // translate([0, 0, 54]) plate_gear();
@@ -153,20 +195,7 @@ if (part == "all") {
     translate([91, 0, 64]) rotate([180, 0, 0]) base_gear();
     base();
 
-    color([0.3, 0.3, 0.3]) {
-        translate([-300, -315, 21]) rotate([0, 90, 0]) tube(600);
-        translate([-300,  315, 21]) rotate([0, 90, 0]) tube(600);
-        translate([-289, 300, 21]) rotate([0, 90, -90]) tube(600);
-        translate([-289, 300, 21 + 25.5 / 2]) rotate([-60, 0, 0])
-            translate([0, 0, 25.5 / 2]) rotate([0, 90, -90]) tube(600);
-        translate([ 289, 300, 21]) rotate([0, 90, -90]) tube(600);
-        translate([ 289, 300, 21 + 25.5 / 2]) rotate([-60, 0, 0])
-            translate([0, 0, 25.5 / 2]) rotate([0, 90, -90]) tube(600);
-        mirror([0, 1, 0]) translate([ 289, 300, 21 + 25.5 / 2]) rotate([-60, 0, 0])
-            translate([0, 0, 25.5 / 2]) rotate([0, 90, -90]) tube(600);
-        mirror([0, 1, 0]) translate([-289, 300, 21 + 25.5 / 2]) rotate([-60, 0, 0])
-            translate([0, 0, 25.5 / 2]) rotate([0, 90, -90]) tube(600);
-    }
+    color([0.3, 0.3, 0.3]) aluminium();
 
     translate([-289,  315, 21]) foot();
     translate([ 289,  315, 21]) mirror([1, 0, 0]) foot();
@@ -180,5 +209,6 @@ if (part == "base-motor") base_motor();
 if (part == "base-gear") base_gear();
 if (part == "base") base();
 if (part == "foot") foot();
+if (part == "apex") apex();
 
 
