@@ -1,7 +1,16 @@
 version: "3"
 services:
+
   cad:
     image: openscad/openscad:latest
     volumes:
       - ./src/cad:/cad
       - ./output/parts:/parts
+
+  firmware:
+    image: seacal-scanner:latest
+    build:
+      context: .
+    volumes:
+      - ./src/firmware:/firmware
+      - ./output/build:/build
