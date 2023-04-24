@@ -34,4 +34,4 @@ jobs:
         name: firmware
         if-no-files-found: error
         path: |
-          output/firmware/*.hex
+          output/build/*.hex
