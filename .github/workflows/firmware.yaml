@@ -5,6 +5,9 @@ on:
     branches:
       - main
   pull_request:
+    paths:
+      - src/firmware/**/*
+      - .github/workflows/firmware.yaml
 
 jobs:
   build-firmware:
