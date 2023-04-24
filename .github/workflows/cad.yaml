@@ -7,6 +7,7 @@ on:
   pull_request:
     paths:
       - src/cad/**/*
+      - .github/workflows/cad.yaml
 
 jobs:
   build-cad:
