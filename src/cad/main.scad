@@ -6,7 +6,7 @@ use <utils/2d.scad>
 $fn = 64;
 
 // which part to render
-part="all"; // [bearing, plate-gear, base-gear, base-motor, base, foot, apex, all]
+part="all"; // [bearing, plate-gear, base-gear, base-motor, base, foot, apex, axle, all]
 
 module bearing() {
     linear_extrude(1) difference() {
@@ -138,15 +138,14 @@ module foot() {
     }
 }
 
-module tube(height, center=false) {
-    module profile() difference() {
-        square([25.5, 25.5], center=true);
-        square([23, 23], center=true);
-    }
-    linear_extrude(height, center=center) profile();
-}
-
 module aluminium() {
+    module tube(height, center=false) {
+        module profile() difference() {
+            square([25.5, 25.5], center=true);
+            square([23, 23], center=true);
+        }
+        linear_extrude(height, center=center) profile();
+    }
     translate([-300, -315, 21]) rotate([0, 90, 0]) tube(600);
     translate([-300,  315, 21]) rotate([0, 90, 0]) tube(600);
     translate([-289, 300, 21]) rotate([0, 90, -90]) tube(600);
@@ -188,6 +187,41 @@ module apex() {
     rotate([0, -150, 0]) translate([ 13, 0, -10]) end(43);
 }
 
+module axle(ARGS) {
+    linear_extrude(60, center=true) difference() {
+        minkowski() {
+            square(25, center=true);
+            circle(2.6);
+        }
+        minkowski() {
+            square(25, center=true);
+            circle(1);
+        }
+    }
+    for (n = [-1:1]) translate([0, 0, n * 10])
+        for (i = [0:3]) rotate(90 * i)
+            hull() {
+                translate([-5, 13.5, 0]) sphere(1);
+                translate([ 5, 13.5, 0]) sphere(1);
+            }
+    translate([14, 0, 0]) rotate([0, 90, 0]) {
+        cylinder(2, d=22);
+        difference() {
+            intersection() {
+                union() {
+                    cylinder(29, d=12);
+                    translate([0, 0, 28.5]) cylinder(5, d1=15, d2=10.5);
+                }
+                linear_extrude(100) square([9.5, 100], center=true);
+            }
+            hull() {
+                translate([0, 0, 10]) rotate([0, 90, 0]) cylinder(100, d=4, center=true);
+                translate([0, 0, 100]) rotate([0, 90, 0]) cylinder(100, d=4, center=true);
+            }
+        }
+    }
+}
+
 if (part == "all") {
     translate([0, 0, 60]) color([0.8, 0.8, 0.8]) bearing();
     // translate([0, 0, 54]) plate_gear();
@@ -210,5 +244,6 @@ if (part == "base-gear") base_gear();
 if (part == "base") base();
 if (part == "foot") foot();
 if (part == "apex") apex();
+if (part == "axle") axle();
 
 
