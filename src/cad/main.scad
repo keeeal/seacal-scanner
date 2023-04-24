@@ -187,24 +187,25 @@ module apex() {
     rotate([0, -150, 0]) translate([ 13, 0, -10]) end(43);
 }
 
-module axle(ARGS) {
-    linear_extrude(60, center=true) difference() {
-        minkowski() {
-            square(25, center=true);
-            circle(2.6);
+module axle() {
+    difference() {
+        hull() {
+            linear_extrude(60, center=true) rounded_square(29.4, r=2.2, center=true);
+            linear_extrude(58, center=true) rounded_square(31.8, r=3.4, center=true);
         }
-        minkowski() {
-            square(25, center=true);
-            circle(1);
-        }
+        linear_extrude(62, center=true) rounded_square(27, r=1, center=true);
     }
-    for (n = [-1:1]) translate([0, 0, n * 10])
+    for (n = [-1:1]) translate([0, 0, n * 12])
         for (i = [0:3]) rotate(90 * i)
             hull() {
-                translate([-5, 13.5, 0]) sphere(1);
-                translate([ 5, 13.5, 0]) sphere(1);
+                translate([-5, 14.5, -4]) sphere(1);
+                translate([ 5, 14.5, -4]) sphere(1);
+                translate([-5, 13.5,  0]) sphere(1);
+                translate([ 5, 13.5,  0]) sphere(1);
+                translate([-5, 14.5, +4]) sphere(1);
+                translate([ 5, 14.5, +4]) sphere(1);
             }
-    translate([14, 0, 0]) rotate([0, 90, 0]) {
+    translate([15, 0, 0]) rotate([0, 90, 0]) {
         cylinder(2, d=22);
         difference() {
             intersection() {
@@ -245,5 +246,3 @@ if (part == "base") base();
 if (part == "foot") foot();
 if (part == "apex") apex();
 if (part == "axle") axle();
-
-
