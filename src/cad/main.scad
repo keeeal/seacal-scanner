@@ -200,8 +200,8 @@ module axle() {
             hull() {
                 translate([-5, 14.5, -4]) sphere(1);
                 translate([ 5, 14.5, -4]) sphere(1);
-                translate([-5, 13.5,  0]) sphere(1);
-                translate([ 5, 13.5,  0]) sphere(1);
+                translate([-5, 13.75,  0]) sphere(1);
+                translate([ 5, 13.75,  0]) sphere(1);
                 translate([-5, 14.5, +4]) sphere(1);
                 translate([ 5, 14.5, +4]) sphere(1);
             }
