@@ -24,7 +24,7 @@ jobs:
       run: |
         make build
 
-    - name: Build firmware
+    - name: Build binaries
       run: |
         make firmware
 
