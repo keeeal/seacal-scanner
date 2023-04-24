@@ -1,0 +1,3 @@
+[submodule "src/cad/openscad-utilities"]
+	path = src/cad/utils
+	url = git@github.com:keeeal/openscad-utilities.git
