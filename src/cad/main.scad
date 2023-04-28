@@ -190,22 +190,22 @@ module apex() {
 module axle() {
     difference() {
         hull() {
-            linear_extrude(60, center=true) rounded_square(29.4, r=2.2, center=true);
-            linear_extrude(58, center=true) rounded_square(31.8, r=3.4, center=true);
+            linear_extrude(60, center=true) rounded_square(28.6, r=1.8, center=true);
+            linear_extrude(58, center=true) rounded_square(30.2, r=2.6, center=true);
         }
         linear_extrude(62, center=true) rounded_square(27, r=1, center=true);
     }
     for (n = [-1:1]) translate([0, 0, n * 12])
         for (i = [0:3]) rotate(90 * i)
             hull() {
-                translate([-5, 14.5, -4]) sphere(1);
-                translate([ 5, 14.5, -4]) sphere(1);
-                translate([-5, 13.75,  0]) sphere(1);
-                translate([ 5, 13.75,  0]) sphere(1);
-                translate([-5, 14.5, +4]) sphere(1);
-                translate([ 5, 14.5, +4]) sphere(1);
+                translate([-5, 14, -4]) sphere(0.5);
+                translate([ 5, 14, -4]) sphere(0.5);
+                translate([-5, 13.2, 0]) sphere(0.5);
+                translate([ 5, 13.2, 0]) sphere(0.5);
+                translate([-5, 14, +4]) sphere(0.5);
+                translate([ 5, 14, +4]) sphere(0.5);
             }
-    translate([15, 0, 0]) rotate([0, 90, 0]) {
+    translate([14, 0, 0]) rotate([0, 90, 0]) {
         cylinder(2, d=22);
         difference() {
             intersection() {
