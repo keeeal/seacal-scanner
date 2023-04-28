@@ -10,7 +10,7 @@ firmware:
 
 part:
 	mkdir -p output/parts
-	docker compose run cad openscad -o /parts/$(part).stl -D '$$fn=$(RENDER_QUALITY)' -D 'part="$(part)"' /cad/main.scad
+	docker compose run cad openscad --hardwarnings -o /parts/$(part).stl -D '$$fn=$(RENDER_QUALITY)' -D 'part="$(part)"' /cad/main.scad
 
 all-parts:
 	make part part="plate-gear"
