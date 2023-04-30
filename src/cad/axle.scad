@@ -32,7 +32,7 @@ module axle() {
                 linear_extrude(100) square([9.5, 100], center=true);
             }
             hull() {
-                translate([0, 0, 10]) rotate([0, 90, 0]) cylinder(100, d=4, center=true)
+                translate([0, 0, 10]) rotate([0, 90, 0]) cylinder(100, d=4, center=true);
                 translate([0, 0, 100]) rotate([0, 90, 0]) cylinder(100, d=4, center=true);
             }
         }
