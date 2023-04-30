@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 
 RENDER_QUALITY ?= 256
 
@@ -8,14 +9,18 @@ firmware:
 	mkdir -p output/build
 	docker compose run firmware arduino-cli compile --fqbn arduino:avr:leonardo /firmware --build-path /build
 
-part:
-	mkdir -p output/parts
-	docker compose run cad openscad --hardwarnings -o /parts/$(part).stl -D '$$fn=$(RENDER_QUALITY)' -D 'part="$(part)"' /cad/main.scad
+src/cad/__main__.scad:
+	./scripts/make-main-scad.sh
+
+%.stl: src/cad/__main__.scad
+	docker compose run cad openscad --hardwarnings -o /parts/$@ -D '$$fn=$(RENDER_QUALITY)' -D 'part="$(basename $@)"' /cad/__main__.scad
 
 all-parts:
-	make part part="plate-gear"
-	make part part="base-gear"
-	make part part="base"
+	for f in src/cad/*.scad; do \
+		if [[ $$(basename $$f .scad) == __*__ ]]; then continue; fi; \
+		make $$(basename $$f .scad).stl || exit 1; \
+	done; \
 
 clean:
 	rm -rf output
+	rm -rf src/cad/__main__.scad
