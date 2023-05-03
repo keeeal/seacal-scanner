@@ -5,9 +5,12 @@ RENDER_QUALITY ?= 256
 build:
 	docker compose build
 
+format:
+	docker compose run firmware sh -c "clang-format --style=microsoft $(if $(check),--dry-run --Werror,) -i /firmware/*.ino"
+
 firmware:
 	mkdir -p output/build
-	docker compose run firmware arduino-cli compile --fqbn arduino:avr:leonardo /firmware --build-path /build
+	docker compose run firmware arduino-cli compile --fqbn arduino:avr:leonardo --build-path /build /firmware
 
 src/cad/__main__.scad:
 	./scripts/make-main-scad.sh
