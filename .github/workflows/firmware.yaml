@@ -24,6 +24,10 @@ jobs:
       run: |
         make build
 
+    - name: Check formatting
+      run: |
+        make format check=true
+
     - name: Build binaries
       run: |
         make firmware
