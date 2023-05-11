@@ -1,3 +1,5 @@
+#include "stepper.h"
+
 // Define the stepper motor interface pins
 #define COIL1_PIN 8
 #define COIL2_PIN 9
