@@ -51,7 +51,7 @@ class Stepper
     // The last time the motor moved in microseconds.
     unsigned long last_step_time;
 
-    //
+    // The last time tick was called in microseconds.
     unsigned long last_tick_time;
 };
 } // namespace stepper
