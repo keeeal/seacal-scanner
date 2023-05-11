@@ -18,7 +18,8 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, int moto
     this->steps_per_degree = max(number_of_steps, 0) / 360.0;
 }
 
-Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4, int motor_pin_5)
+Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4,
+                 int motor_pin_5)
 {
     this->stepper = &arduino::Stepper(number_of_steps, motor_pin_1, motor_pin_2, motor_pin_3, motor_pin_4, motor_pin_5);
     this->steps_per_degree = max(number_of_steps, 0) / 360.0;
@@ -55,7 +56,8 @@ void Stepper::tick()
     double speed = current_speed + delta_speed;
     this->current_speed = constrain(speed, -max_speed, max_speed);
 
-    if ((1 / current_speed) < seconds_since_step) {
+    if ((1 / current_speed) < seconds_since_step)
+    {
         double direction = copysign(1, current_speed);
         stepper->step(direction);
         this->last_step_time = now;
@@ -63,4 +65,4 @@ void Stepper::tick()
     }
 }
 
-}
+} // namespace stepper

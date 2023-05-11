@@ -28,7 +28,7 @@ class Stepper
     void tick();
 
   private:
-    arduino::Stepper* stepper;
+    arduino::Stepper *stepper;
 
     // The number of steps per degree of rotation.
     int steps_per_degree;
@@ -54,4 +54,4 @@ class Stepper
     //
     unsigned long last_tick_time;
 };
-}
+} // namespace stepper
