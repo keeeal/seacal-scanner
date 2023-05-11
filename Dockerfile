@@ -9,3 +9,4 @@ RUN apk --no-cache add \
 # https://arduino.github.io/arduino-cli/latest/installation/#use-the-install-script
 RUN curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
 RUN arduino-cli core install arduino:avr
+RUN xargs -a /firmware/requirements.txt arduino-cli lib install
