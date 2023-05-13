@@ -6,7 +6,7 @@ build:
 	docker compose build
 
 format:
-	docker compose run firmware sh -c "clang-format --style=microsoft $(if $(check),--dry-run --Werror,) -i /firmware/*.cpp /firmware/*.h /firmware/*.ino"
+	docker compose run firmware sh -c "clang-format --style=microsoft $(if $(check),--dry-run --Werror,) -i /firmware/*.ino"
 
 firmware:
 	mkdir -p output/build
