@@ -1,69 +1,36 @@
-#include "stepper.h"
+#include <AccelStepper.h>
 
-// Define the stepper motor interface pins
-#define COIL1_PIN 8
-#define COIL2_PIN 9
-#define COIL3_PIN 10
-#define COIL4_PIN 11
+// Define the base motor characteristics
+#define BASE_PIN_1 8
+#define BASE_PIN_2 9
+#define BASE_PIN_3 10
+#define BASE_PIN_4 11
+#define BASE_STEPS 200
+#define BASE_GEAR_RATIO 140 / 12
+
+AccelStepper BASE_STEPPER;
 
 void setup()
 {
-    // Set the pins as outputs
-    pinMode(COIL1_PIN, OUTPUT);
-    pinMode(COIL2_PIN, OUTPUT);
-    pinMode(COIL3_PIN, OUTPUT);
-    pinMode(COIL4_PIN, OUTPUT);
-}
-
-void step(int step_number)
-{
-    switch (step_number)
-    {
-    case 0:
-        digitalWrite(COIL1_PIN, HIGH);
-        digitalWrite(COIL2_PIN, LOW);
-        digitalWrite(COIL3_PIN, LOW);
-        digitalWrite(COIL4_PIN, HIGH);
-        break;
-    case 1:
-        digitalWrite(COIL1_PIN, LOW);
-        digitalWrite(COIL2_PIN, HIGH);
-        digitalWrite(COIL3_PIN, LOW);
-        digitalWrite(COIL4_PIN, HIGH);
-        break;
-    case 2:
-        digitalWrite(COIL1_PIN, LOW);
-        digitalWrite(COIL2_PIN, HIGH);
-        digitalWrite(COIL3_PIN, HIGH);
-        digitalWrite(COIL4_PIN, LOW);
-        break;
-    case 3:
-        digitalWrite(COIL1_PIN, HIGH);
-        digitalWrite(COIL2_PIN, LOW);
-        digitalWrite(COIL3_PIN, HIGH);
-        digitalWrite(COIL4_PIN, LOW);
-        break;
-    }
+    AccelStepper BASE_STEPPER(AccelStepper::FULL4WIRE, BASE_PIN_1, BASE_PIN_2, BASE_PIN_3, BASE_PIN_4);
+    BASE_STEPPER.setAcceleration(2);  // Steps per second per second
+    BASE_STEPPER.setMaxSpeed(100);  // Steps per second
 }
 
 void loop()
 {
-    // Move the stepper motor forward
-    for (int i = 0; i < 200; i++)
-    {
-        step(i % 4);
-        delay(10);
-    }
+    // Move the stepper motor 360 degrees clockwise
+    BASE_STEPPER.moveTo(BASE_STEPS);
+
+    while (!BASE_STEPPER.run()) continue;
 
     // Wait for a second
     delay(1000);
 
-    // Move the stepper motor backward
-    for (int i = 199; i >= 0; i--)
-    {
-        step(i % 4);
-        delay(10);
-    }
+    // Move the stepper motor 360 degrees anticlockwise
+    BASE_STEPPER.moveTo(0);
+
+     while (!BASE_STEPPER.run()) continue;
 
     // Wait for a second
     delay(1000);
