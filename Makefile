@@ -9,7 +9,8 @@ src/cad/__main__.scad:
 	./scripts/make-main-scad.sh
 
 %.stl: src/cad/__main__.scad
-	docker compose run cad openscad --hardwarnings -o /parts/$@ -D '$$fn=$(RENDER_QUALITY)' -D 'part="$(basename $@)"' /cad/__main__.scad
+	docker compose run cad \
+		openscad --hardwarnings -o /parts/$@ -D '$$fn=$(RENDER_QUALITY)' -D 'part="$(basename $@)"' /cad/__main__.scad
 
 cad:
 	for f in src/cad/*.scad; do \
@@ -22,10 +23,12 @@ firmware:
 	docker compose run firmware arduino-cli compile --fqbn arduino:avr:leonardo --build-path /build /firmware
 
 format-cad:
-	docker compose run format sh -c "clang-format --style=microsoft $(if $(check),--dry-run --Werror,) -i /cad/*.scad"
+	docker compose run format sh -c \
+		"clang-format --style=microsoft $(if $(check),--dry-run --Werror,) -i /cad/*.scad"
 
 format-firmware:
-	docker compose run format sh -c "clang-format --style=microsoft $(if $(check),--dry-run --Werror,) -i /firmware/*.ino"
+	docker compose run format sh -c \
+		"clang-format --style=microsoft $(if $(check),--dry-run --Werror,) -i /firmware/*.ino"
 
 clean:
 	rm -rf output
