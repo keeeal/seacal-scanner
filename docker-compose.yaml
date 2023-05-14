@@ -11,6 +11,16 @@ services:
     image: seacal-scanner:latest
     build:
       context: .
+      dockerfile: .docker/firmware.Dockerfile
     volumes:
       - ./src/firmware:/firmware
       - ./output/build:/build
+
+  format:
+    image: seacal-scanner:latest
+    build:
+      context: .
+      dockerfile: .docker/format.Dockerfile
+    volumes:
+      - ./src/cad:/cad
+      - ./src/firmware:/firmware

@@ -10,6 +10,24 @@ on:
       - .github/workflows/cad.yaml
 
 jobs:
+  format-cad:
+    name: Format CAD
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Build docker image
+      run: |
+        make build service=format
+
+    - name: Check formatting
+      run: |
+        make format-cad check=true
+
   build-cad:
     name: Build CAD
     runs-on: ubuntu-latest
@@ -24,7 +42,7 @@ jobs:
       env:
         RENDER_QUALITY: 32
       run: |
-        make all-parts
+        make cad
 
     - name: Archive parts
       uses: actions/upload-artifact@v3

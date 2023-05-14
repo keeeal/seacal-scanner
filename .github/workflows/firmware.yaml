@@ -10,6 +10,24 @@ on:
       - .github/workflows/firmware.yaml
 
 jobs:
+  format-firmware:
+    name: Format firmware
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Build docker image
+      run: |
+        make build service=format
+
+    - name: Check formatting
+      run: |
+        make format-firmware check=true
+
   build-firmware:
     name: Build firmware
     runs-on: ubuntu-latest
@@ -22,11 +40,7 @@ jobs:
 
     - name: Build docker image
       run: |
-        make build
-
-    - name: Check formatting
-      run: |
-        make format check=true
+        make build service=firmware
 
     - name: Build binaries
       run: |
