@@ -22,13 +22,9 @@ firmware:
 	mkdir -p output/build
 	docker compose run firmware arduino-cli compile --fqbn arduino:avr:leonardo --build-path /build /firmware
 
-format-cad:
+format:
 	docker compose run format sh -c \
-		"clang-format --style=microsoft $(if $(check),--dry-run --Werror,) -i /cad/*.scad"
-
-format-firmware:
-	docker compose run format sh -c \
-		"clang-format --style=microsoft $(if $(check),--dry-run --Werror,) -i /firmware/*.ino"
+		"clang-format --style=microsoft $(if $(check),--dry-run --Werror,) -i /cad/*.scad /firmware/*.ino"
 
 clean:
 	rm -rf output
