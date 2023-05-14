@@ -6,12 +6,12 @@ on:
       - main
   pull_request:
     paths:
-      - src/firmware/**/*
       - .github/workflows/firmware.yaml
+      - src/firmware/**/*
 
 jobs:
-  build-firmware:
-    name: Build firmware
+  build-binaries:
+    name: Build binaries
     runs-on: ubuntu-latest
     steps:
 
@@ -22,20 +22,16 @@ jobs:
 
     - name: Build docker image
       run: |
-        make build
-
-    - name: Check formatting
-      run: |
-        make format check=true
+        make build service=firmware
 
     - name: Build binaries
       run: |
-        make firmware
+        make binaries
 
     - name: Archive binaries
       uses: actions/upload-artifact@v3
       with:
-        name: firmware
+        name: binaries
         if-no-files-found: error
         path: |
           output/build/*.hex

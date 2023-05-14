@@ -6,12 +6,12 @@ on:
       - main
   pull_request:
     paths:
-      - src/cad/**/*
       - .github/workflows/cad.yaml
+      - src/cad/**/*
 
 jobs:
-  build-cad:
-    name: Build CAD
+  build-parts:
+    name: Build parts
     runs-on: ubuntu-latest
     steps:
 
@@ -24,12 +24,12 @@ jobs:
       env:
         RENDER_QUALITY: 32
       run: |
-        make all-parts
+        make parts
 
     - name: Archive parts
       uses: actions/upload-artifact@v3
       with:
-        name: all-parts
+        name: parts
         if-no-files-found: error
         path: |
           output/parts/*.stl
