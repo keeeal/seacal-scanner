@@ -10,8 +10,8 @@ on:
       - src/firmware/**/*
 
 jobs:
-  build-firmware:
-    name: Build firmware
+  build-binaries:
+    name: Build binaries
     runs-on: ubuntu-latest
     steps:
 
@@ -26,12 +26,12 @@ jobs:
 
     - name: Build binaries
       run: |
-        make firmware
+        make binaries
 
     - name: Archive binaries
       uses: actions/upload-artifact@v3
       with:
-        name: firmware
+        name: binaries
         if-no-files-found: error
         path: |
           output/build/*.hex

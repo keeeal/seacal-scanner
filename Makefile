@@ -12,13 +12,13 @@ src/cad/__main__.scad:
 	docker compose run cad \
 		openscad --hardwarnings -o /parts/$@ -D '$$fn=$(RENDER_QUALITY)' -D 'part="$(basename $@)"' /cad/__main__.scad
 
-cad:
+parts:
 	for f in src/cad/*.scad; do \
 		if [[ $$(basename $$f .scad) == __*__ ]]; then continue; fi; \
 		make $$(basename $$f .scad).stl || exit 1; \
 	done; \
 
-firmware:
+binaries:
 	mkdir -p output/build
 	docker compose run firmware arduino-cli compile --fqbn arduino:avr:leonardo --build-path /build /firmware
 
