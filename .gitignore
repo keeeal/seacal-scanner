@@ -1,5 +1,5 @@
 # Output directory
-output/*
+output/
 
 # CAD models
 *.stl
@@ -59,3 +59,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Text editors
+.vscode/
