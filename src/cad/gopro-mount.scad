@@ -26,5 +26,5 @@ module gopro_mount()
             translate([ -5, 14, +4 ]) sphere(0.5);
             translate([ 5, 14, +4 ]) sphere(0.5);
         }
-    translate([-24.5, 0, 0]) rotate([90, 0, 0]) gopro_mount_female(length=1.9, base=true);
+    translate([ -24.5, 0, 0 ]) rotate([ 90, 0, 0 ]) gopro_mount_female(length = 1.9, base = true);
 }
