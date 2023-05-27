@@ -14,8 +14,6 @@ main-scad:
 		openscad -o /parts/$@ --hardwarnings -D '$$fn=$(render_quality)' -D 'part="$(basename $@)"' /cad/__main__.scad \
 	>& output/logs/$(basename $@).log
 
-# |& grep "Volumes:" | tail -c 2 | xargs test 2 -eq
-
 parts:
 	for f in src/cad/*.scad; do \
 		if [[ $$(basename $$f .scad) == __*__ ]]; then continue; fi; \
