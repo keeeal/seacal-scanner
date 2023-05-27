@@ -24,7 +24,7 @@ jobs:
 
     - name: Build parts
       env:
-        RENDER_QUALITY: 32
+        render_quality: 32
       run: |
         make parts
 

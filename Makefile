@@ -9,6 +9,7 @@ main-scad:
 	./scripts/make-main-scad.sh
 
 %.stl: main-scad
+	mkdir -p output
 	docker compose run cad \
 		openscad -o /parts/$@ --hardwarnings -D '$$fn=$(render_quality)' -D 'part="$(basename $@)"' /cad/__main__.scad \
 	>& output/logs/$(basename $@).log
