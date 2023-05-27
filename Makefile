@@ -21,8 +21,8 @@ parts:
 		make $$(basename $$f .scad).stl || exit 1; \
 	done; \
 
-test:
-	docker compose run test pytest /tests
+test-cad:
+	docker compose run test pytest /tests/cad
 
 binaries:
 	docker compose run firmware arduino-cli compile --fqbn arduino:avr:leonardo --build-path /build /firmware

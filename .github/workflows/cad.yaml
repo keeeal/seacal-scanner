@@ -28,6 +28,10 @@ jobs:
       run: |
         make parts
 
+    - name: Run tests
+      run: |
+        make test-cad
+
     - name: Archive parts
       uses: actions/upload-artifact@v3
       with:
