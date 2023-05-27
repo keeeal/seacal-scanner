@@ -6,10 +6,9 @@ services:
     volumes:
       - ./src/cad:/cad
       - ./output/parts:/parts
-      - ./output/logs:/logs
 
   firmware:
-    image: seacal-scanner:latest
+    image: seacal-scanner-firmware:latest
     build:
       context: .
       dockerfile: .docker/firmware.Dockerfile
@@ -18,10 +17,20 @@ services:
       - ./output/build:/build
 
   format:
-    image: seacal-scanner:latest
+    image: seacal-scanner-format:latest
     build:
       context: .
       dockerfile: .docker/format.Dockerfile
     volumes:
       - ./src/cad:/cad
       - ./src/firmware:/firmware
+
+  test:
+    image: seacal-scanner-test:latest
+    build:
+      context: .
+      dockerfile: .docker/test.Dockerfile
+    volumes:
+      - ./tests:/tests
+      - ./src:/src
+      - ./output:/output

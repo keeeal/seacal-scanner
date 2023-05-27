@@ -1,5 +1,5 @@
 # Output directory
-output/*
+output/
 
 # CAD models
 *.stl

@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-RENDER_QUALITY ?= 256
+render_quality ?= 256
 
 build:
 	docker compose build $(service)
@@ -10,13 +10,8 @@ main-scad:
 
 %.stl: main-scad
 	docker compose run cad \
-		openscad \
-			-o /parts/$@ \
-			-D '$$fn=$(RENDER_QUALITY)' \
-			-D 'part="$(basename $@)"' \
-			--hardwarnings \
-			/cad/__main__.scad \
-		>& /logs/$(basename $@).log
+		openscad -o /parts/$@ --hardwarnings -D '$$fn=$(render_quality)' -D 'part="$(basename $@)"' /cad/__main__.scad \
+	>& output/logs/$(basename $@).log
 
 # |& grep "Volumes:" | tail -c 2 | xargs test 2 -eq
 
@@ -25,6 +20,9 @@ parts:
 		if [[ $$(basename $$f .scad) == __*__ ]]; then continue; fi; \
 		make $$(basename $$f .scad).stl || exit 1; \
 	done; \
+
+test:
+	docker compose run test pytest /tests
 
 binaries:
 	docker compose run firmware arduino-cli compile --fqbn arduino:avr:leonardo --build-path /build /firmware
