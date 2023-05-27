@@ -3,6 +3,7 @@ services:
 
   cad:
     image: openscad/openscad:latest
+    network_mode: none
     volumes:
       - ./src/cad:/cad
       - ./output/parts:/parts
