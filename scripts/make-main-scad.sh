@@ -1,6 +1,8 @@
 target=src/cad/__main__.scad
 source=(src/cad/*.scad)
 
+echo > $target
+
 for f in ${source[@]}
 do
     echo "use <$(basename $f)>" >> $target
@@ -20,5 +22,5 @@ echo >> $target
 
 for f in ${source[@]}
 do
-    echo "if (part ==\"$(basename $f .scad)\") $(basename $f .scad | sed 's/-/_/g')();" >> $target
+    echo "if (part == \"$(basename $f .scad)\") $(basename $f .scad | sed 's/-/_/g')();" >> $target
 done

@@ -6,6 +6,7 @@ services:
     volumes:
       - ./src/cad:/cad
       - ./output/parts:/parts
+      - ./output/logs:/logs
 
   firmware:
     image: seacal-scanner:latest
