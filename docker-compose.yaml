@@ -3,7 +3,6 @@ services:
 
   cad:
     image: openscad/openscad:latest
-    network_mode: none
     volumes:
       - ./src/cad:/cad
       - ./output/parts:/parts
@@ -35,3 +34,8 @@ services:
       - ./tests:/tests
       - ./src:/src
       - ./output:/output
+
+networks:
+  default:
+    external: true
+    name: none
