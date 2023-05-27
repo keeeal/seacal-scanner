@@ -8,7 +8,7 @@ build:
 main-scad:
 	./scripts/make-main-scad.sh
 
-%.stl: src/cad/__main__.scad
+%.stl: main-scad
 	docker compose run cad \
 		openscad \
 			-o /parts/$@ \
