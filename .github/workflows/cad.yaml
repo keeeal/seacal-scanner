@@ -24,8 +24,8 @@ jobs:
 
     - name: Build docker images
       run: |
-        make build service=cad
-        make build service=test
+        docker compose pull cad
+        docker compose build test
 
     - name: Build parts
       env:

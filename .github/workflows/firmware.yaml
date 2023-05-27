@@ -22,9 +22,9 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Build docker image
+    - name: Build docker images
       run: |
-        make build service=firmware
+        docker compose build firmware
 
     - name: Build binaries
       run: |

@@ -2,9 +2,6 @@ SHELL := /bin/bash
 
 render_quality ?= 256
 
-build:
-	docker compose build $(service)
-
 main-scad:
 	./scripts/make-main-scad.sh
 
