@@ -6,13 +6,14 @@ $fn = 32;
 
 // clang-format on
 
-module tube_mount() {
+module tube_mount()
+{
     difference()
     {
-        union() {
+        union()
+        {
             linear_extrude(47, center = true) rounded_square(30.2, r = 1.8, center = true);
-            translate([-30.2/4, 0, 0])
-            linear_extrude(47, center = true) square([30.2/2, 30.2], center=true);
+            translate([ -30.2 / 4, 0, 0 ]) linear_extrude(47, center = true) square([ 30.2 / 2, 30.2 ], center = true);
         }
 
         linear_extrude(62, center = true) rounded_square(27, r = 1, center = true);
@@ -29,11 +30,14 @@ module tube_mount() {
         }
 }
 
-module nema_mount() {
-    difference() {
-        translate([ 0, 0, 0 ]) linear_extrude(30.2) union() {
+module nema_mount()
+{
+    difference()
+    {
+        translate([ 0, 0, 0 ]) linear_extrude(30.2) union()
+        {
             rounded_square([ 47, 47 ], r = 7, center = true);
-            translate([0, -47/4]) square([47, 47/2], center=true);
+            translate([ 0, -47 / 4 ]) square([ 47, 47 / 2 ], center = true);
         }
         translate([ 0, 0, -2 ]) linear_extrude(30.2) rounded_square([ 43, 43 ], r = 5, center = true);
         translate([ 0, 0, -1 ]) cylinder(100, r = 12);
@@ -44,6 +48,6 @@ module nema_mount() {
 
 module arm_motor_mount()
 {
-    rotate([0, 90, 0]) tube_mount();
-    translate([0, 15.1, 47/2 + 15]) rotate([90, 0, 0]) nema_mount();
+    rotate([ 0, 90, 0 ]) tube_mount();
+    translate([ 0, 15.1, 47 / 2 + 15 ]) rotate([ 90, 0, 0 ]) nema_mount();
 }
