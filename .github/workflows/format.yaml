@@ -5,6 +5,10 @@ on:
     branches:
       - main
   pull_request:
+    paths:
+      - .github/workflows/format.yaml
+      - src/cad/**/*
+      - src/firmware/**/*
 
 jobs:
   check-formatting:
