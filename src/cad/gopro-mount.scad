@@ -2,7 +2,7 @@
 use <utils/gopro/female.scad>
 use <utils/shapes/2d/rounded-square.scad>
 
-$fn = 64;
+$fn = 32;
 // clang-format on
 
 module gopro_mount()
