@@ -1,8 +1,10 @@
 // clang-format off
+
 use <utils/shapes/2d/rounded-square.scad>
 use <utils/shapes/2d/squircle.scad>
 
 $fn = 32;
+
 // clang-format on
 
 module base()
@@ -15,7 +17,7 @@ module base()
             {
                 hull()
                 {
-                    translate([ 0, 0, 59 ]) linear_extrude(1) circle(d= 304);
+                    translate([ 0, 0, 59 ]) linear_extrude(1) circle(d = 304);
                     linear_extrude(2) squircle(r = 160);
                 }
                 hull()
