@@ -23,7 +23,9 @@ def get_cad_stems(cad_path: Union[Path, str]) -> list[str]:
 def read_log_file(log_file: Union[Path, str]) -> dict[str, Any]:
     with open(log_file) as f:
         data = dict(
-            map(str.strip, line.split(":", maxsplit=1)) for line in f.readlines()
+            map(str.strip, line.split(":", maxsplit=1))
+            for line in f.readlines()
+            if ":" in line
         )
 
     for key, value in data.items():

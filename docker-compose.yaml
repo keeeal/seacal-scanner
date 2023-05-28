@@ -34,8 +34,3 @@ services:
       - ./tests:/tests
       - ./src:/src
       - ./output:/output
-
-networks:
-  default:
-    external: true
-    name: none
