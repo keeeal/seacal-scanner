@@ -48,4 +48,13 @@ module base()
                 translate([ 85, 85, 0 ]) cylinder(58, d = 20);
             }
     }
+    translate([ 150, 0, 30 ]) rotate([ 0, 80, 0 ]) difference()
+    {
+        hull()
+        {
+            linear_extrude(7) rounded_square([ 28, 108 ], r = 8, center = true);
+            linear_extrude(1) rounded_square([ 38, 118 ], r = 13, center = true);
+        }
+        translate([ 0, 0, 6.6 ]) linear_extrude(7) rounded_square([ 24, 104 ], r = 6, center = true);
+    }
 }
