@@ -1,16 +1,15 @@
 SHELL := /bin/bash
 
-RENDER_QUALITY ?= 256
+render_quality ?= 256
 
-build:
-	docker compose build $(service)
-
-src/cad/__main__.scad:
+main-scad:
 	./scripts/make-main-scad.sh
 
-%.stl: src/cad/__main__.scad
+%.stl: main-scad
+	mkdir -p output/logs
 	docker compose run cad \
-		openscad --hardwarnings -o /parts/$@ -D '$$fn=$(RENDER_QUALITY)' -D 'part="$(basename $@)"' /cad/__main__.scad
+		openscad -o /parts/$@ --hardwarnings -D '$$fn=$(render_quality)' -D 'part="$(basename $@)"' /cad/__main__.scad \
+	>& output/logs/$(basename $@).log
 
 parts:
 	for f in src/cad/*.scad; do \
@@ -18,8 +17,10 @@ parts:
 		make $$(basename $$f .scad).stl || exit 1; \
 	done; \
 
+test-cad:
+	docker compose run test pytest /tests/cad
+
 binaries:
-	mkdir -p output/build
 	docker compose run firmware arduino-cli compile --fqbn arduino:avr:leonardo --build-path /build /firmware
 
 format:
