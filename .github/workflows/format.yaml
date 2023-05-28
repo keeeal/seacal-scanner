@@ -17,9 +17,9 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Build docker image
+    - name: Build docker images
       run: |
-        make build service=format
+        docker compose build format
 
     - name: Check formatting
       run: |

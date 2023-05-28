@@ -7,6 +7,8 @@ on:
   pull_request:
     paths:
       - .github/workflows/firmware.yaml
+      - docker-compose.yaml
+      - Makefile
       - src/firmware/**/*
 
 jobs:
@@ -20,9 +22,9 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Build docker image
+    - name: Build docker images
       run: |
-        make build service=firmware
+        docker compose build firmware
 
     - name: Build binaries
       run: |

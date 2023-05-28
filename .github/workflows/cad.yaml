@@ -7,6 +7,8 @@ on:
   pull_request:
     paths:
       - .github/workflows/cad.yaml
+      - docker-compose.yaml
+      - Makefile
       - src/cad/**/*
 
 jobs:
@@ -20,9 +22,14 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Build docker images
+      run: |
+        docker compose pull cad
+        docker compose build test
+
     - name: Build parts
       env:
-        RENDER_QUALITY: 32
+        render_quality: 32
       run: |
         make parts
 
@@ -32,4 +39,9 @@ jobs:
         name: parts
         if-no-files-found: error
         path: |
+          output/logs/*.log
           output/parts/*.stl
+
+    - name: Run tests
+      run: |
+        make test-cad
