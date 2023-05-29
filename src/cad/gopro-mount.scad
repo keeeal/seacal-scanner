@@ -12,7 +12,7 @@ module gopro_mount()
         hull()
         {
             linear_extrude(60, center = true) rounded_square(28.6, r = 1.8, center = true);
-            linear_extrude(58, center = true) rounded_square(30.2, r = 2.6, center = true);
+            translate([ 0, 0, -0.5 ]) linear_extrude(59, center = true) rounded_square(30.2, r = 2.6, center = true);
         }
         linear_extrude(62, center = true) rounded_square(27, r = 1, center = true);
     }
@@ -26,5 +26,5 @@ module gopro_mount()
             translate([ -5, 14, +4 ]) sphere(0.5);
             translate([ 5, 14, +4 ]) sphere(0.5);
         }
-    translate([ -24.5, 0, 0 ]) rotate([ 90, 0, 0 ]) gopro_mount_female(length = 1.9, base = true);
+    translate([ -24.5, 0, -22.5 ]) rotate([ 90, 0, 0 ]) gopro_mount_female(length = 1.9, base = true);
 }
