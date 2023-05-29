@@ -1,16 +1,21 @@
 // clang-format off
+
 use <utils/motors/nema17.scad>
 
 use <apex.scad>
+use <arm-motor-mount.scad>
 use <axle.scad>
+use <badge.scad>
 use <base-motor-gear.scad>
 use <base.scad>
 use <bearing-gear.scad>
 use <cap.scad>
 use <corner.scad>
 use <foot.scad>
+use <gopro-mount.scad>
 
 $fn = 32;
+
 // clang-format on
 
 module aluminium()
@@ -44,6 +49,8 @@ module aluminium()
 
 module base_motor() nema17_short();
 
+module arm_motor() nema17_short();
+
 module bearing()
 {
     linear_extrude(1) difference()
@@ -65,6 +72,7 @@ module __assembly__()
     translate([ 91, 0, 43 ]) rotate([ 180, 0, 0 ]) base_motor();
     // translate([91, 0, 64]) rotate([180, 0, 0]) base_motor_gear();
     base();
+    translate([ 156, 0, 31 ]) rotate([ 0, 80, 0 ]) rotate([ 0, 0, 90 ]) badge();
 
     color([ 0.3, 0.3, 0.3 ]) aluminium();
 
@@ -81,4 +89,9 @@ module __assembly__()
     translate([ 318.5, 463.5, 573.5 ]) mirror([ 1, 0, 0 ]) corner();
     translate([ 318.5, -452.5, 573.5 ]) mirror([ 0, 1, 0 ]) cap();
     translate([ -318.5, -452.5, 573.5 ]) mirror([ 0, 1, 0 ]) cap();
+
+    translate([ 289, 0, 21 ]) rotate([ 0, 0, 90 ]) arm_motor_mount();
+    translate([ 303, 0, 59.5 ]) rotate([ 0, -90, 0 ]) arm_motor();
+
+    translate([ 0, 463.5, 573.5 ]) rotate([ 90, 0, 90 ]) gopro_mount();
 }

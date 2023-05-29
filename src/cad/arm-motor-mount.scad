@@ -36,7 +36,7 @@ module nema_mount()
     {
         translate([ 0, 0, 0 ]) linear_extrude(30.2) union()
         {
-            rounded_square([ 47, 47 ], r = 7, center = true);
+            rounded_square([ 47, 47 ], r = 4, center = true, $fn = 4);
             translate([ 0, -47 / 4 ]) square([ 47, 47 / 2 ], center = true);
         }
         translate([ 0, 0, -2 ]) linear_extrude(30.2) rounded_square([ 43, 43 ], r = 5, center = true);
