@@ -49,5 +49,9 @@ module nema_mount()
 module arm_motor_mount()
 {
     rotate([ 0, 90, 0 ]) tube_mount();
-    translate([ 0, 15.1, 47 / 2 + 15 ]) rotate([ 90, 0, 0 ]) nema_mount();
+    difference()
+    {
+        translate([ 0, 15.1, 38.5 ]) rotate([ 90, 0, 0 ]) nema_mount();
+        translate([ 0, 15, 38.5 ]) cube([ 100, 16, 18 ], center = true);
+    }
 }
