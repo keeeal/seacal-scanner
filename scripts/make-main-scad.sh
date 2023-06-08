@@ -9,7 +9,7 @@ do
 done
 
 echo >> $target
-echo -n "part=\"assembly\"; // [" >> $target
+echo -n "part = \"assembly\"; // [" >> $target
 
 for f in ${source[@]}
 do

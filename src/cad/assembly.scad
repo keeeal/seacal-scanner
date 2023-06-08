@@ -1,5 +1,5 @@
 
-use <../utils/motors/nema17.scad>
+use <utils/motors/nema17.scad>
 
 use <parts/apex.scad>
 use <parts/arm-motor-mount.scad>
