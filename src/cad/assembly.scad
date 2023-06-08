@@ -1,22 +1,19 @@
-// clang-format off
 
-use <utils/motors/nema17.scad>
+use <../utils/motors/nema17.scad>
 
-use <apex.scad>
-use <arm-motor-mount.scad>
-use <axle.scad>
-use <badge.scad>
-use <base-motor-gear.scad>
-use <base.scad>
-use <bearing-gear.scad>
-use <cap.scad>
-use <corner.scad>
-use <foot.scad>
-use <gopro-mount.scad>
+use <parts/apex.scad>
+use <parts/arm-motor-mount.scad>
+use <parts/axle.scad>
+use <parts/badge.scad>
+use <parts/base-motor-gear.scad>
+use <parts/base.scad>
+use <parts/bearing-gear.scad>
+use <parts/cap.scad>
+use <parts/corner.scad>
+use <parts/foot.scad>
+use <parts/gopro-mount.scad>
 
 $fn = 32;
-
-// clang-format on
 
 module aluminium()
 {
@@ -65,7 +62,7 @@ module bearing()
     }
 }
 
-module __assembly__()
+module assembly()
 {
     translate([ 0, 0, 60 ]) color([ 0.8, 0.8, 0.8 ]) bearing();
     // translate([0, 0, 54]) bearing_gear();

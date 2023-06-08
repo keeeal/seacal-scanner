@@ -1,10 +1,6 @@
-// clang-format off
-
-use <utils/shapes/2d/rounded-square.scad>
+use <../utils/shapes/2d/rounded-square.scad>
 
 $fn = 32;
-
-// clang-format on
 
 module tube_mount()
 {
