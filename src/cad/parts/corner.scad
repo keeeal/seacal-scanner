@@ -1,6 +1,4 @@
-// clang-format off
 $fn = 32;
-// clang-format on
 
 module corner()
 {

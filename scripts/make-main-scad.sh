@@ -1,15 +1,15 @@
-target=src/cad/__main__.scad
-source=(src/cad/*.scad)
+target=src/cad/main.scad
+source=(src/cad/parts/*.scad)
 
 echo > $target
 
 for f in ${source[@]}
 do
-    echo "use <$(basename $f)>" >> $target
+    echo "use <parts/$(basename $f)>" >> $target
 done
 
 echo >> $target
-echo -n "part=\"__assembly__\"; // [" >> $target
+echo -n "part = \"assembly\"; // [" >> $target
 
 for f in ${source[@]}
 do

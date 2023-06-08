@@ -1,9 +1,7 @@
-// clang-format off
-use <utils/gears/herringbone.scad>
-use <utils/gears/simple.scad>
+use <../utils/gears/herringbone.scad>
+use <../utils/gears/simple.scad>
 
 $fn = 32;
-// clang-format on
 
 module base_motor_gear(tol_x = .2, tol_z = .4)
 {

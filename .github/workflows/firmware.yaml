@@ -12,8 +12,8 @@ on:
       - src/firmware/**/*
 
 jobs:
-  build-binaries:
-    name: Build binaries
+  build-firmware:
+    name: Build firmware
     runs-on: ubuntu-latest
     steps:
 
@@ -26,14 +26,14 @@ jobs:
       run: |
         docker compose build firmware
 
-    - name: Build binaries
+    - name: Build firmware
       run: |
-        make binaries
+        make firmware
 
-    - name: Archive binaries
+    - name: Archive firmware
       uses: actions/upload-artifact@v3
       with:
-        name: binaries
+        name: firmware
         if-no-files-found: error
         path: |
           output/build/*.hex
