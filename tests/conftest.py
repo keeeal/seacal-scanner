@@ -4,15 +4,15 @@ import pytest
 
 
 @pytest.fixture()
-def cad_path() -> Path:
-    return Path("src") / "cad"
+def parts_source_dir() -> Path:
+    return Path("src") / "cad" / "parts"
 
 
 @pytest.fixture()
-def logs_path() -> Path:
-    return Path("output") / "logs"
-
-
-@pytest.fixture()
-def parts_path() -> Path:
+def parts_output_dir() -> Path:
     return Path("output") / "parts"
+
+
+@pytest.fixture()
+def logs_dir() -> Path:
+    return Path("output") / "logs"

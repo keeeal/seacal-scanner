@@ -1,26 +1,17 @@
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 from datetime import timedelta
 
 
-def has_suffix(path: Union[Path, str], suffix: str) -> bool:
-    return Path(path).suffix.lower() == suffix.lower()
+def has_suffix(path: Path, suffix: str) -> bool:
+    return path.suffix.lower() == suffix.lower()
 
 
-def is_dunder(path: Union[Path, str]) -> bool:
-    stem = Path(path).stem
-    return stem == f"__{stem.strip('_')}__"
+def get_stems(root: Path, suffix: str) -> list[str]:
+    return [f.stem for f in root.iterdir() if has_suffix(f, suffix)]
 
 
-def get_cad_stems(cad_path: Union[Path, str]) -> list[str]:
-    return [
-        f.stem
-        for f in Path(cad_path).iterdir()
-        if has_suffix(f, ".scad") and not is_dunder(f)
-    ]
-
-
-def read_log_file(log_file: Union[Path, str]) -> dict[str, Any]:
+def read_log_file(log_file: Path) -> dict[str, Any]:
     with open(log_file) as f:
         data = dict(
             map(str.strip, line.split(":", maxsplit=1))
@@ -51,25 +42,25 @@ def read_log_file(log_file: Union[Path, str]) -> dict[str, Any]:
     return data
 
 
-def test_one_stl_per_cad_file(cad_path: Path, parts_path: Path):
-    cad_stems = get_cad_stems(cad_path)
-    stl_stems = [f.stem for f in parts_path.iterdir() if has_suffix(f, ".stl")]
+def test_one_stl_per_cad_file(parts_source_dir: Path, parts_output_dir: Path):
+    scad_stems = get_stems(parts_source_dir, suffix=".scad")
+    stl_stems = get_stems(parts_output_dir, suffix=".stl")
 
-    for cad_stem in cad_stems:
-        assert cad_stem in stl_stems
-
-
-def test_one_log_per_cad_file(cad_path: Path, logs_path: Path):
-    cad_stems = get_cad_stems(cad_path)
-    log_stems = [f.stem for f in logs_path.iterdir() if has_suffix(f, ".log")]
-
-    for cad_stem in cad_stems:
-        assert cad_stem in log_stems
+    for scad_stem in scad_stems:
+        assert scad_stem in stl_stems
 
 
-def test_one_volume_per_cad_file(cad_path: Path, logs_path: Path):
-    cad_stems = get_cad_stems(cad_path)
+def test_one_log_per_cad_file(parts_source_dir: Path, logs_dir: Path):
+    scad_stems = get_stems(parts_source_dir, suffix=".scad")
+    log_stems = get_stems(logs_dir, suffix=".log")
 
-    for cad_stem in cad_stems:
-        log_data = read_log_file(logs_path / f"{cad_stem}.log")
+    for scad_stem in scad_stems:
+        assert scad_stem in log_stems
+
+
+def test_one_volume_per_cad_file(parts_source_dir: Path, logs_dir: Path):
+    scad_stems = get_stems(parts_source_dir, suffix=".scad")
+
+    for cad_stem in scad_stems:
+        log_data = read_log_file(logs_dir / f"{cad_stem}.log")
         assert log_data["Volumes"] == 2
