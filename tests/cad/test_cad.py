@@ -42,7 +42,12 @@ def read_log_file(log_file: Path) -> dict[str, Any]:
     return data
 
 
-def test_one_stl_per_cad_file(parts_source_dir: Path, parts_output_dir: Path):
+def test_at_least_one_scad_file(parts_source_dir: Path):
+    scad_stems = get_stems(parts_source_dir, suffix=".scad")
+    assert len(scad_stems) > 0
+
+
+def test_one_stl_per_scad_file(parts_source_dir: Path, parts_output_dir: Path):
     scad_stems = get_stems(parts_source_dir, suffix=".scad")
     stl_stems = get_stems(parts_output_dir, suffix=".stl")
 
@@ -50,7 +55,7 @@ def test_one_stl_per_cad_file(parts_source_dir: Path, parts_output_dir: Path):
         assert scad_stem in stl_stems
 
 
-def test_one_log_per_cad_file(parts_source_dir: Path, logs_dir: Path):
+def test_one_log_per_scad_file(parts_source_dir: Path, logs_dir: Path):
     scad_stems = get_stems(parts_source_dir, suffix=".scad")
     log_stems = get_stems(logs_dir, suffix=".log")
 
@@ -58,7 +63,7 @@ def test_one_log_per_cad_file(parts_source_dir: Path, logs_dir: Path):
         assert scad_stem in log_stems
 
 
-def test_one_volume_per_cad_file(parts_source_dir: Path, logs_dir: Path):
+def test_one_volume_per_scad_file(parts_source_dir: Path, logs_dir: Path):
     scad_stems = get_stems(parts_source_dir, suffix=".scad")
 
     for cad_stem in scad_stems:
