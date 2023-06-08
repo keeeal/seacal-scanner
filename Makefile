@@ -24,7 +24,7 @@ format:
 		"clang-format $(if $(check),--dry-run --Werror,) -i /firmware/*.ino"
 	docker compose run format sh -c \
 		"./openscad-format.sh $(if $(check),--dry-run --Werror,) \
-		-i /cad/components/*.scad /cad/parts/*.scad assembly.scad"
+		-i /cad/components/*.scad /cad/parts/*.scad /cad/assembly.scad"
 
 test-cad:
 	docker compose run test pytest /tests/cad
