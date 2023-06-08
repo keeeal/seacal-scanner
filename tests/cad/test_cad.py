@@ -55,17 +55,9 @@ def test_one_stl_per_scad_file(parts_source_dir: Path, parts_output_dir: Path):
         assert scad_stem in stl_stems
 
 
-def test_one_log_per_scad_file(parts_source_dir: Path, logs_dir: Path):
-    scad_stems = get_stems(parts_source_dir, suffix=".scad")
-    log_stems = get_stems(logs_dir, suffix=".log")
-
-    for scad_stem in scad_stems:
-        assert scad_stem in log_stems
-
-
 def test_one_volume_per_scad_file(parts_source_dir: Path, logs_dir: Path):
     scad_stems = get_stems(parts_source_dir, suffix=".scad")
 
-    for cad_stem in scad_stems:
-        log_data = read_log_file(logs_dir / f"{cad_stem}.log")
+    for scad_stem in scad_stems:
+        log_data = read_log_file(logs_dir / f"{scad_stem}.log")
         assert log_data["Volumes"] == 2
