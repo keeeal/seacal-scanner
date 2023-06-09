@@ -3,7 +3,7 @@ output/
 
 # CAD models
 *.stl
-src/cad/__main__.scad
+src/cad/main.scad
 
 # Prerequisites
 *.d
