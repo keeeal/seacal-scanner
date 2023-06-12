@@ -30,7 +30,7 @@ format:
 	docker compose run format sh -c \
 		'clang-format $(if $(check),--dry-run --Werror,) -i /firmware/*.ino && \
 		./openscad-format.sh $(if $(check),--dry-run --Werror,) -i $$(find /cad/scanner -type f -name "*.scad") && \
-		black /tests'
+		black $(if $(check),--check,) /tests'
 
 test-cad:
 	docker compose run test pytest /tests/cad
