@@ -1,6 +1,7 @@
+from datetime import timedelta
 from pathlib import Path
 from typing import Any
-from datetime import timedelta
+from yaml import safe_load
 
 
 def has_suffix(path: Path, suffix: str) -> bool:
@@ -42,22 +43,27 @@ def read_log_file(log_file: Path) -> dict[str, Any]:
     return data
 
 
-def test_at_least_one_scad_file(parts_source_dir: Path):
-    scad_stems = get_stems(parts_source_dir, suffix=".scad")
-    assert len(scad_stems) > 0
+def test_parts_config(parts_config_file: Path):
+    # TODO: Use pydantic for this
+    with open(parts_config_file) as f:
+        parts_config = safe_load(f)
+
+    assert isinstance(parts_config, dict)
+    assert len(parts_config) > 0
 
 
-def test_one_stl_per_scad_file(parts_source_dir: Path, parts_output_dir: Path):
-    scad_stems = get_stems(parts_source_dir, suffix=".scad")
+def test_one_stl_per_part(parts_config_file: Path, parts_output_dir: Path):
+    with open(parts_config_file) as f:
+        parts_config = safe_load(f)
+
     stl_stems = get_stems(parts_output_dir, suffix=".stl")
-
-    for scad_stem in scad_stems:
-        assert scad_stem in stl_stems
+    assert set(parts_config) == set(stl_stems)
 
 
-def test_one_volume_per_scad_file(parts_source_dir: Path, logs_dir: Path):
-    scad_stems = get_stems(parts_source_dir, suffix=".scad")
+def test_one_volume_per_part(parts_config_file: Path, logs_dir: Path):
+    with open(parts_config_file) as f:
+        parts_config = safe_load(f)
 
-    for scad_stem in scad_stems:
-        log_data = read_log_file(logs_dir / f"{scad_stem}.log")
+    for part_name in parts_config:
+        log_data = read_log_file(logs_dir / f"{part_name}.log")
         assert log_data["Volumes"] == 2

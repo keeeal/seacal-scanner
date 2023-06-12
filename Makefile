@@ -7,7 +7,7 @@ src/cad/main.scad:
 	mkdir -p output/logs
 	docker compose run cad sh -c \
 		'openscad -o /parts/$@ --hardwarnings \
-			-D "\$$fn=$$(yq eval ".$(basename $@).render-quality" /cad/parts.yaml)" \
+			-D "\$$fn=$(if $(render-quality),$(render-quality),$$(yq eval ".$(basename $@).render-quality" /cad/parts.yaml))" \
 			-D "part=\"$(basename $@)\"" \
 			/cad/main.scad \
 		2> /logs/$(basename $@).log'
@@ -17,7 +17,7 @@ parts: src/cad/main.scad
 	docker compose run cad sh -c \
 		'yq eval "keys" /cad/parts.yaml | while read -r part; do \
 			openscad -o /parts/$${part#- }.stl --hardwarnings \
-				-D "\$$fn=$$(yq eval ".$${part#- }.render-quality" /cad/parts.yaml)" \
+				-D "\$$fn=$(if $(render-quality),$(render-quality),$$(yq eval ".$${part#- }.render-quality" /cad/parts.yaml))" \
 				-D "part=\"$${part#- }\"" \
 				/cad/main.scad \
 			2> /logs/$${part#- }.log; \
