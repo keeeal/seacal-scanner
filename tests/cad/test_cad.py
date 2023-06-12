@@ -71,6 +71,14 @@ def test_cad_structure(cad_root_dir: Path):
     assert len(module_names) == len(set(module_names))
 
 
+def test_no_fn_usage(cad_root_dir: Path):
+    for scad_file in cad_root_dir.rglob("*.scad"):
+        with open(scad_file) as f:
+            lines = f.readlines()
+
+        assert not any(line.strip().startswith("$fn") for line in lines)
+
+
 def test_parts_config(parts_config_file: Path):
     # TODO: Use pydantic for this
     with open(parts_config_file) as f:
