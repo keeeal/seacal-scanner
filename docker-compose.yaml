@@ -2,10 +2,14 @@ version: "3"
 services:
 
   cad:
-    image: openscad/openscad:latest
+    image: seacal-scanner-cad:latest
+    build:
+      context: .
+      dockerfile: .docker/cad.Dockerfile
     volumes:
-      - ./src/cad:/cad
+      - ./output/logs:/logs
       - ./output/parts:/parts
+      - ./src/cad:/cad
 
   firmware:
     image: seacal-scanner-firmware:latest
@@ -13,8 +17,8 @@ services:
       context: .
       dockerfile: .docker/firmware.Dockerfile
     volumes:
-      - ./src/firmware:/firmware
       - ./output/build:/build
+      - ./src/firmware:/firmware
 
   format:
     image: seacal-scanner-format:latest
@@ -24,6 +28,7 @@ services:
     volumes:
       - ./src/cad:/cad
       - ./src/firmware:/firmware
+      - ./tests:/tests
 
   test:
     image: seacal-scanner-test:latest
@@ -31,6 +36,6 @@ services:
       context: .
       dockerfile: .docker/test.Dockerfile
     volumes:
-      - ./tests:/tests
-      - ./src:/src
       - ./output:/output
+      - ./src:/src
+      - ./tests:/tests

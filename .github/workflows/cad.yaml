@@ -24,14 +24,12 @@ jobs:
 
     - name: Build docker images
       run: |
-        docker compose pull cad
+        docker compose build cad
         docker compose build test
 
     - name: Build parts
-      env:
-        render_quality: 32
       run: |
-        make parts
+        make parts render-quality=32
 
     - name: Archive parts
       uses: actions/upload-artifact@v3

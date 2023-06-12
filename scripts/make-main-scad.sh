@@ -1,39 +1,34 @@
 #!/bin/sh
 
-target=src/cad/main.scad
-components=src/cad/components/*.scad
-parts=src/cad/parts/*.scad
+output=$(dirname $1)/main.scad
 
-echo > $target
+echo > $output
 
-for f in $components; do
-    echo "use <components/$(basename $f)>" >> $target
+find $1 -type f -name "*.scad" -printf "%P\n" | while read -r file; do
+    echo "use <$(basename $1)/$file>" >> $output
 done
 
-for f in $parts; do
-    echo "use <parts/$(basename $f)>" >> $target
+echo >> $output
+echo -n "part = \"$(basename $1)\"; // [" >> $output
+
+find $1 -type f -name "*.scad" | while read -r file; do
+    if [ $(basename $file .scad) = "__subassembly__" ]; then
+        part=$(basename $(dirname $file))
+    else
+        part=$(basename $file .scad)
+    fi
+    echo -n "$part, " >> $output
 done
 
-echo "use <assembly.scad>" >> $target
-echo >> $target
-echo -n "part = \"assembly\"; // [assembly" >> $target
+sed -i '$ s/..$//' $output
+echo ] >> $output
+echo >> $output
 
-for f in $components; do
-    echo -n ", $(basename $f .scad)" >> $target
-done
-
-for f in $parts; do
-    echo -n ", $(basename $f .scad)" >> $target
-done
-
-echo ] >> $target
-echo >> $target
-echo "if (part == \"assembly\") assembly();" >> $target
-
-for f in $components; do
-    echo "if (part == \"$(basename $f .scad)\") $(basename $f .scad | sed 's/-/_/g')();" >> $target
-done
-
-for f in $parts; do
-    echo "if (part == \"$(basename $f .scad)\") $(basename $f .scad | sed 's/-/_/g')();" >> $target
+find $1 -type f -name "*.scad" | while read -r file; do
+    if [ $(basename $file .scad) = "__subassembly__" ]; then
+        part=$(basename $(dirname $file))
+    else
+        part=$(basename $file .scad)
+    fi
+    echo "if (part == \"$part\") $(echo $part | sed 's/-/_/g')();" >> $output
 done

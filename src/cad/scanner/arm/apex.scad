@@ -1,6 +1,4 @@
-use <../utils/shapes/2d/rounded-square.scad>
-
-$fn = 32;
+use <../../utils/shapes/2d/rounded-square.scad>
 
 module apex()
 {
@@ -9,6 +7,7 @@ module apex()
         linear_extrude(height - 11) square([ 23, 6 ], center = true);
         linear_extrude(height - 3) square([ 20, 6 ], center = true);
     }
+
     module end(height)
     {
         hull()
