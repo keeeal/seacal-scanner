@@ -1,5 +1,6 @@
 use <arm/__subassembly__.scad>
 
-module scanner() {
+module scanner()
+{
     arm();
 }

@@ -1,5 +1,5 @@
-use <../utils/gears/simple.scad>
-use <../utils/gears/herringbone.scad>
+use <../../utils/gears/simple.scad>
+use <../../utils/gears/herringbone.scad>
 
 $fn = 32;
 

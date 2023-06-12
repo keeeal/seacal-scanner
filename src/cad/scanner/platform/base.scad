@@ -1,5 +1,5 @@
-use <../utils/shapes/2d/rounded-square.scad>
-use <../utils/shapes/2d/squircle.scad>
+use <../../utils/shapes/2d/rounded-square.scad>
+use <../../utils/shapes/2d/squircle.scad>
 
 $fn = 32;
 

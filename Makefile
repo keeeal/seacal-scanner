@@ -29,7 +29,7 @@ firmware:
 format:
 	docker compose run format sh -c \
 		'clang-format $(if $(check),--dry-run --Werror,) -i /firmware/*.ino && \
-		./openscad-format.sh $(if $(check),--dry-run --Werror,) -i /cad/scanner/*.scad'
+		./openscad-format.sh $(if $(check),--dry-run --Werror,) -i $$(find /cad/scanner -type f -name "*.scad")'
 
 test-cad:
 	docker compose run test pytest /tests/cad
