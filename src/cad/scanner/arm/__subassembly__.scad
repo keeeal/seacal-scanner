@@ -29,7 +29,7 @@ module all_aluminium_tubes()
 
 module arm()
 {
-    color([ 0.3, 0.3, 0.3 ]) all_aluminium_tubes();
+    all_aluminium_tubes();
 
     translate([ -289, 315, 21 ]) foot();
     translate([ 289, 315, 21 ]) mirror([ 1, 0, 0 ]) foot();

@@ -1,6 +1,4 @@
-use <../../utils/shapes/2d/rounded-square.scad>
-
-$fn = 32;
+use <../../../utils/shapes/2d/rounded-square.scad>
 
 module badge()
 {

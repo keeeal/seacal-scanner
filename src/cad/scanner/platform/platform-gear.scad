@@ -1,8 +1,6 @@
 use <../../utils/gears/simple.scad>
 use <../../utils/gears/herringbone.scad>
 
-$fn = 32;
-
 module platform_gear()
 {
     difference()

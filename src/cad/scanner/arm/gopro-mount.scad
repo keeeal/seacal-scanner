@@ -1,8 +1,6 @@
 use <../../utils/gopro/female.scad>
 use <../../utils/shapes/2d/rounded-square.scad>
 
-$fn = 32;
-
 module gopro_mount()
 {
     difference()

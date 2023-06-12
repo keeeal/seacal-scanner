@@ -57,13 +57,26 @@ def get_top_level_modules(scad_file: Path) -> set[str]:
 
 
 def test_cad_structure(cad_root_dir: Path):
+    module_names = []
+
     for scad_file in cad_root_dir.rglob("*.scad"):
-        expected_module_name = (
+        module_name = (
             scad_file.parent.stem.replace("-", "_")
             if scad_file.stem == "__subassembly__"
             else scad_file.stem.replace("-", "_")
         )
-        assert expected_module_name in get_top_level_modules(scad_file)
+        assert module_name in get_top_level_modules(scad_file)
+        module_names.append(module_name)
+
+    assert len(module_names) == len(set(module_names))
+
+
+def test_no_fn_usage(cad_root_dir: Path):
+    for scad_file in cad_root_dir.rglob("*.scad"):
+        with open(scad_file) as f:
+            lines = f.readlines()
+
+        assert not any(line.strip().startswith("$fn") for line in lines)
 
 
 def test_parts_config(parts_config_file: Path):

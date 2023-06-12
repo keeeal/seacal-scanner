@@ -5,5 +5,5 @@ module aluminium_tube(height, center = false)
         square([ 25.5, 25.5 ], center = true);
         square([ 23, 23 ], center = true);
     }
-    linear_extrude(height, center = center) profile();
+    color([ 0.3, 0.3, 0.3 ]) linear_extrude(height, center = center) profile();
 }

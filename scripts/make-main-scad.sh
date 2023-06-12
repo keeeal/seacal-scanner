@@ -2,7 +2,8 @@
 
 output=$(dirname $1)/main.scad
 
-echo > $output
+echo "\$fn = 32;  // [16:128]" > $output
+echo >> $output
 
 find $1 -type f -name "*.scad" -printf "%P\n" | while read -r file; do
     echo "use <$(basename $1)/$file>" >> $output

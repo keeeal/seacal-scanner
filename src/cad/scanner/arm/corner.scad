@@ -1,5 +1,3 @@
-$fn = 32;
-
 module corner()
 {
     module wedge(height) hull()

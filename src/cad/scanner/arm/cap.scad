@@ -1,5 +1,3 @@
-$fn = 32;
-
 module cap()
 {
     module wedge(height) hull()
