@@ -4,8 +4,9 @@ module box_without_components()
 {
     difference()
     {
-        hull() {
-            translate([0, 0, 1]) linear_extrude(58) rounded_square([ 183.2, 76.2 ], r = 8, center = true);
+        hull()
+        {
+            translate([ 0, 0, 1 ]) linear_extrude(58) rounded_square([ 183.2, 76.2 ], r = 8, center = true);
             linear_extrude(60) rounded_square([ 181.6, 74.6 ], r = 7.2, center = true);
         }
         translate([ -53.5, 0, 1.6 ]) linear_extrude(60) rounded_square([ 73, 73 ], r = 8 - 1.6, center = true);
