@@ -6,7 +6,7 @@ axle:
   render-quality: 128
 badge:
   render-quality: 128
-base:
+base-without-badge:
   render-quality: 256
 cap:
   render-quality: 128
