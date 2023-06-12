@@ -24,7 +24,7 @@ jobs:
 
     - name: Build docker images
       run: |
-        docker compose pull cad
+        docker compose build cad
         docker compose build test
 
     - name: Build parts
