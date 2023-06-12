@@ -1,8 +1,5 @@
 # Output directory
 output/
-
-# CAD models
-*.stl
 src/cad/main.scad
 
 # Prerequisites
@@ -59,6 +56,26 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
 
 # Text editors
 .vscode/
