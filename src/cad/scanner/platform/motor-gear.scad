@@ -1,8 +1,6 @@
 use <../../utils/gears/herringbone.scad>
 use <../../utils/gears/simple.scad>
 
-$fn = 32;
-
 module motor_gear(tol_x = .2, tol_z = .4)
 {
     difference()

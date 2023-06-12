@@ -1,5 +1,3 @@
-$fn = 32;
-
 module gx16(num_pins = 4)
 {
     color([ 0.8, 0.8, 0.8 ])

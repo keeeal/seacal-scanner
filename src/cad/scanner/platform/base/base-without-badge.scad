@@ -1,8 +1,6 @@
 use <../../../utils/shapes/2d/rounded-square.scad>
 use <../../../utils/shapes/2d/squircle.scad>
 
-$fn = 32;
-
 module base_without_badge()
 {
     difference()

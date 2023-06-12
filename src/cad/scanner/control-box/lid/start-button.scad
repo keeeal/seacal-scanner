@@ -1,5 +1,3 @@
-$fn = 32;
-
 module start_button(pressed = false)
 {
     color([ 0.8, 0.8, 0.8 ])

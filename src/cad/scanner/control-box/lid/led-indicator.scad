@@ -1,4 +1,3 @@
-$fn = 32;
 EPS = 1e-3;
 
 module led_indicator(led_color = [ 0.8, 0.1, 0.1 ])

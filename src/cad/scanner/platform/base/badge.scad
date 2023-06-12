@@ -1,7 +1,5 @@
 use <../../../utils/shapes/2d/rounded-square.scad>
 
-$fn = 32;
-
 module badge()
 {
     linear_extrude(2) text("S  E  A  C  A  L", halign = "center", valign = "center");
