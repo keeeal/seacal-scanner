@@ -43,6 +43,29 @@ def read_log_file(log_file: Path) -> dict[str, Any]:
     return data
 
 
+def get_top_level_modules(scad_file: Path) -> set[str]:
+    with open(scad_file) as f:
+        lines = f.readlines()
+
+    prefix = "module "
+
+    return {
+        line[len(prefix) :].split("(", maxsplit=1)[0]
+        for line in lines
+        if line.startswith(prefix)
+    }
+
+
+def test_cad_structure(cad_root_dir: Path):
+    for scad_file in cad_root_dir.rglob("*.scad"):
+        expected_module_name = (
+            scad_file.parent.stem.replace("-", "_")
+            if scad_file.stem == "__subassembly__"
+            else scad_file.stem.replace("-", "_")
+        )
+        assert expected_module_name in get_top_level_modules(scad_file)
+
+
 def test_parts_config(parts_config_file: Path):
     # TODO: Use pydantic for this
     with open(parts_config_file) as f:

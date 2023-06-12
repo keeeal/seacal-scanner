@@ -3,7 +3,7 @@ use <../../utils/gears/simple.scad>
 
 $fn = 32;
 
-module base_motor_gear(tol_x = .2, tol_z = .4)
+module motor_gear(tol_x = .2, tol_z = .4)
 {
     difference()
     {
