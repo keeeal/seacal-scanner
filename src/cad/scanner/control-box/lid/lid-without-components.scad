@@ -1,5 +1,5 @@
 use <../../../utils/shapes/2d/rounded-square.scad>
-$fn = 64;
+
 module lid_without_components()
 {
     linear_extrude(1.6) difference()
