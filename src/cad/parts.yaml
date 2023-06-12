@@ -1,6 +1,4 @@
 apex:
-  path: scanner/arm/apex.scad
   render-quality: 128
 arm-motor-mount:
-  path: scanner/arm/arm-motor-mount.scad
   render-quality: 128
