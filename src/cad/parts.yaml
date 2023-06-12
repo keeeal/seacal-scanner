@@ -20,3 +20,7 @@ motor-gear:
   render-quality: 128
 platform-gear:
   render-quality: 128
+box-without-components:
+  render-quality: 128
+lid-without-components:
+  render-quality: 128
