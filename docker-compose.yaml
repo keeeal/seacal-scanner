@@ -25,6 +25,7 @@ services:
     volumes:
       - ./src/cad:/cad
       - ./src/firmware:/firmware
+      - ./tests:/tests
 
   dev:
     image: seacal-scanner/dev:latest
