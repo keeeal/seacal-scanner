@@ -2,40 +2,34 @@ version: "3"
 services:
 
   cad:
-    image: seacal-scanner-cad:latest
-    build:
-      context: .
-      dockerfile: .docker/cad.Dockerfile
+    image: ghcr.io/keeeal/openscad-build:latest
     volumes:
       - ./output/logs:/logs
       - ./output/parts:/parts
       - ./src/cad:/cad
 
   firmware:
-    image: seacal-scanner-firmware:latest
+    image: arduino-cli:latest
     build:
       context: .
-      dockerfile: .docker/firmware.Dockerfile
+      dockerfile: .docker/arduino-cli.Dockerfile
     volumes:
       - ./output/build:/build
       - ./src/firmware:/firmware
 
   format:
-    image: seacal-scanner-format:latest
-    build:
-      context: .
-      dockerfile: .docker/format.Dockerfile
+    image: ghcr.io/keeeal/openscad-format:latest
     volumes:
       - ./src/cad:/cad
       - ./src/firmware:/firmware
-      - ./tests:/tests
 
-  test:
-    image: seacal-scanner-test:latest
+  dev:
+    image: seacal-scanner-dev:latest
     build:
       context: .
-      dockerfile: .docker/test.Dockerfile
+      dockerfile: .docker/dev.Dockerfile
     volumes:
       - ./output:/output
-      - ./src:/src
+      - ./src/cad:/cad
+      - ./src/firmware:/firmware
       - ./tests:/tests
