@@ -1,4 +1,3 @@
-SHELL := /bin/bash
 
 src/cad/main.scad:
 	docker compose run openscad openscad-build write-main cad/scanner
