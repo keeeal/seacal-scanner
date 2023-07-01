@@ -9,7 +9,7 @@ services:
       - ./src/cad:/cad
 
   arduino:
-    image: arduino-cli:latest
+    image: seacal-scanner/arduino:latest
     build:
       context: .
       dockerfile: dockerfiles/arduino-cli.Dockerfile
@@ -19,6 +19,9 @@ services:
 
   format:
     image: seacal-scanner/format:latest
+    build:
+      context: .
+      dockerfile: dockerfiles/format.Dockerfile
     volumes:
       - ./src/cad:/cad
       - ./src/firmware:/firmware
