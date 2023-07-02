@@ -19,7 +19,7 @@ jobs:
 
     - name: Build docker images
       run: |
-        docker compose build format
+        docker compose build dev
 
     - name: Check formatting
       run: |
