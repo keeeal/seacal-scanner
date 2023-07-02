@@ -17,21 +17,11 @@ services:
       - ./output/build:/build
       - ./src/firmware:/firmware
 
-  format:
-    image: seacal-scanner/format:latest
+  dev:
+    image: seacal-scanner/dev:latest
     build:
       context: .
-      dockerfile: dockerfiles/format.Dockerfile
-    volumes:
-      - ./src/cad:/cad
-      - ./src/firmware:/firmware
-      - ./tests:/tests
-
-  test:
-    image: seacal-scanner/test:latest
-    build:
-      context: .
-      dockerfile: dockerfiles/test.Dockerfile
+      dockerfile: dockerfiles/dev.Dockerfile
     volumes:
       - ./output:/output
       - ./src/cad:/cad

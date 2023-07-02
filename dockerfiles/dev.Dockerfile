@@ -7,4 +7,5 @@ RUN python -m ensurepip
 RUN pip3 --no-cache-dir install --upgrade pip && \
     pip3 --no-cache-dir install \
     black \
-    isort
+    isort \
+    pytest
