@@ -25,6 +25,7 @@ jobs:
     - name: Build docker images
       run: |
         docker compose build openscad
+        docker compose build dev
 
     - name: Render parts
       run: |
@@ -38,6 +39,6 @@ jobs:
         path: |
           output/parts/*.stl
 
-    # - name: Run tests
-    #   run: |
-    #     make test-cad
+    - name: Run tests
+      run: |
+        make test-cad

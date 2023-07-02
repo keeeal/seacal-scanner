@@ -3,9 +3,9 @@ src/cad/main.scad:
 	docker compose run openscad openscad-build write-main cad/scanner
 
 render:
-	docker compose run openscad openscad-build render \
+	docker compose run openscad openscad-build render cad/render.yaml \
 		$(if $(render-quality),--render-quality=$(render-quality),) \
-		--output-dir=parts cad/render.yaml
+		--output-dir=parts --log
 
 firmware:
 	docker compose run arduino arduino-cli compile --fqbn arduino:avr:leonardo --build-path build firmware
