@@ -25,7 +25,6 @@ jobs:
     - name: Build docker images
       run: |
         docker compose build openscad
-        docker compose build dev
 
     - name: Render parts
       run: |

@@ -14,6 +14,7 @@ format:
 	docker compose run format sh -c \
 		'clang-format $(if $(check),--dry-run --Werror,) -i firmware/*.ino && \
 		openscad-format $(if $(check),--dry-run --Werror,) -i $$(find cad/scanner -type f -name "*.scad") && \
+		isort $(if $(check),--check,) tests && \
 		black $(if $(check),--check,) tests'
 
 test-cad:
