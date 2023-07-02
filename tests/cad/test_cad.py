@@ -84,10 +84,10 @@ def test_one_stl_per_part(parts_config_file: Path, parts_output_dir: Path):
     assert set(parts_config) == set(stl_stems)
 
 
-def test_one_volume_per_part(parts_config_file: Path, logs_dir: Path):
+def test_one_volume_per_part(parts_config_file: Path, parts_output_dir: Path):
     with open(parts_config_file) as f:
         parts_config = safe_load(f)
 
     for part_name in parts_config:
-        log_data = read_log_file(logs_dir / f"{part_name}.log")
+        log_data = read_log_file(parts_output_dir / f"{part_name}.log")
         assert log_data["Volumes"] == 2

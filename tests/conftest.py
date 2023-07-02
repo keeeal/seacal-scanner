@@ -16,8 +16,3 @@ def cad_root_dir() -> Path:
 @pytest.fixture()
 def parts_output_dir() -> Path:
     return Path("output") / "parts"
-
-
-@pytest.fixture()
-def logs_dir() -> Path:
-    return Path("output") / "logs"

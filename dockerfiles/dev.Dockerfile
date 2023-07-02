@@ -8,4 +8,5 @@ RUN pip3 --no-cache-dir install --upgrade pip && \
     pip3 --no-cache-dir install \
     black \
     isort \
-    pytest
+    pytest \
+    pyyaml
