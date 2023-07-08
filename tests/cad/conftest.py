@@ -4,8 +4,8 @@ import pytest
 
 
 @pytest.fixture()
-def parts_config_file() -> Path:
-    return Path("cad") / "parts.yaml"
+def render_config_file() -> Path:
+    return Path("cad") / "render.yaml"
 
 
 @pytest.fixture()
