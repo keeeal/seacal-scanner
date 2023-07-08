@@ -24,12 +24,12 @@ jobs:
 
     - name: Build docker images
       run: |
-        docker compose build cad
-        docker compose build test
+        docker compose build openscad
+        docker compose build dev
 
-    - name: Build parts
+    - name: Render parts
       run: |
-        make parts render-quality=32
+        make render render-quality=32
 
     - name: Archive parts
       uses: actions/upload-artifact@v3
@@ -37,8 +37,8 @@ jobs:
         name: parts
         if-no-files-found: error
         path: |
-          output/logs/*.log
           output/parts/*.stl
+          output/parts/*.log
 
     - name: Run tests
       run: |

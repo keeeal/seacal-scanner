@@ -1,39 +1,24 @@
-SHELL := /bin/bash
 
 src/cad/main.scad:
-	./scripts/make-main-scad.sh src/cad/scanner
+	docker compose run openscad openscad-build write-main cad/scanner
 
-%.stl: src/cad/main.scad
-	mkdir -p output/logs
-	docker compose run cad sh -c \
-		'openscad -o /parts/$@ --hardwarnings \
-			-D "\$$fn=$(if $(render-quality),$(render-quality),$$(yq eval ".$(basename $@).render-quality" /cad/parts.yaml))" \
-			-D "part=\"$(basename $@)\"" \
-			/cad/main.scad \
-		2> /logs/$(basename $@).log'
-
-parts: src/cad/main.scad
-	mkdir -p output/logs
-	docker compose run cad sh -c \
-		'yq eval "keys" /cad/parts.yaml | while read -r part; do \
-			openscad -o /parts/$${part#- }.stl --hardwarnings \
-				-D "\$$fn=$(if $(render-quality),$(render-quality),$$(yq eval ".$${part#- }.render-quality" /cad/parts.yaml))" \
-				-D "part=\"$${part#- }\"" \
-				/cad/main.scad \
-			2> /logs/$${part#- }.log; \
-		done'
+render:
+	docker compose run openscad openscad-build render cad/render.yaml \
+		$(if $(render-quality),--render-quality=$(render-quality),) \
+		--output-dir=parts --log
 
 firmware:
-	docker compose run firmware arduino-cli compile --fqbn arduino:avr:leonardo --build-path /build /firmware
+	docker compose run arduino arduino-cli compile --fqbn arduino:avr:leonardo --build-path build firmware
 
 format:
-	docker compose run format sh -c \
-		'clang-format $(if $(check),--dry-run --Werror,) -i /firmware/*.ino && \
-		./openscad-format.sh $(if $(check),--dry-run --Werror,) -i $$(find /cad/scanner -type f -name "*.scad") && \
-		black $(if $(check),--check,) /tests'
+	docker compose run dev sh -c \
+		'clang-format $(if $(check),--dry-run --Werror,) -i firmware/*.ino && \
+		openscad-format $(if $(check),--dry-run --Werror,) -i $$(find cad/scanner -type f -name "*.scad") && \
+		isort $(if $(check),--check,) tests && \
+		black $(if $(check),--check,) tests'
 
 test-cad:
-	docker compose run test pytest /tests/cad
+	docker compose run dev pytest tests/cad
 
 clean:
 	rm -rf src/cad/main.scad

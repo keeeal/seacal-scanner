@@ -1,6 +1,7 @@
 from datetime import timedelta
 from pathlib import Path
 from typing import Any
+
 from yaml import safe_load
 
 
@@ -66,27 +67,27 @@ def test_cad_structure(cad_root_dir: Path):
         assert expected_module_name in get_top_level_modules(scad_file)
 
 
-def test_parts_config(parts_config_file: Path):
+def test_parts_config(render_config_file: Path):
     # TODO: Use pydantic for this
-    with open(parts_config_file) as f:
+    with open(render_config_file) as f:
         parts_config = safe_load(f)
 
     assert isinstance(parts_config, dict)
     assert len(parts_config) > 0
 
 
-def test_one_stl_per_part(parts_config_file: Path, parts_output_dir: Path):
-    with open(parts_config_file) as f:
-        parts_config = safe_load(f)
+def test_one_stl_per_part(render_config_file: Path, parts_output_dir: Path):
+    with open(render_config_file) as f:
+        parts = safe_load(f)["parts"]
 
     stl_stems = get_stems(parts_output_dir, suffix=".stl")
-    assert set(parts_config) == set(stl_stems)
+    assert set(parts) == set(stl_stems)
 
 
-def test_one_volume_per_part(parts_config_file: Path, logs_dir: Path):
-    with open(parts_config_file) as f:
-        parts_config = safe_load(f)
+def test_one_volume_per_part(render_config_file: Path, parts_output_dir: Path):
+    with open(render_config_file) as f:
+        parts = safe_load(f)["parts"]
 
-    for part_name in parts_config:
-        log_data = read_log_file(logs_dir / f"{part_name}.log")
+    for part_name in parts:
+        log_data = read_log_file(parts_output_dir / f"{part_name}.log")
         assert log_data["Volumes"] == 2
