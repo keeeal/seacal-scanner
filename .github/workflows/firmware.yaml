@@ -24,7 +24,7 @@ jobs:
 
     - name: Build docker images
       run: |
-        docker compose build firmware
+        docker compose build arduino
 
     - name: Build firmware
       run: |
