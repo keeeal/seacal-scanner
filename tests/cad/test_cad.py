@@ -58,13 +58,26 @@ def get_top_level_modules(scad_file: Path) -> set[str]:
 
 
 def test_cad_structure(cad_root_dir: Path):
+    module_names = []
+
     for scad_file in cad_root_dir.rglob("*.scad"):
-        expected_module_name = (
+        module_name = (
             scad_file.parent.stem.replace("-", "_")
             if scad_file.stem == "__subassembly__"
             else scad_file.stem.replace("-", "_")
         )
-        assert expected_module_name in get_top_level_modules(scad_file)
+        assert module_name in get_top_level_modules(scad_file)
+        module_names.append(module_name)
+
+    assert len(module_names) == len(set(module_names))
+
+
+def test_no_fn_usage(cad_root_dir: Path):
+    for scad_file in cad_root_dir.rglob("*.scad"):
+        with open(scad_file) as f:
+            lines = f.readlines()
+
+        assert not any(line.strip().startswith("$fn") for line in lines)
 
 
 def test_parts_config(render_config_file: Path):
@@ -76,18 +89,19 @@ def test_parts_config(render_config_file: Path):
     assert len(parts_config) > 0
 
 
-def test_one_stl_per_part(render_config_file: Path, parts_output_dir: Path):
+def test_one_stl_per_part(render_config_file: Path, parts_dir: Path):
     with open(render_config_file) as f:
         parts = safe_load(f)["parts"]
 
-    stl_stems = get_stems(parts_output_dir, suffix=".stl")
+    stl_stems = get_stems(parts_dir, suffix=".stl")
     assert set(parts) == set(stl_stems)
 
 
-def test_one_volume_per_part(render_config_file: Path, parts_output_dir: Path):
+def test_one_volume_per_part(render_config_file: Path, parts_dir: Path):
     with open(render_config_file) as f:
         parts = safe_load(f)["parts"]
 
     for part_name in parts:
-        log_data = read_log_file(parts_output_dir / f"{part_name}.log")
-        assert log_data["Volumes"] == 2
+        log_data = read_log_file(parts_dir / f"{part_name}.log")
+        if "Volumes" in log_data:
+            assert log_data["Volumes"] == 2

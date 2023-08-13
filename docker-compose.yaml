@@ -3,27 +3,24 @@ services:
 
   openscad:
     image: ghcr.io/keeeal/openscad-build:latest
+    working_dir: /home
     volumes:
-      - ./output/logs:/logs
-      - ./output/parts:/parts
-      - ./src/cad:/cad
+      - .:/home
 
   arduino:
     image: seacal-scanner/arduino:latest
     build:
       context: .
       dockerfile: dockerfiles/arduino-cli.Dockerfile
+    working_dir: /home
     volumes:
-      - ./output/build:/build
-      - ./src/firmware:/firmware
+      - .:/home
 
   dev:
     image: seacal-scanner/dev:latest
     build:
       context: .
       dockerfile: dockerfiles/dev.Dockerfile
+    working_dir: /home
     volumes:
-      - ./output:/output
-      - ./src/cad:/cad
-      - ./src/firmware:/firmware
-      - ./tests:/tests
+      - .:/home

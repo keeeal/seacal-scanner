@@ -37,8 +37,8 @@ jobs:
         name: parts
         if-no-files-found: error
         path: |
-          output/parts/*.stl
-          output/parts/*.log
+          build/parts/*.stl
+          build/parts/*.log
 
     - name: Run tests
       run: |

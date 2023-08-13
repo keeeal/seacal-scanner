@@ -1,6 +1,6 @@
-# Output directory
-output/
-src/cad/main.scad
+# Outputs
+build/
+main.scad
 
 # Prerequisites
 *.d
