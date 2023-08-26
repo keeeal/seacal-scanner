@@ -13,7 +13,7 @@ module apex_limit()
             translate([ -8.5, -11, 100 ]) rotate([ 90, 0, 0 ])
                 linear_extrude(2) rounded_square([ 38.5, 20 ], r = 5);
         }
-        translate([ 22.1, -10, 110 ]) rotate([ 90, 0, 0 ]) cube([1.8, 11, 4]);
+        translate([ 22.1, -10, 110 ]) rotate([ 90, 0, 0 ]) cube([ 1.8, 11, 4 ]);
     }
 
     hull()
