@@ -8,7 +8,7 @@ parts:
     render-quality: 128
   badge:
     render-quality: 128
-  base_without_badge:
+  base-without-badge:
     render-quality: 256
   bottom-limit:
     render-quality: 128
@@ -28,7 +28,7 @@ parts:
     render-quality: 128
   limit-switch-mount:
     render-quality: 128
-  motor_gear:
+  motor-gear:
     render-quality: 128
-  platform_gear:
+  platform-gear:
     render-quality: 128
