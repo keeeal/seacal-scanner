@@ -1,4 +1,4 @@
-module aluminium_tube(height, center = false)
+module _aluminium_tube(height, center = false)
 {
     module profile() difference()
     {

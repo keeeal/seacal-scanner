@@ -1,5 +1,5 @@
-use <../../utils/gopro/female.scad>
-use <../../utils/shapes/2d/rounded-square.scad>
+use <../../../utils/gopro/female.scad>
+use <../../../utils/shapes/2d/rounded-square.scad>
 
 module gopro_mount()
 {

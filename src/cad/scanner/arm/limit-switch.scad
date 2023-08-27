@@ -1,3 +1,0 @@
-module limit_switch()
-{
-}

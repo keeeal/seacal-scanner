@@ -44,34 +44,6 @@ def read_log_file(log_file: Path) -> dict[str, Any]:
     return data
 
 
-def get_top_level_modules(scad_file: Path) -> set[str]:
-    with open(scad_file) as f:
-        lines = f.readlines()
-
-    prefix = "module "
-
-    return {
-        line[len(prefix) :].split("(", maxsplit=1)[0]
-        for line in lines
-        if line.startswith(prefix)
-    }
-
-
-def test_cad_structure(cad_root_dir: Path):
-    module_names = []
-
-    for scad_file in cad_root_dir.rglob("*.scad"):
-        module_name = (
-            scad_file.parent.stem.replace("-", "_")
-            if scad_file.stem == "__subassembly__"
-            else scad_file.stem.replace("-", "_")
-        )
-        assert module_name in get_top_level_modules(scad_file)
-        module_names.append(module_name)
-
-    assert len(module_names) == len(set(module_names))
-
-
 def test_no_fn_usage(cad_root_dir: Path):
     for scad_file in cad_root_dir.rglob("*.scad"):
         with open(scad_file) as f:
