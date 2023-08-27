@@ -2,7 +2,33 @@ root-dir: scanner
 parts:
   apex-limit:
     render-quality: 128
-  limit-switch-mount:
+  arm-motor-mount:
+    render-quality: 128
+  axle:
+    render-quality: 128
+  badge:
+    render-quality: 128
+  base_without_badge:
+    render-quality: 256
+  bottom-limit:
     render-quality: 128
   bottom-limit:
+    render-quality: 128
+  box-without-components:
+    render-quality: 128
+  cap:
+    render-quality: 128
+  corner:
+    render-quality: 128
+  foot:
+    render-quality: 128
+  gopro-mount:
+    render-quality: 128
+  lid-without-components:
+    render-quality: 128
+  limit-switch-mount:
+    render-quality: 128
+  motor_gear:
+    render-quality: 128
+  platform_gear:
     render-quality: 128
