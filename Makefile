@@ -6,7 +6,9 @@ firmware-dir := src/firmware
 render-config := src/cad/render.yaml
 
 cad-root-files := $(shell find $(cad-root-dir) -type f -name "*.scad")
-firmware-files := $(shell find $(firmware-dir) -type f -name "*.ino")
+firmware-files := $(shell \
+	find $(firmware-dir) -type f -name "*.ino" -o -name "*.cpp" -o -name "*.h" \
+)
 
 main.scad: $(cad-root-files)
 	docker compose run openscad openscad-build write-main $(cad-root-dir) main.scad
@@ -21,7 +23,8 @@ firmware:
 	mkdir -p $(firmware-build-dir)
 	docker compose run arduino arduino-cli compile \
 		--fqbn arduino:avr:leonardo \
-		--build-path $(firmware-build-dir) $(firmware-dir)
+		--build-path $(firmware-build-dir) \
+		$(firmware-dir)
 
 format:
 	docker compose run dev sh -c \
