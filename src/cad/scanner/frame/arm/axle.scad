@@ -28,7 +28,7 @@ module axle()
 
             translate([ -15, 0, 0 ]) rotate([ 0, -90, 0 ]) cylinder(5, 12, 10);
         }
-        translate([ -35, 0, 0 ]) rotate([ 0, 90, 0 ]) scale(0.52) import("../../../assets/screw.stl");
+        translate([ -35, 0, 0 ]) rotate([ 0, 90, 0 ]) scale(0.52) import("../../../assets/axle-screw.stl");
     }
 
     translate([ 14, 0, 0 ]) rotate([ 0, 90, 0 ])
