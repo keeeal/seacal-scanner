@@ -1,39 +1,36 @@
 #include <AccelStepper.h>
 
 // Define the base motor characteristics
-#define BASE_PIN_1 8
-#define BASE_PIN_2 9
-#define BASE_PIN_3 10
-#define BASE_PIN_4 11
+#define BASE_STP_PIN 10
+#define BASE_DIR_PIN 11
 #define BASE_STEPS 200
-#define BASE_GEAR_RATIO 140 / 12
+#define ENABLE 0
+#define MS1 1
+#define MS2 2
+#define MS3 3
 
-AccelStepper BASE_STEPPER;
+static AccelStepper stepper(AccelStepper::DRIVER, BASE_STP_PIN, BASE_DIR_PIN);
 
 void setup()
 {
-    AccelStepper BASE_STEPPER(AccelStepper::FULL4WIRE, BASE_PIN_1, BASE_PIN_2, BASE_PIN_3, BASE_PIN_4);
-    BASE_STEPPER.setAcceleration(2); // Steps per second per second
-    BASE_STEPPER.setMaxSpeed(100);   // Steps per second
+    stepper.setMaxSpeed(200);     // Steps per second
+    stepper.setAcceleration(50);  // Steps per second per second
+
+    pinMode(ENABLE, OUTPUT);
+    pinMode(MS1, OUTPUT);
+    pinMode(MS2, OUTPUT);
+    pinMode(MS3, OUTPUT);
+
+    digitalWrite(ENABLE, LOW);
+    digitalWrite(MS1, LOW);
+    digitalWrite(MS2, LOW);
+    digitalWrite(MS3, HIGH);
 }
 
 void loop()
 {
-    // Move the stepper motor 360 degrees clockwise
-    BASE_STEPPER.moveTo(BASE_STEPS);
-
-    while (!BASE_STEPPER.run())
-        continue;
-
-    // Wait for a second
-    delay(1000);
-
-    // Move the stepper motor 360 degrees anticlockwise
-    BASE_STEPPER.moveTo(0);
-
-    while (!BASE_STEPPER.run())
-        continue;
-
-    // Wait for a second
-    delay(1000);
+    stepper.moveTo(BASE_STEPS);
+    while (stepper.run()) continue;
+    stepper.moveTo(0);
+    while (stepper.run()) continue;
 }
