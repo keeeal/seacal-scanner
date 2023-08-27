@@ -1,9 +1,10 @@
 use <../aluminium-tube.scad>
+use <axle-screw.scad>
+use <axle.scad>
+use <bottom-limit-with-switch/__subassembly__.scad>
 use <cap.scad>
 use <corner.scad>
 use <gopro-mount.scad>
-use <axle.scad>
-use <bottom-limit-with-switch/__subassembly__.scad>
 
 module aluminium_tubes()
 {
@@ -17,7 +18,9 @@ module arm()
     translate([ 0, 0, 0 ]) aluminium_tubes();
 
     translate([ -313.5, 0, 0 ]) rotate([ 90, 0, 0 ]) axle();
-    translate([ 313.5, 0, 0 ]) rotate([ 90, 0, 0 ]) mirror([ 1, 0, 0 ]) axle();
+    translate([ -345, 0, 0 ]) rotate([ 0, 90, 0 ]) axle_screw();
+    translate([ 313.5, 0, 0 ]) rotate([ 90, 0, 0 ]) rotate([ 0, 180, 0 ]) axle();
+    translate([ 345, 0, 0 ]) rotate([ 0, 90, 0 ]) rotate([ 0, 180, 0 ]) axle_screw();
 
     translate([ -313.5, 463.5, 0 ]) corner();
     translate([ 313.5, 463.5, 0 ]) mirror([ 1, 0, 0 ]) corner();
