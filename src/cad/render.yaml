@@ -4,6 +4,8 @@ parts:
     render-quality: 128
   arm-motor-mount:
     render-quality: 128
+  axle-screw:
+    render-quality: 128
   axle:
     render-quality: 128
   badge:
@@ -31,6 +33,4 @@ parts:
   motor-gear:
     render-quality: 128
   platform-gear:
-    render-quality: 128
-  screw:
     render-quality: 128
