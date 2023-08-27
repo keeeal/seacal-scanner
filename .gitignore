@@ -1,6 +1,7 @@
 # Outputs
 build/
 main.scad
+main.json
 *.stl
 
 # Prerequisites
