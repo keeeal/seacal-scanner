@@ -1,0 +1,8 @@
+root-dir: scanner
+parts:
+  apex-limit:
+    render-quality: 128
+  limit-switch-mount:
+    render-quality: 128
+  bottom-limit:
+    render-quality: 128

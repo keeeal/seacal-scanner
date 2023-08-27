@@ -1,16 +1,26 @@
 version: "3"
 services:
 
-  cad:
-    image: openscad/openscad:latest
+  openscad:
+    image: ghcr.io/keeeal/openscad-build:latest
+    working_dir: /home
     volumes:
-      - ./src/cad:/cad
-      - ./output/parts:/parts
+      - .:/home
 
-  firmware:
-    image: seacal-scanner:latest
+  arduino:
+    image: seacal-scanner/arduino:latest
     build:
       context: .
+      dockerfile: dockerfiles/arduino-cli.Dockerfile
+    working_dir: /home
     volumes:
-      - ./src/firmware:/firmware
-      - ./output/build:/build
+      - .:/home
+
+  dev:
+    image: seacal-scanner/dev:latest
+    build:
+      context: .
+      dockerfile: dockerfiles/dev.Dockerfile
+    working_dir: /home
+    volumes:
+      - .:/home

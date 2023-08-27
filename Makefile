@@ -1,29 +1,37 @@
-SHELL := /bin/bash
+cad-build-dir ?= build/parts
+firmware-build-dir ?= build/firmware
 
-RENDER_QUALITY ?= 256
+cad-root-dir := src/cad/scanner
+firmware-dir := src/firmware
+render-config := src/cad/render.yaml
 
-build:
-	docker compose build
+cad-root-files := $(shell find $(cad-root-dir) -type f -name "*.scad")
+firmware-files := $(shell find $(firmware-dir) -type f -name "*.ino")
 
-format:
-	docker compose run firmware sh -c "clang-format --style=microsoft $(if $(check),--dry-run --Werror,) -i /firmware/*.ino"
+main.scad: $(cad-root-files)
+	docker compose run openscad openscad-build write-main $(cad-root-dir) main.scad
+
+render:
+	mkdir -p $(cad-build-dir)
+	docker compose run openscad openscad-build render $(render-config) \
+		$(if $(render-quality),--render-quality=$(render-quality),) \
+		--output-dir=$(cad-build-dir) --log
 
 firmware:
-	mkdir -p output/build
-	docker compose run firmware arduino-cli compile --fqbn arduino:avr:leonardo --build-path /build /firmware
+	mkdir -p $(firmware-build-dir)
+	docker compose run arduino arduino-cli compile \
+		--fqbn arduino:avr:leonardo \
+		--build-path $(firmware-build-dir) $(firmware-dir)
 
-src/cad/__main__.scad:
-	./scripts/make-main-scad.sh
+format:
+	docker compose run dev sh -c \
+		'clang-format $(if $(check),--dry-run --Werror,) -i $(firmware-files) && \
+		openscad-format $(if $(check),--dry-run --Werror,) -i $(cad-root-files) && \
+		isort $(if $(check),--check,) tests && \
+		black $(if $(check),--check,) tests'
 
-%.stl: src/cad/__main__.scad
-	docker compose run cad openscad --hardwarnings -o /parts/$@ -D '$$fn=$(RENDER_QUALITY)' -D 'part="$(basename $@)"' /cad/__main__.scad
-
-all-parts:
-	for f in src/cad/*.scad; do \
-		if [[ $$(basename $$f .scad) == __*__ ]]; then continue; fi; \
-		make $$(basename $$f .scad).stl || exit 1; \
-	done; \
+test-cad:
+	docker compose run dev pytest tests/cad
 
 clean:
-	rm -rf output
-	rm -rf src/cad/__main__.scad
+	git clean -Xdf

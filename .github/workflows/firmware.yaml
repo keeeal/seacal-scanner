@@ -6,8 +6,10 @@ on:
       - main
   pull_request:
     paths:
-      - src/firmware/**/*
       - .github/workflows/firmware.yaml
+      - docker-compose.yaml
+      - Makefile
+      - src/firmware/**/*
 
 jobs:
   build-firmware:
@@ -20,22 +22,18 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Build docker image
+    - name: Build docker images
       run: |
-        make build
+        docker compose build arduino
 
-    - name: Check formatting
-      run: |
-        make format check=true
-
-    - name: Build binaries
+    - name: Build firmware
       run: |
         make firmware
 
-    - name: Archive binaries
+    - name: Archive firmware
       uses: actions/upload-artifact@v3
       with:
         name: firmware
         if-no-files-found: error
         path: |
-          output/build/*.hex
+          build/firmware/*.hex
