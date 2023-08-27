@@ -13,8 +13,8 @@ static AccelStepper stepper(AccelStepper::DRIVER, BASE_STP_PIN, BASE_DIR_PIN);
 
 void setup()
 {
-    stepper.setMaxSpeed(200);     // Steps per second
-    stepper.setAcceleration(50);  // Steps per second per second
+    stepper.setMaxSpeed(200);    // Steps per second
+    stepper.setAcceleration(50); // Steps per second per second
 
     pinMode(ENABLE, OUTPUT);
     pinMode(MS1, OUTPUT);
@@ -30,7 +30,9 @@ void setup()
 void loop()
 {
     stepper.moveTo(BASE_STEPS);
-    while (stepper.run()) continue;
+    while (stepper.run())
+        continue;
     stepper.moveTo(0);
-    while (stepper.run()) continue;
+    while (stepper.run())
+        continue;
 }
