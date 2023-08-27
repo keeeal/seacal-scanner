@@ -30,9 +30,12 @@ void setup()
 void loop()
 {
     stepper.moveTo(BASE_STEPS);
+
     while (stepper.run())
         continue;
+
     stepper.moveTo(0);
+
     while (stepper.run())
         continue;
 }
