@@ -1,41 +1,47 @@
 #include <AccelStepper.h>
 
-// Define the base motor characteristics
-#define BASE_STP_PIN 10
-#define BASE_DIR_PIN 11
-#define BASE_STEPS 200
-#define ENABLE 0
-#define MS1 1
-#define MS2 2
-#define MS3 3
+#include "constants.h"
+#include "idle.h"
+#include "scanning.h"
+#include "state.h"
+#include "stopped.h"
 
-static AccelStepper stepper(AccelStepper::DRIVER, BASE_STP_PIN, BASE_DIR_PIN);
+State *state;
+
+AccelStepper base(AccelStepper::DRIVER, BASE_STEP_PIN, BASE_DIR_PIN);
+AccelStepper arm(AccelStepper::DRIVER, ARM_STEP_PIN, ARM_DIR_PIN);
 
 void setup()
 {
-    stepper.setMaxSpeed(200);    // Steps per second
-    stepper.setAcceleration(50); // Steps per second per second
+    pinMode(ENABLE_PIN, OUTPUT);
+    pinMode(MS1_PIN, OUTPUT);
+    pinMode(MS2_PIN, OUTPUT);
+    pinMode(MS3_PIN, OUTPUT);
 
-    pinMode(ENABLE, OUTPUT);
-    pinMode(MS1, OUTPUT);
-    pinMode(MS2, OUTPUT);
-    pinMode(MS3, OUTPUT);
+    digitalWrite(ENABLE_PIN, LOW);
+    digitalWrite(MS1_PIN, LOW);
+    digitalWrite(MS2_PIN, LOW);
+    digitalWrite(MS3_PIN, HIGH);
 
-    digitalWrite(ENABLE, LOW);
-    digitalWrite(MS1, LOW);
-    digitalWrite(MS2, LOW);
-    digitalWrite(MS3, HIGH);
+    pinMode(LIMIT_TOP_PIN, INPUT_PULLUP);
+    pinMode(LIMIT_BOTTOM_PIN, INPUT_PULLUP);
+    pinMode(START_BUTTON_PIN, INPUT_PULLUP);
+    pinMode(STOP_BUTTON_PIN, INPUT_PULLUP);
+
+    arm.setMaxSpeed(200);    // steps per second
+    arm.setAcceleration(50); // steps per second per second
+
+    state = new Idle();
 }
 
 void loop()
 {
-    stepper.moveTo(BASE_STEPS);
+    State *next_state = state->update();
 
-    while (stepper.run())
-        continue;
-
-    stepper.moveTo(0);
-
-    while (stepper.run())
-        continue;
+    if (next_state != state)
+    {
+        state->on_exit();
+        state = next_state;
+        state->on_enter();
+    }
 }
