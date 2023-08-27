@@ -1,15 +1,31 @@
 #include <AccelStepper.h>
 
-// Define the base motor characteristics
-#define BASE_STP_PIN 10
-#define BASE_DIR_PIN 11
+#define BASE_STP_PIN 7
+#define BASE_DIR_PIN 9
 #define BASE_STEPS 200
+#define BASE_RATIO (140 / 12)
+
+#define ARM_STP_PIN 10
+#define ARM_DIR_PIN 11
+#define ARM_STEPS 200
+
 #define ENABLE 0
+#define RESET 4
 #define MS1 1
 #define MS2 2
 #define MS3 3
 
-static AccelStepper stepper(AccelStepper::DRIVER, BASE_STP_PIN, BASE_DIR_PIN);
+enum State
+{
+    IDLE,
+    SCANNING,
+    STOPPED,
+};
+
+State state;
+
+AccelStepper base(AccelStepper::DRIVER, BASE_STP_PIN, BASE_DIR_PIN);
+AccelStepper arm(AccelStepper::DRIVER, BASE_STP_PIN, BASE_DIR_PIN);
 
 void setup()
 {
@@ -25,17 +41,31 @@ void setup()
     digitalWrite(MS1, LOW);
     digitalWrite(MS2, LOW);
     digitalWrite(MS3, HIGH);
+
+    state = IDLE;
 }
 
 void loop()
 {
-    stepper.moveTo(BASE_STEPS);
+    switch (state)
+    {
+    case IDLE:
+        stepper.moveTo(BASE_STEPS);
 
-    while (stepper.run())
-        continue;
+        while (stepper.run())
+            continue;
 
-    stepper.moveTo(0);
+        stepper.moveTo(0);
 
-    while (stepper.run())
-        continue;
+        while (stepper.run())
+            continue;
+
+        break;
+
+    case SCANNING:
+        break;
+
+    case STOPPED:
+        break;
+    }
 }
