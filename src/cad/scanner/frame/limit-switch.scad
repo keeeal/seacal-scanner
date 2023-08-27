@@ -25,26 +25,26 @@ module limit_switch(pressed = false)
         translate([ 0, 0, -2.25 ]) cube([ 4.5, 6.5, 1 ], center = true);
     }
 
+    module leg() translate([ 0, -1.5, -6.5 ]) cube([ 0.5, 3, 4 ]);
+
     color([ 0.2, 0.2, 0.2 ]) difference()
     {
         union()
         {
-            translate([ 0, -3, -9.5 ]) cube([ 20, 6, 9.5 ]);
-            translate([ 5, 0, -7 ]) bump();
-            translate([ 15, 0, -7 ]) bump();
+            translate([ -10, -3, -2.5 ]) cube([ 20, 6, 9.5 ]);
+            translate([ -5, 0, 0 ]) bump();
+            translate([ +5, 0, 0 ]) bump();
         }
-        translate([ 5, 0, -7 ]) rotate([ 90, 0, 0 ]) cylinder(7, d = 2.5, center = true);
-        translate([ 15, 0, -7 ]) rotate([ 90, 0, 0 ]) cylinder(7, d = 2.5, center = true);
+        translate([ -5, 0, 0 ]) rotate([ 90, 0, 0 ]) cylinder(7, d = 2.5, center = true);
+        translate([ +5, 0, 0 ]) rotate([ 90, 0, 0 ]) cylinder(7, d = 2.5, center = true);
     }
-
-    module leg() translate([ 0, -1.5, -13.5 ]) cube([ 0.5, 3, 4 ]);
 
     color([ 0.8, 0.8, 0.8 ])
     {
-        translate([ 1.5, 0, 0 ]) leg();
-        translate([ 9, 0, 0 ]) leg();
-        translate([ 18, 0, 0 ]) leg();
+        translate([ 8.5, 0, 0 ]) leg();
+        translate([ 1, 0, 0 ]) leg();
+        translate([ -8, 0, 0 ]) leg();
     }
 
-    translate([ 3, 0, 0 ]) rotate([ 0, pressed ? 0 : -15, 0 ]) lever();
+    translate([ -7, 0, 7 ]) rotate([ 0, pressed ? 0 : -15, 0 ]) lever();
 }

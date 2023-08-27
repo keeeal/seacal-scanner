@@ -34,9 +34,15 @@ module bottom_limit()
             translate([ -5, 14, +4 ]) sphere(0.5);
             translate([ 5, 14, +4 ]) sphere(0.5);
         }
-
-    translate([ -8.1, 22.1, -5 ]) sphere(1.2);
-    translate([ -8.1, 22.1, +5 ]) sphere(1.2);
-    translate([ -8.1, 15.1, -5 ]) sphere(1.2);
-    translate([ -8.1, 15.1, +5 ]) sphere(1.2);
+    intersection()
+    {
+        union()
+        {
+            translate([ -8.1, 14.6, -5 ]) sphere(1.5);
+            translate([ -8.1, 14.6, +5 ]) sphere(1.5);
+            translate([ -8.1, 22.6, -5 ]) sphere(1.5);
+            translate([ -8.1, 22.6, +5 ]) sphere(1.5);
+        }
+        translate([ -16.1, 15.1, -21 / 2 ]) cube([ 12, 7, 21 ]);
+    }
 }

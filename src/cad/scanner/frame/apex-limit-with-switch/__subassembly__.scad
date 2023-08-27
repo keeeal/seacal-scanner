@@ -5,9 +5,9 @@ use <limit-switch-mount.scad>
 module apex_limit_with_switch()
 {
     apex_limit();
-    translate([ 18, -19.8, 100 ]) rotate([ 0, -90, 0 ])
+    translate([ 23, -19.8, 110 ]) rotate([ 0, -90, 0 ])
     {
         limit_switch_mount();
-        limit_switch(pressed = true);
+        translate([ 0, 0, -2 ]) limit_switch(pressed = true);
     }
 }
