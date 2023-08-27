@@ -19,8 +19,8 @@ module arm()
 
     translate([ -313.5, 0, 0 ]) rotate([ 90, 0, 0 ]) axle();
     translate([ -345, 0, 0 ]) rotate([ 0, 90, 0 ]) axle_screw();
-    translate([ 313.5, 0, 0 ]) rotate([ 90, 0, 0 ]) rotate([0, 180, 0]) axle();
-    translate([ 345, 0, 0 ]) rotate([ 0, 90, 0 ]) rotate([0, 180, 0]) axle_screw();
+    translate([ 313.5, 0, 0 ]) rotate([ 90, 0, 0 ]) rotate([ 0, 180, 0 ]) axle();
+    translate([ 345, 0, 0 ]) rotate([ 0, 90, 0 ]) rotate([ 0, 180, 0 ]) axle_screw();
 
     translate([ -313.5, 463.5, 0 ]) corner();
     translate([ 313.5, 463.5, 0 ]) mirror([ 1, 0, 0 ]) corner();
