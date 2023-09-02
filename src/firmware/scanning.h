@@ -1,15 +1,17 @@
 #pragma once
 
-#include "state.h"
-
-class Scanning : public State
+namespace Scanning
 {
-  public:
-    void on_enter();
-    void on_exit();
-    State *update();
 
-  private:
-    int top_limit;
-    int bottom_limit;
-};
+namespace
+{
+long _top_limit;
+long _bottom_limit;
+} // namespace
+
+void onEnter();
+void run();
+void onExit();
+void setLimits(long top_limit, long bottom_limit);
+
+} // namespace Scanning

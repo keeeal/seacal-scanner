@@ -1,15 +1,16 @@
 #include <AccelStepper.h>
+#include <StateMachine.h>
 
 #include "constants.h"
+#include "homing.h"
 #include "idle.h"
 #include "scanning.h"
-#include "state.h"
 #include "stopped.h"
 
-State *state;
+AccelStepper base_stepper(AccelStepper::DRIVER, BASE_STEP_PIN, BASE_DIR_PIN);
+AccelStepper arm_stepper(AccelStepper::DRIVER, ARM_STEP_PIN, ARM_DIR_PIN);
 
-AccelStepper base(AccelStepper::DRIVER, BASE_STEP_PIN, BASE_DIR_PIN);
-AccelStepper arm(AccelStepper::DRIVER, ARM_STEP_PIN, ARM_DIR_PIN);
+StateMachine state_machine = StateMachine();
 
 void setup()
 {
@@ -28,20 +29,17 @@ void setup()
     pinMode(START_BUTTON_PIN, INPUT_PULLUP);
     pinMode(STOP_BUTTON_PIN, INPUT_PULLUP);
 
-    arm.setMaxSpeed(200);    // steps per second
-    arm.setAcceleration(50); // steps per second per second
+    arm_stepper.setMaxSpeed(200);    // steps per second
+    arm_stepper.setAcceleration(50); // steps per second per second
 
-    state = new Idle();
+    State *idle = state_machine.addState(&Idle::run);
+    State *homing = state_machine.addState(&Homing::run);
+    State *scanning = state_machine.addState(&Scanning::run);
+    State *stopped = state_machine.addState(&Stopped::run);
+
+    idle->addTransition(&Idle::toScanning, scanning);
 }
 
 void loop()
 {
-    State *next_state = state->update();
-
-    if (next_state != state)
-    {
-        state->on_exit();
-        state = next_state;
-        state->on_enter();
-    }
 }

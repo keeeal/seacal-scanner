@@ -1,16 +1,20 @@
+#include "constants.h"
 #include "scanning.h"
 
-void Scanning::on_enter()
+void Scanning::onEnter()
 {
 }
 
-void Scanning::on_exit()
+void Scanning::run()
+{
+    if (state_machine.executeOnce)
+        Scanning::onEnter();
+}
+
+void Scanning::onExit()
 {
 }
 
-State *Scanning::update()
+void Scanning::setLimits(long top_limit, long bottom_limit)
 {
-    arm.run();
-    base.run();
-    return this;
 }

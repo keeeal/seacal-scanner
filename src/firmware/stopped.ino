@@ -1,14 +1,16 @@
+#include "constants.h"
 #include "stopped.h"
 
-void Stopped::on_enter()
+void Stopped::onEnter()
 {
 }
 
-void Stopped::on_exit()
+void Stopped::run()
 {
+    if (state_machine.executeOnce)
+        Stopped::onEnter();
 }
 
-State *Stopped::update()
+void Stopped::onExit()
 {
-    return this;
 }

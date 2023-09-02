@@ -1,9 +1,8 @@
 #pragma once
 
-namespace Idle
+namespace Homing
 {
 void onEnter();
 void run();
 void onExit();
-bool toScanning();
-} // namespace Idle
+} // namespace Homing

@@ -1,23 +1,30 @@
+#include "constants.h"
 #include "idle.h"
-#include "scanning.h"
 
-void Idle::on_enter()
+void Idle::onEnter()
 {
     // disable steppers
     digitalWrite(ENABLE_PIN, HIGH);
 }
 
-void Idle::on_exit()
+void Idle::run()
+{
+    if (state_machine.executeOnce)
+        Idle::onEnter();
+}
+
+void Idle::onExit()
 {
     // enable steppers
     digitalWrite(ENABLE_PIN, LOW);
 }
 
-State *Idle::update()
+bool Idle::toScanning()
 {
     if (digitalRead(START_BUTTON_PIN) == LOW)
     {
-        return new Scanning();
+        Idle::onExit();
+        return true;
     }
-    return this;
+    return false;
 }
