@@ -7,7 +7,7 @@ void Stopped::onEnter()
 
 void Stopped::run()
 {
-    if (state_machine.executeOnce)
+    if (STATE_MACHINE.executeOnce)
         Stopped::onEnter();
 }
 

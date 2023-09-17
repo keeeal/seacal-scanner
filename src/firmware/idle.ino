@@ -9,7 +9,7 @@ void Idle::onEnter()
 
 void Idle::run()
 {
-    if (state_machine.executeOnce)
+    if (STATE_MACHINE.executeOnce)
         Idle::onEnter();
 }
 
@@ -19,7 +19,7 @@ void Idle::onExit()
     digitalWrite(ENABLE_PIN, LOW);
 }
 
-bool Idle::toScanning()
+bool Idle::toHoming()
 {
     if (digitalRead(START_BUTTON_PIN) == LOW)
     {

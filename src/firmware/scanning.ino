@@ -7,7 +7,7 @@ void Scanning::onEnter()
 
 void Scanning::run()
 {
-    if (state_machine.executeOnce)
+    if (STATE_MACHINE.executeOnce)
         Scanning::onEnter();
 }
 
@@ -15,6 +15,12 @@ void Scanning::onExit()
 {
 }
 
-void Scanning::setLimits(long top_limit, long bottom_limit)
+void Scanning::setTopLimit(long position)
 {
+    top_limit = position;
+}
+
+void Scanning::setBottomLimit(long position)
+{
+    bottom_limit = position;
 }

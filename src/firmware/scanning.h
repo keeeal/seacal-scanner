@@ -5,13 +5,14 @@ namespace Scanning
 
 namespace
 {
-long _top_limit;
-long _bottom_limit;
+long top_limit;    // Steps
+long bottom_limit; // Steps
 } // namespace
 
 void onEnter();
 void run();
 void onExit();
-void setLimits(long top_limit, long bottom_limit);
+void setTopLimit(long position);
+void setBottomLimit(long position);
 
 } // namespace Scanning
