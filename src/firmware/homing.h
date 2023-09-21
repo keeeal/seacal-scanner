@@ -11,8 +11,8 @@ namespace
 
 StateMachine state_machine;
 
-bool retract_complete;
 bool homing_complete;
+bool retract_complete;
 
 enum Direction
 {
