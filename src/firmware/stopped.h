@@ -1,11 +1,8 @@
 #pragma once
 
-#include "state.h"
-
-class Stopped : public State
+namespace Stopped
 {
-  public:
-    void on_enter();
-    void on_exit();
-    State *update();
-};
+void onEnter();
+void run();
+void onExit();
+} // namespace Stopped

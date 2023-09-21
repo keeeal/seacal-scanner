@@ -1,11 +1,9 @@
 #pragma once
 
-#include "state.h"
-
-class Idle : public State
+namespace Idle
 {
-  public:
-    void on_enter();
-    void on_exit();
-    State *update();
-};
+void onEnter();
+void run();
+void onExit();
+bool toHoming();
+} // namespace Idle

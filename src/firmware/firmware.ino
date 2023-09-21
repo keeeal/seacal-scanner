@@ -1,15 +1,16 @@
 #include <AccelStepper.h>
+#include <StateMachine.h>
 
 #include "constants.h"
+#include "homing.h"
 #include "idle.h"
 #include "scanning.h"
-#include "state.h"
 #include "stopped.h"
 
-State *state;
+AccelStepper BASE_STEPPER(AccelStepper::DRIVER, BASE_STEP_PIN, BASE_DIR_PIN);
+AccelStepper ARM_STEPPER(AccelStepper::DRIVER, ARM_STEP_PIN, ARM_DIR_PIN);
 
-AccelStepper base(AccelStepper::DRIVER, BASE_STEP_PIN, BASE_DIR_PIN);
-AccelStepper arm(AccelStepper::DRIVER, ARM_STEP_PIN, ARM_DIR_PIN);
+StateMachine STATE_MACHINE = StateMachine();
 
 void setup()
 {
@@ -23,25 +24,26 @@ void setup()
     digitalWrite(MS2_PIN, LOW);
     digitalWrite(MS3_PIN, HIGH);
 
-    pinMode(LIMIT_TOP_PIN, INPUT_PULLUP);
-    pinMode(LIMIT_BOTTOM_PIN, INPUT_PULLUP);
+    pinMode(TOP_LIMIT_PIN, INPUT_PULLUP);
+    pinMode(BOTTOM_LIMIT_PIN, INPUT_PULLUP);
     pinMode(START_BUTTON_PIN, INPUT_PULLUP);
     pinMode(STOP_BUTTON_PIN, INPUT_PULLUP);
 
-    arm.setMaxSpeed(200);    // steps per second
-    arm.setAcceleration(50); // steps per second per second
+    ARM_STEPPER.setMaxSpeed(200);    // Steps per second
+    ARM_STEPPER.setAcceleration(50); // Steps per second per second
 
-    state = new Idle();
+    Homing::setup();
+
+    State *idle = STATE_MACHINE.addState(&Idle::run);
+    State *homing = STATE_MACHINE.addState(&Homing::run);
+    State *scanning = STATE_MACHINE.addState(&Scanning::run);
+    // State *stopped = STATE_MACHINE.addState(&Stopped::run);
+
+    idle->addTransition(&Idle::toHoming, homing);
+    homing->addTransition(&Homing::toScanning, scanning);
 }
 
 void loop()
 {
-    State *next_state = state->update();
-
-    if (next_state != state)
-    {
-        state->on_exit();
-        state = next_state;
-        state->on_enter();
-    }
+    STATE_MACHINE.run();
 }
