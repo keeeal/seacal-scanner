@@ -18,21 +18,26 @@ void setup()
     pinMode(MS1_PIN, OUTPUT);
     pinMode(MS2_PIN, OUTPUT);
     pinMode(MS3_PIN, OUTPUT);
+    pinMode(CAMERA_PIN, OUTPUT);
 
     digitalWrite(ENABLE_PIN, LOW);
-    digitalWrite(MS1_PIN, LOW);
-    digitalWrite(MS2_PIN, LOW);
+    digitalWrite(MS1_PIN, HIGH);
+    digitalWrite(MS2_PIN, HIGH);
     digitalWrite(MS3_PIN, HIGH);
+    digitalWrite(CAMERA_PIN, LOW);
 
     pinMode(TOP_LIMIT_PIN, INPUT_PULLUP);
     pinMode(BOTTOM_LIMIT_PIN, INPUT_PULLUP);
     pinMode(START_BUTTON_PIN, INPUT_PULLUP);
     pinMode(STOP_BUTTON_PIN, INPUT_PULLUP);
 
-    ARM_STEPPER.setMaxSpeed(200);    // Steps per second
-    ARM_STEPPER.setAcceleration(50); // Steps per second per second
+    ARM_STEPPER.setMaxSpeed(MAX_ARM_SPEED);
+    ARM_STEPPER.setAcceleration(MAX_ARM_ACCELERATION);
+    BASE_STEPPER.setMaxSpeed(MAX_BASE_SPEED);
+    BASE_STEPPER.setAcceleration(MAX_BASE_ACCELERATION);
 
     Homing::setup();
+    Scanning::setup();
 
     State *idle = STATE_MACHINE.addState(&Idle::run);
     State *homing = STATE_MACHINE.addState(&Homing::run);
@@ -41,6 +46,7 @@ void setup()
 
     idle->addTransition(&Idle::toHoming, homing);
     homing->addTransition(&Homing::toScanning, scanning);
+    scanning->addTransition(&Scanning::toIdle, idle);
 }
 
 void loop()

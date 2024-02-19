@@ -21,8 +21,9 @@ void Idle::onExit()
 
 bool Idle::toHoming()
 {
-    if (digitalRead(START_BUTTON_PIN) == LOW)
+    if (!complete)
     {
+        complete = true;
         Idle::onExit();
         return true;
     }

@@ -1,4 +1,3 @@
-#include "constants.h"
 #include "homing.h"
 #include "scanning.h"
 
@@ -6,42 +5,33 @@ void Homing::setup()
 {
     state_machine = StateMachine();
 
-    State *move = state_machine.addState([]() {
-        if (state_machine.executeOnce)
-        {
-            ARM_STEPPER.setSpeed(calculateSpeed());
-        }
+    move = state_machine.addState([]() {
+        ARM_STEPPER.setSpeed(calculateSpeed());
         ARM_STEPPER.runSpeed();
     });
 
-    State *retract = state_machine.addState([]() {
+    retract = state_machine.addState([]() {
         if (state_machine.executeOnce)
-        {
-            retract_complete = false;
             ARM_STEPPER.move(calculateRetractSteps());
-        }
-        retract_complete = ARM_STEPPER.run();
     });
 
-    State *complete = state_machine.addState([]() {});
+    complete = state_machine.addState([]() {});
 
     move->addTransition(
         []() {
             if (mode != coarse)
                 return false;
-
-            if (digitalRead(getLimitPin()) != LOW)
+            int pin = (direction == up) ? TOP_LIMIT_PIN : BOTTOM_LIMIT_PIN;
+            if (digitalRead(pin) != LOW)
                 return false;
-
             return true;
         },
         retract);
 
     retract->addTransition(
         []() {
-            if (!retract_complete)
+            if (ARM_STEPPER.run())
                 return false;
-
             mode = fine;
             return true;
         },
@@ -51,37 +41,39 @@ void Homing::setup()
         []() {
             if (mode != fine)
                 return false;
-
-            if (digitalRead(getLimitPin()) != LOW)
+            if (direction != up)
+                return false;
+            if (digitalRead(TOP_LIMIT_PIN) != LOW)
                 return false;
 
-            switch (direction)
-            {
-            case up:
-                Scanning::setTopLimit(ARM_STEPPER.currentPosition());
-                break;
-            case down:
-                Scanning::setBottomLimit(ARM_STEPPER.currentPosition());
-                homing_complete = true;
-                return false;
-            }
-
-            toggleDirection();
+            Scanning::setTopLimit(ARM_STEPPER.currentPosition());
+            direction = down;
             mode = coarse;
             return true;
         },
         move);
 
-    move->addTransition([]() { return homing_complete; }, complete);
+    move->addTransition(
+        []() {
+            if (mode != fine)
+                return false;
+            if (direction != down)
+                return false;
+            if (digitalRead(BOTTOM_LIMIT_PIN) != LOW)
+                return false;
+
+            Scanning::setBottomLimit(ARM_STEPPER.currentPosition());
+            return true;
+        },
+        complete);
 }
 
 void Homing::onEnter()
 {
-    homing_complete = false;
-    retract_complete = false;
+    Serial.println("HOMING");
     direction = up;
     mode = coarse;
-    state_machine.transitionTo(0);
+    state_machine.transitionTo(move);
 }
 
 void Homing::run()
@@ -98,7 +90,7 @@ void Homing::onExit()
 
 bool Homing::toScanning()
 {
-    if (homing_complete)
+    if (isComplete())
     {
         Homing::onExit();
         return true;

@@ -10,9 +10,9 @@ namespace
 {
 
 StateMachine state_machine;
-
-bool homing_complete;
-bool retract_complete;
+State *move;
+State *retract;
+State *complete;
 
 enum Direction
 {
@@ -26,35 +26,14 @@ enum Speed
     fine
 } mode;
 
-void toggleDirection()
+bool isComplete()
 {
-    switch (direction)
-    {
-    case up:
-        direction = down;
-        break;
-    case down:
-        direction = up;
-        break;
-    }
-}
-
-int getLimitPin()
-{
-    switch (direction)
-    {
-    case up:
-        return TOP_LIMIT_PIN;
-    case down:
-        return BOTTOM_LIMIT_PIN;
-    default:
-        return -1;
-    }
+    return state_machine.currentState == complete->index;
 }
 
 float calculateSpeed()
 {
-    float speed = ARM_DIR_UP;
+    float speed = ARM_UP_DIR;
     speed = (direction == up) ? speed : -speed;
 
     switch (mode)
@@ -72,7 +51,7 @@ float calculateSpeed()
 
 int calculateRetractSteps()
 {
-    long steps = ARM_DIR_UP * HOMING_RETRACT_STEPS;
+    long steps = ARM_UP_DIR * HOMING_RETRACT_STEPS;
     steps = (direction == up) ? -steps : steps;
     return steps;
 }
