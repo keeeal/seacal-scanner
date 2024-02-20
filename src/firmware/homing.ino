@@ -1,3 +1,5 @@
+#include <Button.h>
+
 #include "homing.h"
 #include "scanning.h"
 
@@ -21,10 +23,8 @@ void Homing::setup()
         []() {
             if (mode != coarse)
                 return false;
-            int pin = (direction == up) ? TOP_LIMIT_PIN : BOTTOM_LIMIT_PIN;
-            if (digitalRead(pin) != LOW)
-                return false;
-            return true;
+            return (direction == up) ? TOP_LIMIT_SWITCH.pressed()
+                                     : BOTTOM_LIMIT_SWITCH.pressed();
         },
         retract);
 
@@ -43,7 +43,7 @@ void Homing::setup()
                 return false;
             if (direction != up)
                 return false;
-            if (digitalRead(TOP_LIMIT_PIN) != LOW)
+            if (!TOP_LIMIT_SWITCH.pressed())
                 return false;
 
             Scanning::setTopLimit(ARM_STEPPER.currentPosition());
@@ -59,7 +59,7 @@ void Homing::setup()
                 return false;
             if (direction != down)
                 return false;
-            if (digitalRead(BOTTOM_LIMIT_PIN) != LOW)
+            if (!BOTTOM_LIMIT_SWITCH.pressed())
                 return false;
 
             Scanning::setBottomLimit(ARM_STEPPER.currentPosition());
@@ -70,7 +70,6 @@ void Homing::setup()
 
 void Homing::onEnter()
 {
-    Serial.println("HOMING");
     direction = up;
     mode = coarse;
     state_machine.transitionTo(move);
