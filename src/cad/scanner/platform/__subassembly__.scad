@@ -1,8 +1,9 @@
 use <base-motor.scad>
-use <base/__subassembly__.scad>
+use <platform-base/__subassembly__.scad>
 use <bearing.scad>
 use <motor-gear.scad>
 use <platform-gear.scad>
+use <platform-top.scad>
 
 module platform()
 {
@@ -10,5 +11,6 @@ module platform()
     // translate([0, 0, 54]) platform_gear();
     translate([ 91, 0, 43 ]) rotate([ 180, 0, 0 ]) base_motor();
     // translate([91, 0, 64]) rotate([180, 0, 0]) motor_gear();
-    base();
+    platform_base();
+    translate([ 0, 0, 61 ]) platform_top();
 }
