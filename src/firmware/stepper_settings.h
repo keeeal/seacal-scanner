@@ -2,6 +2,7 @@
 
 class StepperSettings
 {
+  public:
     enum class StepMode
     {
         STANDBY,
@@ -14,7 +15,6 @@ class StepperSettings
         THIRTY_SECOND_STEP,
     };
 
-  public:
     StepperSettings(int enable_pin, int ms1_pin, int ms2_pin, int ms3_pin,
                     int reset_pin);
     void setup();
