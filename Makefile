@@ -24,7 +24,7 @@ firmware:
 	docker compose run arduino arduino-cli compile \
 		--fqbn arduino:avr:leonardo \
 		--warnings all \
-		--build-property compiler.cpp.extra_flags="-Werror -Wno-unused-parameter" \
+		--build-property compiler.cpp.extra_flags="-Werror -Wno-unused-parameter -Wno-reorder" \
 		--build-path $(firmware-build-dir) \
 		$(firmware-dir)
 

@@ -3,8 +3,7 @@
 
 void Idle::onEnter()
 {
-    // disable steppers
-    digitalWrite(ENABLE_PIN, HIGH);
+    STEPPER_SETTINGS.disable();
 }
 
 void Idle::run()
@@ -15,8 +14,7 @@ void Idle::run()
 
 void Idle::onExit()
 {
-    // enable steppers
-    digitalWrite(ENABLE_PIN, LOW);
+    STEPPER_SETTINGS.enable();
 }
 
 bool Idle::toHoming()

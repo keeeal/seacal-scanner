@@ -1,3 +1,5 @@
+#include <Button.h>
+
 #include "constants.h"
 #include "scanning.h"
 
@@ -14,9 +16,7 @@ void Scanning::setup()
     });
 
     photo = state_machine.addState([]() {
-        digitalWrite(CAMERA_PIN, HIGH);
-        delay(100);
-        digitalWrite(CAMERA_PIN, LOW);
+        CAMERA.takePhoto();
         current_base_position += 1;
         current_arm_position = current_base_position / NUM_BASE_POSITIONS;
     });
@@ -30,7 +30,8 @@ void Scanning::setup()
 
     move->addTransition(
         []() {
-            bool arm_move_complete = digitalRead(TOP_LIMIT_PIN) == LOW || !ARM_STEPPER.run();
+            bool limit_reached = TOP_LIMIT_SWITCH.read() == Button::PRESSED;
+            bool arm_move_complete = limit_reached || !ARM_STEPPER.run();
             bool base_move_complete = !BASE_STEPPER.run();
             return arm_move_complete && base_move_complete;
         },
@@ -38,17 +39,18 @@ void Scanning::setup()
 
     photo->addTransition(
         []() {
+            // Reset after one photo has been taken from the top position.
             if (current_arm_position < NUM_ARM_POSITIONS)
                 return false;
-            if (current_base_position < NUM_ARM_POSITIONS * NUM_BASE_POSITIONS)
-                return false;
-            return true;
+            return current_base_position % NUM_ARM_POSITIONS == 1;
         },
         reset);
 
     photo->addTransition([]() { return true; }, move);
 
-    reset->addTransition([]() { return digitalRead(BOTTOM_LIMIT_PIN) == LOW || !ARM_STEPPER.run(); }, complete);
+    reset->addTransition(
+        []() { return BOTTOM_LIMIT_SWITCH.pressed() || !ARM_STEPPER.run(); },
+        complete);
 }
 
 void Scanning::onEnter()
