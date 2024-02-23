@@ -34,3 +34,5 @@ parts:
     render-quality: 128
   platform-gear:
     render-quality: 128
+  platform-top:
+    render-quality: 128
