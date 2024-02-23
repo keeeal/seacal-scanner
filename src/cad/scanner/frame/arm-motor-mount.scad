@@ -6,22 +6,30 @@ module tube_mount()
     {
         union()
         {
-            linear_extrude(47, center = true) rounded_square(30.2, r = 1.8, center = true);
-            translate([ -30.2 / 4, 0, 0 ]) linear_extrude(47, center = true) square([ 30.2 / 2, 30.2 ], center = true);
+            difference()
+            {
+                union()
+                {
+                    linear_extrude(47, center = true) rounded_square(30.2, r = 1.8, center = true);
+                    translate([ -30.2 / 4, 0, 0 ]) linear_extrude(47, center = true) square([ 30.2 / 2, 30.2 ], center = true);
+                }
+                linear_extrude(62, center = true) rounded_square(27, r = 1, center = true);
+            }
+            for (n = [ -1, 1 ])
+                translate([ 0, 0, n * 12 ]) for (i = [0:3]) rotate(90 * i) hull()
+                {
+                    translate([ -5, 14, -4 ]) sphere(0.5);
+                    translate([ 5, 14, -4 ]) sphere(0.5);
+                    translate([ -5, 13.2, 0 ]) sphere(0.5);
+                    translate([ 5, 13.2, 0 ]) sphere(0.5);
+                    translate([ -5, 14, +4 ]) sphere(0.5);
+                    translate([ 5, 14, +4 ]) sphere(0.5);
+                }
+            rotate([ 0, 0, -90 ]) translate([ -15, 0, 0 ]) rotate([ 0, -90, 0 ]) cylinder(5, 12, 10);
         }
-
-        linear_extrude(62, center = true) rounded_square(27, r = 1, center = true);
+        rotate([ 0, 0, -90 ]) translate([ -35, 0, 0 ]) rotate([ 0, 90, 0 ])
+            scale(0.52) import("../../assets/axle-screw.stl");
     }
-    for (n = [-1:1])
-        translate([ 0, 0, n * 12 ]) for (i = [0:3]) rotate(90 * i) hull()
-        {
-            translate([ -5, 14, -4 ]) sphere(0.5);
-            translate([ 5, 14, -4 ]) sphere(0.5);
-            translate([ -5, 13.2, 0 ]) sphere(0.5);
-            translate([ 5, 13.2, 0 ]) sphere(0.5);
-            translate([ -5, 14, +4 ]) sphere(0.5);
-            translate([ 5, 14, +4 ]) sphere(0.5);
-        }
 }
 
 module nema_mount()
