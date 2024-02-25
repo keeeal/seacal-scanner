@@ -10,5 +10,5 @@ class Camera
     void takePhoto();
 
   private:
-    Output output;
+    Output _output;
 };

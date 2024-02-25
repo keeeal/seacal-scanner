@@ -2,18 +2,18 @@
 
 StepperSettings::StepperSettings(int enable_pin, int ms1_pin, int ms2_pin,
                                  int ms3_pin, int reset_pin)
-    : enable(Output(enable_pin)), ms1(Output(ms1_pin)), ms2(Output(ms2_pin)),
-      ms3(Output(ms3_pin)), reset(Output(reset_pin))
+    : _enable(Output(enable_pin)), _ms1(Output(ms1_pin)), _ms2(Output(ms2_pin)),
+      _ms3(Output(ms3_pin)), _reset(Output(reset_pin))
 {
 }
 
 void StepperSettings::setup()
 {
-    enable.setup();
-    ms1.setup();
-    ms2.setup();
-    ms3.setup();
-    reset.setup();
+    _enable.setup();
+    _ms1.setup();
+    _ms2.setup();
+    _ms3.setup();
+    _reset.setup();
 
     disable();
     setStepMode(StepMode::STANDBY);
@@ -22,12 +22,12 @@ void StepperSettings::setup()
 
 void StepperSettings::enable()
 {
-    enable.low();
+    _enable.low();
 }
 
 void StepperSettings::disable()
 {
-    enable.high();
+    _enable.high();
 }
 
 void StepperSettings::setStepMode(StepMode step_mode)
@@ -35,54 +35,54 @@ void StepperSettings::setStepMode(StepMode step_mode)
     switch (step_mode)
     {
     case StepMode::STANDBY:
-        ms1.low();
-        ms2.low();
-        ms3.low();
+        _ms1.low();
+        _ms2.low();
+        _ms3.low();
         break;
     case StepMode::FULL_STEP:
-        ms1.low();
-        ms2.low();
-        ms3.high();
+        _ms1.low();
+        _ms2.low();
+        _ms3.high();
         break;
     case StepMode::HALF_STEP_A:
-        ms1.low();
-        ms2.high();
-        ms3.low();
+        _ms1.low();
+        _ms2.high();
+        _ms3.low();
         break;
     case StepMode::HALF_STEP_B:
-        ms1.high();
-        ms2.low();
-        ms3.low();
+        _ms1.high();
+        _ms2.low();
+        _ms3.low();
         break;
     case StepMode::QUARTER_STEP:
-        ms1.low();
-        ms2.high();
-        ms3.high();
+        _ms1.low();
+        _ms2.high();
+        _ms3.high();
         break;
     case StepMode::EIGHTH_STEP:
-        ms1.high();
-        ms2.low();
-        ms3.high();
+        _ms1.high();
+        _ms2.low();
+        _ms3.high();
         break;
     case StepMode::SIXTEENTH_STEP:
-        ms1.high();
-        ms2.high();
-        ms3.low();
+        _ms1.high();
+        _ms2.high();
+        _ms3.low();
         break;
     case StepMode::THIRTY_SECOND_STEP:
-        ms1.high();
-        ms2.high();
-        ms3.high();
+        _ms1.high();
+        _ms2.high();
+        _ms3.high();
         break;
     }
 }
 
 void StepperSettings::reset()
 {
-    reset.high();
+    _reset.high();
 }
 
 void StepperSettings::cancelReset()
 {
-    reset.low();
+    _reset.low();
 }

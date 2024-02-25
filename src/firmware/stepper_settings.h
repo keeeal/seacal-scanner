@@ -27,9 +27,9 @@ class StepperSettings
     void cancelReset();
 
   private:
-    Output enable;
-    Output ms1;
-    Output ms2;
-    Output ms3;
-    Output reset;
+    Output _enable;
+    Output _ms1;
+    Output _ms2;
+    Output _ms3;
+    Output _reset;
 };
