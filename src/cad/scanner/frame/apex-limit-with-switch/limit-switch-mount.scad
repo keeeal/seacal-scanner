@@ -8,8 +8,15 @@ module limit_switch_mount()
     translate([ 6.05, 8, 0 ]) cube([ 12.1, 3, 1.6 ], center = true);
     translate([ 0, 9.8, 0 ]) cube([ 24.2, 1.6, 10 ], center = true);
 
-    translate([ -5, +4, -2 ]) sphere(1.5);
-    translate([ -5, -4, -2 ]) sphere(1.5);
-    translate([ +5, +4, -2 ]) sphere(1.5);
-    translate([ +5, -4, -2 ]) sphere(1.5);
+    intersection()
+    {
+        union()
+        {
+            translate([ -5, +4, -2 ]) sphere(1.5);
+            translate([ -5, -4, -2 ]) sphere(1.5);
+            translate([ +5, +4, -2 ]) sphere(1.5);
+            translate([ +5, -4, -2 ]) sphere(1.5);
+        }
+        translate([ 0, 0.7 ]) cube([ 24.2, 12, 10 ], center = true);
+    }
 }

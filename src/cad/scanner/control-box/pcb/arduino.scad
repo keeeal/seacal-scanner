@@ -32,4 +32,17 @@ module arduino()
         }
         color([ 0.5, 0.5, 0.5 ]) translate([ 1.5, 4.5, 6.2 ]) rotate([ 0, 90, 0 ]) cylinder(h = 12, d = 2);
     }
+
+    translate([ -27, 23, 1.5 ])
+    {
+        color([ 0.2, 0.2, 0.2 ]) linear_extrude(height = 3.5) rotate(-90) rounded_square(6, r = 1, center = true);
+        color([ 0.5, 0.5, 0.5 ]) translate([ 0, 0, 3.5 ]) linear_extrude(height = 0.5) rotate(-90) rounded_square(6, r = 1, center = true);
+        color([ 0.5, 0.2, 0.2 ]) cylinder(5, d = 3);
+    }
+
+    color([ 0.5, 0.5, 0.5 ]) translate([ -28.5, 11.5, 3 ]) rotate([ 0, -90, 0 ]) hull()
+    {
+        translate([ 0, +2, 0 ]) cylinder(h = 6, d = 3);
+        translate([ 0, -2, 0 ]) cylinder(h = 6, d = 3);
+    }
 }
