@@ -1,5 +1,7 @@
 #pragma once
 
+#include "output.h"
+
 class Camera
 {
   public:
@@ -8,5 +10,5 @@ class Camera
     void takePhoto();
 
   private:
-    int pin;
+    Output _output;
 };
