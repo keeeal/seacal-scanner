@@ -18,7 +18,7 @@
 #define TOP_LIMIT_PIN PIN_A0
 #define BOTTOM_LIMIT_PIN PIN_A1
 #define START_BUTTON_PIN PIN_A2
-#define STOP_BUTTON_PIN PIN_A5
+#define STOP_BUTTON_PIN PIN_A3
 
 // Global settings
 #define ARM_UP_DIR 1              // 1 or -1
