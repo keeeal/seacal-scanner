@@ -54,11 +54,15 @@ void setup()
     State *idle = STATE_MACHINE.addState(&Idle::run);
     State *homing = STATE_MACHINE.addState(&Homing::run);
     State *scanning = STATE_MACHINE.addState(&Scanning::run);
-    // State *stopped = STATE_MACHINE.addState(&Stopped::run);
+    State *stopped = STATE_MACHINE.addState(&Stopped::run);
 
+    idle->addTransition(&Stopped::fromAny, stopped);
     idle->addTransition(&Idle::toHoming, homing);
+    homing->addTransition(&Stopped::fromAny, stopped);
     homing->addTransition(&Homing::toScanning, scanning);
+    scanning->addTransition(&Stopped::fromAny, stopped);
     scanning->addTransition(&Scanning::toIdle, idle);
+    stopped->addTransition(&Stopped::toIdle, idle);
 }
 
 void loop()
