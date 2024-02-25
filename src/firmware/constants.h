@@ -6,6 +6,8 @@
 #define BASE_DIR_PIN 11
 #define FAN_PIN 12
 #define CAMERA_PIN 13
+#define GREEN_LED_PIN 14
+#define RED_LED_PIN 15
 
 #define ENABLE_PIN 0
 #define RESET_PIN 4

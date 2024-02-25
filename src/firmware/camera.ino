@@ -1,18 +1,18 @@
 #include "camera.h"
 
-Camera::Camera(int pin) : pin(pin)
+Camera::Camera(int pin) : output(Output(pin))
 {
 }
 
 void Camera::setup()
 {
-    pinMode(pin, OUTPUT);
-    digitalWrite(pin, LOW);
+    output.setup();
+    output.low();
 }
 
 void Camera::takePhoto()
 {
-    digitalWrite(pin, HIGH);
+    output.high();
     delay(100);
-    digitalWrite(pin, LOW);
+    output.low();
 }

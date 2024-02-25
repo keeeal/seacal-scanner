@@ -4,6 +4,7 @@
 void Idle::onEnter()
 {
     STEPPER_SETTINGS.disable();
+    FAN.off();
 }
 
 void Idle::run()
@@ -14,6 +15,7 @@ void Idle::run()
 
 void Idle::onExit()
 {
+    FAN.on();
     STEPPER_SETTINGS.enable();
 }
 

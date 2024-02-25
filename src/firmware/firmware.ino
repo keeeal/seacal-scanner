@@ -6,6 +6,7 @@
 #include "constants.h"
 #include "homing.h"
 #include "idle.h"
+#include "output.h"
 #include "scanning.h"
 #include "stepper_settings.h"
 #include "stopped.h"
@@ -21,6 +22,9 @@ Button TOP_LIMIT_SWITCH(TOP_LIMIT_PIN);
 Button BOTTOM_LIMIT_SWITCH(BOTTOM_LIMIT_PIN);
 
 Camera CAMERA(CAMERA_PIN);
+Output FAN(FAN_PIN);
+Output GREEN_LED(GREEN_LED_PIN);
+Output RED_LED(RED_LED_PIN);
 
 StateMachine STATE_MACHINE = StateMachine();
 
@@ -40,6 +44,9 @@ void setup()
     BOTTOM_LIMIT_SWITCH.begin();
 
     CAMERA.setup();
+    FAN.setup();
+    GREEN_LED.setup();
+    RED_LED.setup();
 
     Homing::setup();
     Scanning::setup();

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "output.h"
+
 class StepperSettings
 {
   public:
@@ -25,9 +27,9 @@ class StepperSettings
     void cancelReset();
 
   private:
-    int enable_pin;
-    int ms1_pin;
-    int ms2_pin;
-    int ms3_pin;
-    int reset_pin;
+    Output enable;
+    Output ms1;
+    Output ms2;
+    Output ms3;
+    Output reset;
 };

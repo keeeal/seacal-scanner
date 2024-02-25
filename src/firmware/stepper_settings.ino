@@ -2,18 +2,18 @@
 
 StepperSettings::StepperSettings(int enable_pin, int ms1_pin, int ms2_pin,
                                  int ms3_pin, int reset_pin)
-    : enable_pin(enable_pin), ms1_pin(ms1_pin), ms2_pin(ms2_pin),
-      ms3_pin(ms3_pin), reset_pin(reset_pin)
+    : enable(Output(enable_pin)), ms1(Output(ms1_pin)), ms2(Output(ms2_pin)),
+      ms3(Output(ms3_pin)), reset(Output(reset_pin))
 {
 }
 
 void StepperSettings::setup()
 {
-    pinMode(enable_pin, OUTPUT);
-    pinMode(ms1_pin, OUTPUT);
-    pinMode(ms2_pin, OUTPUT);
-    pinMode(ms3_pin, OUTPUT);
-    pinMode(reset_pin, OUTPUT);
+    enable.setup();
+    ms1.setup();
+    ms2.setup();
+    ms3.setup();
+    reset.setup();
 
     disable();
     setStepMode(StepMode::STANDBY);
@@ -22,12 +22,12 @@ void StepperSettings::setup()
 
 void StepperSettings::enable()
 {
-    digitalWrite(enable_pin, LOW);
+    enable.low();
 }
 
 void StepperSettings::disable()
 {
-    digitalWrite(enable_pin, HIGH);
+    enable.high();
 }
 
 void StepperSettings::setStepMode(StepMode step_mode)
@@ -35,54 +35,54 @@ void StepperSettings::setStepMode(StepMode step_mode)
     switch (step_mode)
     {
     case StepMode::STANDBY:
-        digitalWrite(ms1_pin, LOW);
-        digitalWrite(ms2_pin, LOW);
-        digitalWrite(ms3_pin, LOW);
+        ms1.low();
+        ms2.low();
+        ms3.low();
         break;
     case StepMode::FULL_STEP:
-        digitalWrite(ms1_pin, LOW);
-        digitalWrite(ms2_pin, LOW);
-        digitalWrite(ms3_pin, HIGH);
+        ms1.low();
+        ms2.low();
+        ms3.high();
         break;
     case StepMode::HALF_STEP_A:
-        digitalWrite(ms1_pin, LOW);
-        digitalWrite(ms2_pin, HIGH);
-        digitalWrite(ms3_pin, LOW);
+        ms1.low();
+        ms2.high();
+        ms3.low();
         break;
     case StepMode::HALF_STEP_B:
-        digitalWrite(ms1_pin, HIGH);
-        digitalWrite(ms2_pin, LOW);
-        digitalWrite(ms3_pin, LOW);
+        ms1.high();
+        ms2.low();
+        ms3.low();
         break;
     case StepMode::QUARTER_STEP:
-        digitalWrite(ms1_pin, LOW);
-        digitalWrite(ms2_pin, HIGH);
-        digitalWrite(ms3_pin, HIGH);
+        ms1.low();
+        ms2.high();
+        ms3.high();
         break;
     case StepMode::EIGHTH_STEP:
-        digitalWrite(ms1_pin, HIGH);
-        digitalWrite(ms2_pin, LOW);
-        digitalWrite(ms3_pin, HIGH);
+        ms1.high();
+        ms2.low();
+        ms3.high();
         break;
     case StepMode::SIXTEENTH_STEP:
-        digitalWrite(ms1_pin, HIGH);
-        digitalWrite(ms2_pin, HIGH);
-        digitalWrite(ms3_pin, LOW);
+        ms1.high();
+        ms2.high();
+        ms3.low();
         break;
     case StepMode::THIRTY_SECOND_STEP:
-        digitalWrite(ms1_pin, HIGH);
-        digitalWrite(ms2_pin, HIGH);
-        digitalWrite(ms3_pin, HIGH);
+        ms1.high();
+        ms2.high();
+        ms3.high();
         break;
     }
 }
 
 void StepperSettings::reset()
 {
-    digitalWrite(reset_pin, HIGH);
+    reset.high();
 }
 
 void StepperSettings::cancelReset()
 {
-    digitalWrite(reset_pin, LOW);
+    reset.low();
 }
