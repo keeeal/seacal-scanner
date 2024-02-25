@@ -33,37 +33,15 @@ bool Output::isHigh()
 
 void Output::on()
 {
-    switch (_mode)
-    {
-    case Mode::ON_IS_HIGH:
-        high();
-        break;
-    case Mode::ON_IS_LOW:
-        low();
-        break;
-    }
+    (_mode == Mode::ON_IS_HIGH) ? high() : low();
 }
 
 void Output::off()
 {
-    switch (_mode)
-    {
-    case Mode::ON_IS_HIGH:
-        low();
-        break;
-    case Mode::ON_IS_LOW:
-        high();
-        break;
-    }
+    (_mode == Mode::ON_IS_HIGH) ? low() : high();
 }
 
 bool Output::isOn()
 {
-    switch (_mode)
-    {
-    case Mode::ON_IS_HIGH:
-        return isHigh();
-    case Mode::ON_IS_LOW:
-        return !isHigh();
-    }
+    return (_mode == Mode::ON_IS_HIGH) ? isHigh() : !isHigh();
 }
