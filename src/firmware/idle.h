@@ -2,10 +2,6 @@
 
 namespace Idle
 {
-namespace
-{
-bool complete = false;
-}
 void onEnter();
 void run();
 void onExit();

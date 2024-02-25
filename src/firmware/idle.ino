@@ -21,9 +21,8 @@ void Idle::onExit()
 
 bool Idle::toHoming()
 {
-    if (!complete)
+    if (START_BUTTON.pressed())
     {
-        complete = true;
         Idle::onExit();
         return true;
     }
