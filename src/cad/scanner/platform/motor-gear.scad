@@ -7,7 +7,7 @@ module motor_gear(tol_x = .2, tol_z = .4)
     {
         union()
         {
-            herringbone_gear(10, 12, -32);
+            herringbone_gear(10, teeth = 12, twist = -32);
             cylinder(20, r = 5);
         }
         translate([ 0, 0, -1 ]) linear_extrude(100) difference()

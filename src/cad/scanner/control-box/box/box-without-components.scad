@@ -62,16 +62,16 @@ module box_without_components()
 
         translate([ 38.5, 0, 13 ]) rotate([ 90, 0, 0 ]) hull()
         {
-            translate([ +2, 0, 0 ]) cylinder(h = 100, d = 10, $fn = 6);
-            translate([ -2, 0, 0 ]) cylinder(h = 100, d = 10, $fn = 6);
+            translate([ +2, 0, 0 ]) cylinder(h = 100, d = 8, $fn = 6);
+            translate([ -2, 0, 0 ]) cylinder(h = 100, d = 8, $fn = 6);
         }
 
         translate([ 50, -4, 11 ]) cube([ 55, 70, 2 ], center = true);
         translate([ 50, -4, 30 ]) cube([ 55, 70, 16 ], center = true);
         translate([ 0, 0, 23 ]) rotate([ 0, -90, 0 ]) cylinder(h = 10, d = 20);
-        translate([ 47.5, 0, 57 ]) linear_extrude(2) square([ 101, 10 ], center = true);
+        translate([ 47.5, 0, 57 ]) linear_extrude(2) square([ 101, 11 ], center = true);
     }
-    translate([ 50, 36, 1 ]) linear_extrude(13) rounded_square([ 20, 10 ], r = 2, center = true);
+    translate([ 50, 35, 1 ]) linear_extrude(13) rounded_square([ 20, 8 ], r = 2, center = true);
     translate([ 50, 34, 1 ]) linear_extrude(9) rounded_square([ 20, 10 ], r = 2, center = true);
     translate([ 50, 31, 13 ]) rotate([ 0, 90, 0 ]) cylinder(h = 8, r = 1, center = true);
 

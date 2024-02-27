@@ -20,7 +20,7 @@
 
 // Global settings
 #define ARM_UP_DIR 1              // 1 or -1
-#define NUM_BASE_STEPS 74656      // Steps per base rotation
+#define NUM_BASE_STEPS 74666      // Steps per base rotation
 #define MAX_ARM_SPEED 4000        // Steps per second
 #define MAX_ARM_ACCELERATION 4000 // Steps per second per second
 #define MAX_BASE_SPEED 2000       // Steps per second
