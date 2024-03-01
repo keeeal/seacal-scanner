@@ -29,5 +29,5 @@ module stepper_controller(heat_sink = true)
         color([ 0.6, 0.6, 0.6 ]) linear_extrude(height = 2.5) circle(d = 3);
     }
     if (heat_sink)
-        color([ 0.2, 0.2, 0.8 ]) translate([ -10, 0, 2.5 ]) rotate([ 90, 0, 90 ]) heat_sink();
+        color([ 0.2, 0.2, 0.8 ]) translate([ 0, 7.5, 2.5 ]) rotate([ 90, 0, 0 ]) heat_sink();
 }

@@ -12,7 +12,7 @@ module base_without_badge()
             {
                 chamfered_cylinder(60, 160, 160, 1);
                 translate([ 0, 0, -1 ]) cylinder(h = 59, r = 150);
-                translate([ 0, 0, 57 ]) linear_extrude(4) circle(r = 115);
+                translate([ 0, 0, 57 ]) cylinder(h = 4, r = 115);
             }
             translate([ 91, 0, 0 ]) difference()
             {
