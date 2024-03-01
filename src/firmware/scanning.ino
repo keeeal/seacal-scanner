@@ -2,6 +2,7 @@
 
 #include "constants.h"
 #include "scanning.h"
+#include "stepper_settings.h"
 
 void Scanning::setup()
 {
@@ -16,7 +17,9 @@ void Scanning::setup()
     });
 
     photo = state_machine.addState([]() {
+        STEPPER_SETTINGS.reset();
         CAMERA.takePhoto();
+        STEPPER_SETTINGS.cancelReset();
         current_base_position += 1;
         current_arm_position = current_base_position / NUM_BASE_POSITIONS;
     });
@@ -40,9 +43,9 @@ void Scanning::setup()
     photo->addTransition(
         []() {
             // Reset after one photo has been taken from the top position.
-            if (current_arm_position < NUM_ARM_POSITIONS)
+            if (current_arm_position < NUM_ARM_POSITIONS - 1)
                 return false;
-            return current_base_position % NUM_ARM_POSITIONS == 1;
+            return current_base_position % NUM_ARM_POSITIONS > 0;
         },
         reset);
 
