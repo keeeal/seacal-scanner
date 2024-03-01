@@ -4,6 +4,8 @@ void Idle::onEnter()
 {
     STEPPER_SETTINGS.disable();
     FAN.off();
+    GREEN_LED.off();
+    RED_LED.off();
 }
 
 void Idle::run()
@@ -14,8 +16,10 @@ void Idle::run()
 
 void Idle::onExit()
 {
-    FAN.on();
+
     STEPPER_SETTINGS.enable();
+    FAN.on();
+    GREEN_LED.on();
 }
 
 bool Idle::toHoming()

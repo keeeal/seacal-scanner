@@ -4,6 +4,7 @@
 void Stopped::onEnter()
 {
     STEPPER_SETTINGS.reset();
+    GREEN_LED.off();
     RED_LED.on();
 }
 

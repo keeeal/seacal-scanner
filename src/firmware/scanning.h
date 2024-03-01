@@ -29,7 +29,7 @@ bool isComplete()
 
 long calculateArmPosition()
 {
-    float f = (float)current_arm_position / (float)(NUM_ARM_POSITIONS - 1);
+    float f = (float)(current_arm_position + 1) / (float)(NUM_ARM_POSITIONS);
     f = pow(f, 1.5); // This is a fudge factor
     return (long)(f * (top_limit - bottom_limit) + bottom_limit);
 }
