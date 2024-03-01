@@ -1,10 +1,11 @@
 use <aluminium-tube.scad>
 use <apex.scad>
 use <apex-limit-with-switch/__subassembly__.scad>
-use <arm-motor-mount.scad>
-use <arm-motor.scad>
+use <arm-motor/arm-motor-mount.scad>
+use <arm-motor/pulley.scad>
 use <foot.scad>
 use <arm/__subassembly__.scad>
+use <arm-motor/__subassembly__.scad>
 
 module aluminium_tubes()
 {
@@ -33,8 +34,6 @@ module frame()
     translate([ -284.25, 0, 553.5 ]) rotate([ 0, 0, 90 ]) apex();
     translate([ 284.25, 0, 553.5 ]) rotate([ 0, 0, 90 ]) mirror([ 1, 0, 0 ]) apex_limit_with_switch();
 
-    translate([ 284.25, 0, 21 ]) rotate([ 0, 0, 90 ]) arm_motor_mount();
-    translate([ 303, 0, 59.5 ]) rotate([ 0, -90, 0 ]) arm_motor();
-
+    translate([ 284.25, 100, 21 ]) rotate([ 0, 0, 90 ]) arm_motor();
     translate([ 0, 0, 573.5 ]) rotate([ -55, 0, 0 ]) arm();
 }
