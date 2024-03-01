@@ -19,7 +19,7 @@ module pulley()
         translate([ 0, 18, 0 ]) cylinder(h = 100, r = 1.5);
         linear_extrude(21, center = true) difference()
         {
-            circle(d = 5.5);
+            circle(d = 5.2);
             translate([ -5, 2, 0 ]) square(10);
         }
         difference()
