@@ -15,5 +15,5 @@ module platform_top()
         }
     }
     for (i = [0:3])
-        rotate(i * 90) translate([ 120.5, 0, 6 ]) chamfered_cylinder(8, 2.5, 2.5, 1);
+        rotate(i * 90) translate([ 120.5, 0, 6 ]) chamfered_cylinder(8, 3, 3, 1);
 }

@@ -43,7 +43,7 @@ void Homing::setup()
                 return false;
             if (direction != up)
                 return false;
-            if (!TOP_LIMIT_SWITCH.pressed())
+            if (!TOP_LIMIT_SWITCH.read() == Button::PRESSED)
                 return false;
 
             Scanning::setTopLimit(ARM_STEPPER.currentPosition());
@@ -59,7 +59,7 @@ void Homing::setup()
                 return false;
             if (direction != down)
                 return false;
-            if (!BOTTOM_LIMIT_SWITCH.pressed())
+            if (!BOTTOM_LIMIT_SWITCH.read() == Button::PRESSED)
                 return false;
 
             Scanning::setBottomLimit(ARM_STEPPER.currentPosition());

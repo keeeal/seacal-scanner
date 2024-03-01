@@ -3,13 +3,6 @@ use <../../../../utils/shapes/2d/rounded-square.scad>
 
 module bottom_limit()
 {
-
-    // mirror([ 0, 0, 1 ]) hull()
-    // {
-    //     linear_extrude(30, center = true) rounded_square(28.6, r = 1.8, center = true);
-    //     translate([ 0, 0, -0.5 ]) linear_extrude(29, center = true) rounded_square(30.2, r = 2.6, center = true);
-    //     translate([ -15.1, 0, -15 ]) cube([ 15.1, 15.1, 24.2 ]);
-    // }
     difference()
     {
         linear_extrude(24.2, center = true) difference()

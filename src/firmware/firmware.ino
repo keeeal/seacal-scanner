@@ -6,6 +6,7 @@
 #include "constants.h"
 #include "homing.h"
 #include "idle.h"
+#include "output.h"
 #include "scanning.h"
 #include "stepper_settings.h"
 #include "stopped.h"
@@ -21,6 +22,9 @@ Button TOP_LIMIT_SWITCH(TOP_LIMIT_PIN);
 Button BOTTOM_LIMIT_SWITCH(BOTTOM_LIMIT_PIN);
 
 Camera CAMERA(CAMERA_PIN);
+Output FAN(FAN_PIN);
+Output GREEN_LED(GREEN_LED_PIN);
+Output RED_LED(RED_LED_PIN);
 
 StateMachine STATE_MACHINE = StateMachine();
 
@@ -40,6 +44,9 @@ void setup()
     BOTTOM_LIMIT_SWITCH.begin();
 
     CAMERA.setup();
+    FAN.setup();
+    GREEN_LED.setup();
+    RED_LED.setup();
 
     Homing::setup();
     Scanning::setup();
@@ -47,11 +54,15 @@ void setup()
     State *idle = STATE_MACHINE.addState(&Idle::run);
     State *homing = STATE_MACHINE.addState(&Homing::run);
     State *scanning = STATE_MACHINE.addState(&Scanning::run);
-    // State *stopped = STATE_MACHINE.addState(&Stopped::run);
+    State *stopped = STATE_MACHINE.addState(&Stopped::run);
 
+    idle->addTransition(&Stopped::fromAny, stopped);
     idle->addTransition(&Idle::toHoming, homing);
+    homing->addTransition(&Stopped::fromAny, stopped);
     homing->addTransition(&Homing::toScanning, scanning);
+    scanning->addTransition(&Stopped::fromAny, stopped);
     scanning->addTransition(&Scanning::toIdle, idle);
+    stopped->addTransition(&Stopped::toIdle, idle);
 }
 
 void loop()

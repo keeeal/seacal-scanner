@@ -1,9 +1,11 @@
-#include "constants.h"
 #include "idle.h"
 
 void Idle::onEnter()
 {
     STEPPER_SETTINGS.disable();
+    FAN.off();
+    GREEN_LED.off();
+    RED_LED.off();
 }
 
 void Idle::run()
@@ -14,14 +16,16 @@ void Idle::run()
 
 void Idle::onExit()
 {
+
     STEPPER_SETTINGS.enable();
+    FAN.on();
+    GREEN_LED.on();
 }
 
 bool Idle::toHoming()
 {
-    if (!complete)
+    if (START_BUTTON.pressed())
     {
-        complete = true;
         Idle::onExit();
         return true;
     }
