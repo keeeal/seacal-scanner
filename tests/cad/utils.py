@@ -2,17 +2,6 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel
-
-
-class PartConfig(BaseModel):
-    render_quality: int
-
-
-class RenderConfig(BaseModel):
-    root_dir: Path
-    parts: dict[str, PartConfig]
-
 
 def read_log_file(log_file: Path) -> dict[str, Any]:
     with open(log_file) as f:
