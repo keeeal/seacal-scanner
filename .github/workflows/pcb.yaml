@@ -24,8 +24,7 @@ jobs:
 
     - name: Build docker images
       run: |
-        docker compose build kicad
-        docker compose build dev
+        docker compose build kicad dev
 
     - name: Generate gerbers
       run: |
