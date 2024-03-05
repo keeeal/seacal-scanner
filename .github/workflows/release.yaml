@@ -23,36 +23,40 @@ jobs:
       run: |
         make firmware
 
+    - name: Compress firmware
+      run: |
+        zip -r build/firmware.zip build/firmware
+
     - name: Add firmware to release
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: build/firmware/*
+        asset_path: build/firmware.zip
         asset_name: firmware.zip
         asset_content_type: application/zip
 
-  release-parts:
-    name: Release parts
-    runs-on: ubuntu-latest
-    steps:
+  # release-parts:
+  #   name: Release parts
+  #   runs-on: ubuntu-latest
+  #   steps:
 
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        submodules: recursive
+  #   - name: Checkout
+  #     uses: actions/checkout@v4
+  #     with:
+  #       submodules: recursive
 
-    - name: Build docker images
-      run: |
-        docker compose build openscad
+  #   - name: Build docker images
+  #     run: |
+  #       docker compose build openscad
 
-    - name: Render parts
-      run: |
-        make render
+  #   - name: Render parts
+  #     run: |
+  #       make render
 
-    - name: Add parts to release
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: build/parts/*.stl
-        asset_name: parts.zip
-        asset_content_type: application/zip
+  #   - name: Add parts to release
+  #     uses: actions/upload-release-asset@v1
+  #     with:
+  #       upload_url: ${{ github.event.release.upload_url }}
+  #       asset_path: build/parts/*.stl
+  #       asset_name: parts.zip
+  #       asset_content_type: application/zip
