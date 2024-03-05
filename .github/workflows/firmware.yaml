@@ -36,4 +36,4 @@ jobs:
         name: firmware
         if-no-files-found: error
         path: |
-          build/firmware/*.hex
+          build/firmware/firmware.ino.*
