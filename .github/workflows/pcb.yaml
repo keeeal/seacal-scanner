@@ -1,4 +1,4 @@
-name: Firmware
+name: PCB
 
 on:
   push:
@@ -6,14 +6,14 @@ on:
       - main
   pull_request:
     paths:
-      - .github/workflows/firmware.yaml
+      - .github/workflows/pcb.yaml
       - docker-compose.yaml
       - Makefile
-      - src/firmware/**/*
+      - src/pcb/**/*
 
 jobs:
-  build-firmware:
-    name: Build firmware
+  generate-gerbers:
+    name: Generate gerbers
     runs-on: ubuntu-latest
     steps:
 
@@ -24,21 +24,24 @@ jobs:
 
     - name: Build docker images
       run: |
-        docker compose build arduino
+        docker compose build kicad
         docker compose build dev
 
-    - name: Build firmware
+    - name: Generate gerbers
       run: |
-        make firmware
+        make gerbers
 
-    - name: Archive firmware
+    - name: Archive parts
       uses: actions/upload-artifact@v4
       with:
-        name: firmware
+        name: gerbers
         if-no-files-found: error
         path: |
-          build/firmware/firmware.ino.*
+          build/gerbers/seacal-scanner-job.gbrjob
+          build/gerbers/*.gbr
+          build/gerbers/*.gtl
+          build/gerbers/*.gbl
 
     - name: Run tests
       run: |
-        make test-firmware
+        make test-pcb

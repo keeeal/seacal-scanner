@@ -12,8 +12,8 @@ on:
       - src/cad/**/*
 
 jobs:
-  build-parts:
-    name: Build parts
+  render-parts:
+    name: Render parts
     runs-on: ubuntu-latest
     steps:
 
@@ -29,7 +29,7 @@ jobs:
 
     - name: Render parts
       run: |
-        make render render-quality=32
+        make render render-quality=16
 
     - name: Archive parts
       uses: actions/upload-artifact@v4

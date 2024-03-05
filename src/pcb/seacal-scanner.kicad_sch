@@ -1566,7 +1566,7 @@
     (pin "7" (uuid bcfad7e0-fcfd-4945-85e4-093bdd6d54cd))
     (pin "8" (uuid 749899cd-5576-46e4-8574-37c5dc2364b3))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "J2") (unit 1)
         )
@@ -1594,7 +1594,7 @@
     (pin "3" (uuid 9301a645-f46e-4f79-9d36-9b9bd86a38ad))
     (pin "4" (uuid 387973e3-4a62-4764-9818-04997a440680))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "J14") (unit 1)
         )
@@ -1622,7 +1622,7 @@
     (pin "3" (uuid 3ef4cbb7-294a-4432-a1b9-4b8436dac53e))
     (pin "4" (uuid d148c329-61ac-4768-a11c-12f88d5cd876))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "J12") (unit 1)
         )
@@ -1647,7 +1647,7 @@
     )
     (pin "1" (uuid 967914b8-68ba-4492-a9ce-852249eaef53))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "#PWR08") (unit 1)
         )
@@ -1679,7 +1679,7 @@
     (pin "7" (uuid 46016cd6-b1f3-4262-aa56-dc61dc00fe0b))
     (pin "8" (uuid 65746c71-19ea-45c6-a780-76b0e107e8d6))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "J7") (unit 1)
         )
@@ -1711,7 +1711,7 @@
     (pin "7" (uuid 1d7e89ca-7726-41c4-b8ca-5dcfad484411))
     (pin "8" (uuid cadee423-415c-4101-b091-fbc2bb1f5552))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "J6") (unit 1)
         )
@@ -1737,7 +1737,7 @@
     (pin "1" (uuid 4d36ec96-7cd9-4dcb-95ae-55d1a9b094d7))
     (pin "2" (uuid 43a7529b-c6e4-4b6c-afec-261073637aee))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "R1") (unit 1)
         )
@@ -1771,7 +1771,7 @@
     (pin "8" (uuid ab878ed6-2380-4558-b910-e7481b24f19b))
     (pin "9" (uuid 39fe4703-65d3-49ce-a5bc-6689809e6411))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "J3") (unit 1)
         )
@@ -1797,7 +1797,7 @@
     (pin "1" (uuid 0516f234-46e8-4c8f-8047-abe6e134711b))
     (pin "2" (uuid bad4e911-bc18-47cd-aaee-358e334adda9))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "J9") (unit 1)
         )
@@ -1822,7 +1822,7 @@
     )
     (pin "1" (uuid 45d15746-d0a1-46a9-8a94-c76d6066b191))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "#PWR09") (unit 1)
         )
@@ -1854,7 +1854,7 @@
     (pin "7" (uuid 4803e314-df93-46c1-91d3-33af1c90d92a))
     (pin "8" (uuid be0fd634-06cf-4252-820c-3d3e7dc4e469))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "J8") (unit 1)
         )
@@ -1879,7 +1879,7 @@
     )
     (pin "1" (uuid 01473540-e31f-4d4e-b7cc-89d6fd32d604))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "#PWR06") (unit 1)
         )
@@ -1904,7 +1904,7 @@
     )
     (pin "1" (uuid 94f37480-66ea-40ea-85bc-42adf8fd3956))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "#PWR03") (unit 1)
         )
@@ -1931,7 +1931,7 @@
     (pin "2" (uuid b97f076c-2d32-4acb-8fd8-6a0f164c4b3e))
     (pin "3" (uuid 0391b90a-f250-4cc9-8130-6f3a06742fec))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "Q2") (unit 1)
         )
@@ -1961,7 +1961,7 @@
     (pin "5" (uuid 20b9f3d7-8d4f-42c3-8238-efec6b57389d))
     (pin "6" (uuid 6ed3727a-8664-4b60-a484-4f6fc5e54eef))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "J4") (unit 1)
         )
@@ -1987,7 +1987,7 @@
     (pin "1" (uuid 2ef7e0a8-e31d-4205-b7ff-35e1f877b242))
     (pin "2" (uuid a7149585-58b6-4ecb-8251-0d1dfc9ea962))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "J10") (unit 1)
         )
@@ -2012,7 +2012,7 @@
     )
     (pin "1" (uuid de3e810d-313a-4545-8e59-815b51401aba))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "#PWR07") (unit 1)
         )
@@ -2040,7 +2040,7 @@
     (pin "3" (uuid 6f81e26e-1ca0-4b2d-9fcb-e2405b523d73))
     (pin "4" (uuid 20ad491a-8965-4834-8082-5a4bbebd7b73))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "J13") (unit 1)
         )
@@ -2065,7 +2065,7 @@
     )
     (pin "1" (uuid ae44e555-5578-4e6b-993c-b86858f1c9d9))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "#PWR010") (unit 1)
         )
@@ -2090,7 +2090,7 @@
     )
     (pin "1" (uuid ef9d9194-75a9-4283-80b5-eb6ddd59928b))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "#PWR01") (unit 1)
         )
@@ -2115,7 +2115,7 @@
     )
     (pin "1" (uuid b5599c3b-b461-46ef-9de8-e6fa2b612f0c))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "#PWR05") (unit 1)
         )
@@ -2141,7 +2141,7 @@
     (pin "1" (uuid b6618210-b2a3-4357-985d-0cb8a6059a94))
     (pin "2" (uuid 8d18aa6a-5fd6-4268-ad68-8f165c93c62b))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "R2") (unit 1)
         )
@@ -2173,7 +2173,7 @@
     (pin "7" (uuid ee874f35-87e8-4ba4-8a05-9a9f2bb4da45))
     (pin "8" (uuid a56fa36d-f8cc-41e7-b29c-a258c5cb0459))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "J5") (unit 1)
         )
@@ -2205,7 +2205,7 @@
     (pin "7" (uuid 799cd598-a1cd-4a24-acbd-feabb1208e73))
     (pin "8" (uuid 11de6717-f758-4610-823a-9780fc9776ff))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "J1") (unit 1)
         )
@@ -2231,7 +2231,7 @@
     (pin "1" (uuid 2da09532-3d28-42cd-87b1-4319b8ff08bb))
     (pin "2" (uuid 3fef4a57-13c9-4e0d-b74c-0b8e5f4f586a))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "J11") (unit 1)
         )
@@ -2256,7 +2256,7 @@
     )
     (pin "1" (uuid 0df47e25-4b34-4dea-9535-d3f60609d0c5))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "#PWR02") (unit 1)
         )
@@ -2283,7 +2283,7 @@
     (pin "2" (uuid cfb7e670-d5db-4b5b-b95b-0af95ba5299f))
     (pin "3" (uuid 2c77260b-58f9-4ac2-8dfa-4ce37c0b66d3))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "Q1") (unit 1)
         )
@@ -2308,7 +2308,7 @@
     )
     (pin "1" (uuid 4df25c31-357b-4a1e-9f4d-da4eb1e4440d))
     (instances
-      (project "leo_breakout"
+      (project "seacal-scanner"
         (path "/c57bae01-7a88-41fa-83c0-273f26cc2959"
           (reference "#PWR04") (unit 1)
         )

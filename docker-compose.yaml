@@ -16,6 +16,12 @@ services:
     volumes:
       - .:/home
 
+  kicad:
+    image: kicad/kicad:8.0.0
+    working_dir: /home
+    volumes:
+      - .:/home
+
   dev:
     image: seacal-scanner/dev:latest
     build:
