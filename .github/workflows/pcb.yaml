@@ -12,8 +12,8 @@ on:
       - src/pcb/**/*
 
 jobs:
-  generate-gerbers:
-    name: Generate gerbers
+  plot-gerbers:
+    name: Plot gerbers
     runs-on: ubuntu-latest
     steps:
 
@@ -26,7 +26,7 @@ jobs:
       run: |
         docker compose build kicad dev
 
-    - name: Generate gerbers
+    - name: Plot gerbers
       run: |
         make gerbers
 

@@ -18,6 +18,7 @@ services:
 
   kicad:
     image: kicad/kicad:8.0.0
+    user: root
     working_dir: /app
     volumes:
       - .:/app
