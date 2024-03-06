@@ -1,6 +1,5 @@
 # Outputs
 build/
-kicad/
 main.scad
 main.json
 
