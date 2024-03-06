@@ -1,4 +1,4 @@
-name: CAD
+name: PCB
 
 on:
   push:
@@ -6,14 +6,14 @@ on:
       - main
   pull_request:
     paths:
-      - .github/workflows/cad.yaml
+      - .github/workflows/pcb.yaml
       - docker-compose.yaml
       - Makefile
-      - src/cad/**/*
+      - src/pcb/**/*
 
 jobs:
-  render-parts:
-    name: Render parts
+  plot-gerbers:
+    name: Plot gerbers
     runs-on: ubuntu-latest
     steps:
 
@@ -24,21 +24,20 @@ jobs:
 
     - name: Build docker images
       run: |
-        docker compose build openscad dev
+        docker compose build kicad dev
 
-    - name: Render parts
+    - name: Plot gerbers
       run: |
-        make render render-quality=32
+        make gerbers
 
     - name: Archive parts
       uses: actions/upload-artifact@v4
       with:
-        name: parts
+        name: gerbers
         if-no-files-found: error
         path: |
-          build/parts/*.stl
-          build/parts/*.log
+          build/gerbers/*
 
     - name: Run tests
       run: |
-        make test-cad
+        make test-pcb

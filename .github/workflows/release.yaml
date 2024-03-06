@@ -5,6 +5,36 @@ on:
     types: [released]
 
 jobs:
+  release-parts:
+    name: Release parts
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Build docker images
+      run: |
+        docker compose build openscad
+
+    - name: Render parts
+      run: |
+        make render
+
+    - name: Compress parts
+      run: |
+        zip -jr build/parts.zip build/parts/*.stl
+
+    - name: Add parts to release
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: build/parts.zip
+        asset_name: parts.zip
+        asset_content_type: application/zip
+
   release-firmware:
     name: Release firmware
     runs-on: ubuntu-latest
@@ -37,8 +67,8 @@ jobs:
         asset_name: firmware.zip
         asset_content_type: application/zip
 
-  release-parts:
-    name: Release parts
+  release-gerbers:
+    name: Release gerbers
     runs-on: ubuntu-latest
     steps:
 
@@ -49,20 +79,23 @@ jobs:
 
     - name: Build docker images
       run: |
-        docker compose build openscad
+        docker compose build kicad
 
-    - name: Render parts
+    - name: Plot gerbers
       run: |
-        make render
+        make gerbers
 
-    - name: Compress parts
+    - name: Compress gerbers
       run: |
-        zip -jr build/parts.zip build/parts/*.stl
+        zip -jr build/gerbers.zip build/gerbers/seacal-scanner*
 
-    - name: Add parts to release
+    - name: Add gerbers to release
       uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: build/parts.zip
-        asset_name: parts.zip
+        asset_path: build/gerbers.zip
+        asset_name: gerbers.zip
         asset_content_type: application/zip
+

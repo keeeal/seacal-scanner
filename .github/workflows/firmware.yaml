@@ -24,7 +24,7 @@ jobs:
 
     - name: Build docker images
       run: |
-        docker compose build arduino
+        docker compose build arduino dev
 
     - name: Build firmware
       run: |
@@ -37,3 +37,7 @@ jobs:
         if-no-files-found: error
         path: |
           build/firmware/firmware.ino.*
+
+    - name: Run tests
+      run: |
+        make test-firmware
