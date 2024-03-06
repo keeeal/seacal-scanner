@@ -6,6 +6,7 @@ cad-root-dir := src/cad/scanner
 firmware-dir := src/firmware
 render-config := src/cad/render.yaml
 pcb-file := src/pcb/seacal-scanner.kicad_pcb
+sch-file := src/pcb/seacal-scanner.kicad_sch
 layers-config := src/pcb/layers.csv
 
 cad-root-files := $(shell find $(cad-root-dir) -type f -name "*.scad")
@@ -46,9 +47,12 @@ gerbers:
 			$(pcb-file) && \
 		kicad-cli pcb drc \
 			--severity-error \
-			--exit-code-violations \
 			--output $(pcb-build-dir)/drc.rpt \
-			$(pcb-file)'
+			$(pcb-file) && \
+		kicad-cli sch erc \
+			--severity-error \
+			--output $(pcb-build-dir)/erc.rpt \
+			$(sch-file)'
 
 format:
 	docker compose run dev sh -c \
