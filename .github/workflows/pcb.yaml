@@ -36,10 +36,7 @@ jobs:
         name: gerbers
         if-no-files-found: error
         path: |
-          build/gerbers/seacal-scanner-job.gbrjob
-          build/gerbers/*.gbr
-          build/gerbers/*.gtl
-          build/gerbers/*.gbl
+          build/gerbers/*
 
     - name: Run tests
       run: |

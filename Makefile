@@ -36,10 +36,19 @@ firmware:
 
 gerbers:
 	mkdir -p $(pcb-build-dir)
-	docker compose run kicad kicad-cli pcb export gerbers \
-		--layers $(pcb-layers) \
-		--output $(pcb-build-dir) \
-		$(pcb-file)
+	docker compose run kicad sh -c \
+		'kicad-cli pcb export gerbers \
+			--layers $(pcb-layers) \
+			--output $(pcb-build-dir) \
+			$(pcb-file) && \
+		kicad-cli pcb export drill \
+			--output $(pcb-build-dir)/ \
+			$(pcb-file) && \
+		kicad-cli pcb drc \
+			--severity-error \
+			--exit-code-violations \
+			--output $(pcb-build-dir)/drc.rpt \
+			$(pcb-file)'
 
 format:
 	docker compose run dev sh -c \
