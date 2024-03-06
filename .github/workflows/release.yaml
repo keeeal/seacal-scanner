@@ -29,6 +29,8 @@ jobs:
 
     - name: Add parts to release
       uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
         asset_path: build/parts.zip
@@ -98,4 +100,3 @@ jobs:
         asset_path: build/gerbers.zip
         asset_name: gerbers.zip
         asset_content_type: application/zip
-
