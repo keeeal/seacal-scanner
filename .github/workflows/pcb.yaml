@@ -28,6 +28,7 @@ jobs:
 
     - name: Generate gerbers
       run: |
+        mkdir kicad
         make gerbers
 
     - name: Archive parts
