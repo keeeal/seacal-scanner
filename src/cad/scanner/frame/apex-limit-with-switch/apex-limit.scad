@@ -11,9 +11,9 @@ module apex_limit()
         {
             translate([ -8.5, -13, 30 ]) cube([ 17, 2, 80 ]);
             translate([ -8.5, -11, 100 ]) rotate([ 90, 0, 0 ])
-                linear_extrude(2) rounded_square([ 38.5, 20 ], r = 5);
+                linear_extrude(2) rounded_square([ 28.5, 20 ], r = 3);
         }
-        translate([ 22.1, -10, 110 ]) rotate([ 90, 0, 0 ]) cube([ 1.8, 11, 4 ]);
+        translate([ 14.1, -10, 110 ]) rotate([ 90, 0, 0 ]) cube([ 1.8, 11, 4 ]);
     }
 
     hull()
