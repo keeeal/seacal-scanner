@@ -28,7 +28,7 @@ module tube_mount()
             rotate([ 0, 0, -90 ]) translate([ -15, 0, 0 ]) rotate([ 0, -90, 0 ]) cylinder(5, 12, 10);
         }
         rotate([ 0, 0, -90 ]) translate([ -35, 0, 0 ]) rotate([ 0, 90, 0 ])
-            scale(0.52) import("../../assets/axle-screw.stl");
+            scale(0.52) import("../../../assets/axle-screw.stl");
     }
 }
 
