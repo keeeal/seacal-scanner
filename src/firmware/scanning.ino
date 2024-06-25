@@ -6,13 +6,59 @@
 
 void Scanning::setup()
 {
+    unsigned long num_integral_steps = 8 * NUM_PHOTOS;
+    double distances[num_integral_steps];
+    distances[0] = 0;
+
+    double x = sin(MIN_ARM_ANGLE) * cos(0);
+    double y = sin(MIN_ARM_ANGLE) * sin(0);
+    double z = cos(MIN_ARM_ANGLE);
+
+    for (unsigned long i = 1; i < num_integral_steps; i++)
+    {
+        double fraction = (double)i / (double)(num_integral_steps - 1);
+        double arm_angle =
+            MIN_ARM_ANGLE + (MAX_ARM_ANGLE - MIN_ARM_ANGLE) * fraction;
+        double base_angle = 2 * M_PI * NUM_REVOLUTIONS * fraction;
+
+        double xi = sin(arm_angle) * cos(base_angle);
+        double yi = sin(arm_angle) * sin(base_angle);
+        double zi = cos(arm_angle);
+
+        double dx = xi - x;
+        double dy = yi - y;
+        double dz = zi - z;
+
+        distances[i] = distances[i - 1] + sqrt(dx * dx + dy * dy + dz * dz);
+
+        x = xi;
+        y = yi;
+        z = zi;
+    }
+
+    photo_index = 0;
+    double photo_distance =
+        distances[num_integral_steps - 1] / (NUM_PHOTOS - 1);
+
+    for (unsigned int i = 0; i < num_integral_steps; i++)
+    {
+        if (distances[i] >= photo_index * photo_distance)
+        {
+            fractions[photo_index] =
+                (double)i / (double)(num_integral_steps - 1);
+            photo_index++;
+        }
+    }
+
     state_machine = StateMachine();
 
     move = state_machine.addState([]() {
         if (state_machine.executeOnce)
         {
-            ARM_STEPPER.moveTo(calculateArmPosition());
-            BASE_STEPPER.moveTo(calculateBasePosition());
+            float f = fractions[photo_index];
+            ARM_STEPPER.moveTo((long)(pow(f, 1.5) * (top_limit - bottom_limit) +
+                                      bottom_limit));
+            BASE_STEPPER.moveTo((long)(f * NUM_REVOLUTIONS * NUM_BASE_STEPS));
         }
     });
 
@@ -20,8 +66,7 @@ void Scanning::setup()
         STEPPER_SETTINGS.reset();
         CAMERA.takePhoto();
         STEPPER_SETTINGS.cancelReset();
-        current_base_position += 1;
-        current_arm_position = current_base_position / NUM_BASE_POSITIONS;
+        photo_index++;
     });
 
     reset = state_machine.addState([]() {
@@ -40,14 +85,7 @@ void Scanning::setup()
         },
         photo);
 
-    photo->addTransition(
-        []() {
-            // Reset after one photo has been taken from the top position.
-            if (current_arm_position < NUM_ARM_POSITIONS - 1)
-                return false;
-            return current_base_position % NUM_ARM_POSITIONS > 0;
-        },
-        reset);
+    photo->addTransition([]() { return photo_index == NUM_PHOTOS; }, reset);
 
     photo->addTransition([]() { return true; }, move);
 
@@ -58,8 +96,7 @@ void Scanning::setup()
 
 void Scanning::onEnter()
 {
-    current_arm_position = 0;
-    current_base_position = 0;
+    photo_index = 0;
     state_machine.transitionTo(move);
 }
 

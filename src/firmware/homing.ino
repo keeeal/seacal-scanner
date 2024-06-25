@@ -85,6 +85,7 @@ void Homing::run()
 
 void Homing::onExit()
 {
+    BASE_STEPPER.setCurrentPosition(0);
 }
 
 bool Homing::toScanning()

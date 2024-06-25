@@ -1,5 +1,7 @@
 #pragma once
 
+#include <math.h>
+
 // Output pins
 #define ARM_STEP_PIN 8
 #define ARM_DIR_PIN 9
@@ -35,5 +37,7 @@
 #define HOMING_RETRACT_STEPS 500 // Steps
 
 // Scan settings
-#define NUM_ARM_POSITIONS 4
-#define NUM_BASE_POSITIONS 32
+#define MIN_ARM_ANGLE M_PI_4 // radians
+#define MAX_ARM_ANGLE M_PI   // radians
+#define NUM_REVOLUTIONS 5
+#define NUM_PHOTOS 100
