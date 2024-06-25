@@ -19,7 +19,6 @@ State *complete;
 long top_limit;    // Steps
 long bottom_limit; // Steps
 
-double fractions[NUM_PHOTOS];
 unsigned int photo_index;
 
 bool isComplete()
