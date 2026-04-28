@@ -15,6 +15,12 @@ firmware-files := $(shell \
 )
 pcb-layers := $(shell cat $(layers-config) | tr -s '[:space:]' ',')
 
+app:
+	cargo build
+
+run:
+	cargo run
+
 main.scad: $(cad-root-files)
 	docker compose run openscad openscad-build write-main $(cad-root-dir) main.scad
 
@@ -60,6 +66,9 @@ format:
 		openscad-format $(if $(check),--dry-run --Werror,) -i $(cad-root-files) && \
 		isort $(if $(check),--check,) tests && \
 		black $(if $(check),--check,) tests'
+
+format-app:
+	cargo fmt $(if $(check),--check,)
 
 test-cad:
 	docker compose run dev pytest tests/cad
