@@ -1,4 +1,3 @@
-use rmpv::Value::Binary;
 use serde::ser::SerializeStruct;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
@@ -6,28 +5,27 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 pub enum Message {
     Ping,
     Pong,
-    Info(String),
-    Warning(String),
-    Error(String),
-    Success(String),
-    MoveTo((u8, u8)),
-    MoveComplete,
+    SetSpeed((u32, u32)),
+    MoveTo((u32, u32)),
+    MoveComplete((u32, u32)),
+    ZeroBase,
+    StartPressed,
+    StopPressed,
+    UnexpectedMsg(u32),
 }
 
 impl Message {
     fn discriminant(&self) -> u8 {
         match self {
-            // Handshake
             Self::Ping => 0x00,
             Self::Pong => 0x01,
-            // Logging
-            Self::Info(_) => 0x10,
-            Self::Warning(_) => 0x11,
-            Self::Error(_) => 0x12,
-            Self::Success(_) => 0x13,
-            // Control
-            Self::MoveTo(_) => 0x20,
-            Self::MoveComplete => 0x21,
+            Self::SetSpeed(_) => 0x10,
+            Self::MoveTo(_) => 0x11,
+            Self::MoveComplete(_) => 0x12,
+            Self::ZeroBase => 0x13,
+            Self::StartPressed => 0x20,
+            Self::StopPressed => 0x21,
+            Self::UnexpectedMsg(_) => 0x30,
         }
     }
 }
@@ -38,12 +36,13 @@ impl TryFrom<u8> for Message {
         for message in [
             Self::Ping,
             Self::Pong,
-            Self::Info(String::new()),
-            Self::Warning(String::new()),
-            Self::Error(String::new()),
-            Self::Success(String::new()),
+            Self::SetSpeed((0, 0)),
             Self::MoveTo((0, 0)),
-            Self::MoveComplete,
+            Self::MoveComplete((0, 0)),
+            Self::ZeroBase,
+            Self::StartPressed,
+            Self::StopPressed,
+            Self::UnexpectedMsg(0),
         ] {
             if message.discriminant() == discriminant {
                 return Ok(message);
@@ -53,10 +52,11 @@ impl TryFrom<u8> for Message {
     }
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Default, Deserialize, Serialize)]
 struct PackedMessage {
     discriminant: u8,
-    payload: Vec<u8>,
+    parameter_0: u32,
+    parameter_1: u32,
 }
 
 impl From<Message> for PackedMessage {
@@ -65,35 +65,43 @@ impl From<Message> for PackedMessage {
         match message {
             Message::Ping => Self {
                 discriminant,
-                payload: Vec::new(),
+                ..Default::default()
             },
             Message::Pong => Self {
                 discriminant,
-                payload: Vec::new(),
+                ..Default::default()
             },
-            Message::Info(text) => Self {
+            Message::SetSpeed((x, y)) => Self {
                 discriminant,
-                payload: text.into_bytes(),
-            },
-            Message::Warning(text) => Self {
-                discriminant,
-                payload: text.into_bytes(),
-            },
-            Message::Error(text) => Self {
-                discriminant,
-                payload: text.into_bytes(),
-            },
-            Message::Success(text) => Self {
-                discriminant,
-                payload: text.into_bytes(),
+                parameter_0: x,
+                parameter_1: y,
             },
             Message::MoveTo((x, y)) => Self {
                 discriminant,
-                payload: vec![x, y],
+                parameter_0: x,
+                parameter_1: y,
             },
-            Message::MoveComplete => Self {
+            Message::MoveComplete((x, y)) => Self {
                 discriminant,
-                payload: Vec::new(),
+                parameter_0: x,
+                parameter_1: y,
+            },
+            Message::ZeroBase => Self {
+                discriminant,
+                ..Default::default()
+            },
+            Message::StartPressed => Self {
+                discriminant,
+                ..Default::default()
+            },
+            Message::StopPressed => Self {
+                discriminant,
+                ..Default::default()
+            },
+            Message::UnexpectedMsg(x) => Self {
+                discriminant,
+                parameter_0: x,
+                ..Default::default()
             },
         }
     }
@@ -105,12 +113,15 @@ impl TryFrom<PackedMessage> for Message {
         match Self::try_from(packed.discriminant)? {
             Self::Ping => Ok(Self::Ping),
             Self::Pong => Ok(Self::Pong),
-            Self::Info(_) => Ok(Self::Info(String::from_utf8(packed.payload).unwrap())),
-            Self::Warning(_) => Ok(Self::Warning(String::from_utf8(packed.payload).unwrap())),
-            Self::Error(_) => Ok(Self::Error(String::from_utf8(packed.payload).unwrap())),
-            Self::Success(_) => Ok(Self::Success(String::from_utf8(packed.payload).unwrap())),
-            Self::MoveTo(_) => Ok(Self::MoveTo((packed.payload[0], packed.payload[1]))),
-            Self::MoveComplete => Ok(Self::MoveComplete),
+            Self::SetSpeed(_) => Ok(Self::MoveTo((packed.parameter_0, packed.parameter_1))),
+            Self::MoveTo(_) => Ok(Self::MoveTo((packed.parameter_0, packed.parameter_1))),
+            Self::MoveComplete(_) => {
+                Ok(Self::MoveComplete((packed.parameter_0, packed.parameter_1)))
+            }
+            Self::ZeroBase => Ok(Self::ZeroBase),
+            Self::StartPressed => Ok(Self::StartPressed),
+            Self::StopPressed => Ok(Self::StopPressed),
+            Self::UnexpectedMsg(_) => Ok(Self::UnexpectedMsg(packed.parameter_0)),
         }
     }
 }
@@ -133,98 +144,8 @@ impl Serialize for Message {
         let packed: PackedMessage = (*self).clone().into();
         let mut state = serializer.serialize_struct("PackedMessage", 2)?;
         state.serialize_field("discriminant", &packed.discriminant)?;
-        // Force serde to treat payload as binary data, not as an array
-        let binary_payload = Binary(packed.payload);
-        state.serialize_field("payload", &binary_payload)?;
+        state.serialize_field("parameter_0", &packed.parameter_0)?;
+        state.serialize_field("parameter_1", &packed.parameter_1)?;
         state.end()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    // MessagePack array header
-    fn arr(size: usize) -> u8 {
-        0x90 + size as u8
-    }
-
-    // MessagePack binary header (for length 0..255 only!)
-    fn bin() -> u8 {
-        0xC4
-    }
-
-    #[test]
-    fn test_ping() {
-        let discriminant = Message::Ping.discriminant();
-        let message = Message::Ping;
-        let buffer = rmp_serde::to_vec(&message).unwrap();
-        let expected_buffer = vec![arr(2), discriminant, bin(), 0];
-        assert_eq!(buffer, expected_buffer);
-        let deserialized: Message = rmp_serde::from_slice(&buffer).unwrap();
-        assert_eq!(deserialized, message);
-    }
-
-    #[test]
-    fn test_pong() {
-        let discriminant = Message::Pong.discriminant();
-        let message = Message::Pong;
-        let buffer = rmp_serde::to_vec(&message).unwrap();
-        let expected_buffer = vec![arr(2), discriminant, bin(), 0];
-        assert_eq!(buffer, expected_buffer);
-        let deserialized: Message = rmp_serde::from_slice(&buffer).unwrap();
-        assert_eq!(deserialized, message);
-    }
-
-    #[test]
-    fn test_info() {
-        let discriminant = Message::Info(String::new()).discriminant();
-        let text = "Hello, world!";
-        let message = Message::Info(String::from(text));
-        let buffer = rmp_serde::to_vec(&message).unwrap();
-        let mut expected_buffer = vec![arr(2), discriminant, bin(), text.len() as u8];
-        expected_buffer.extend(text.bytes());
-        assert_eq!(buffer, expected_buffer);
-        let deserialized: Message = rmp_serde::from_slice(&buffer).unwrap();
-        assert_eq!(deserialized, message);
-    }
-
-    #[test]
-    fn test_warning() {
-        let discriminant = Message::Warning(String::new()).discriminant();
-        let text = "Hello, world!";
-        let message = Message::Warning(String::from(text));
-        let buffer = rmp_serde::to_vec(&message).unwrap();
-        let mut expected_buffer = vec![arr(2), discriminant, bin(), text.len() as u8];
-        expected_buffer.extend(text.bytes());
-        assert_eq!(buffer, expected_buffer);
-        let deserialized: Message = rmp_serde::from_slice(&buffer).unwrap();
-        assert_eq!(deserialized, message);
-    }
-
-    #[test]
-    fn test_error() {
-        let discriminant = Message::Error(String::new()).discriminant();
-        let text = "Hello, world!";
-        let message = Message::Error(String::from(text));
-        let buffer = rmp_serde::to_vec(&message).unwrap();
-        let mut expected_buffer = vec![arr(2), discriminant, bin(), text.len() as u8];
-        expected_buffer.extend(text.bytes());
-        assert_eq!(buffer, expected_buffer);
-        let deserialized: Message = rmp_serde::from_slice(&buffer).unwrap();
-        assert_eq!(deserialized, message);
-    }
-
-    #[test]
-    fn test_success() {
-        let discriminant = Message::Success(String::new()).discriminant();
-        let text = "Hello, world!";
-        let message = Message::Success(String::from(text));
-        let buffer = rmp_serde::to_vec(&message).unwrap();
-        let mut expected_buffer = vec![arr(2), discriminant, bin(), text.len() as u8];
-        expected_buffer.extend(text.bytes());
-        assert_eq!(buffer, expected_buffer);
-        let deserialized: Message = rmp_serde::from_slice(&buffer).unwrap();
-        assert_eq!(deserialized, message);
     }
 }

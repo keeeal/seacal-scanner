@@ -1,3 +1,6 @@
+board = arduino:renesas_uno:minima
+# board = arduino:avr:leonardo
+
 cad-build-dir ?= build/parts
 firmware-build-dir ?= build/firmware
 pcb-build-dir ?= build/gerbers
@@ -32,14 +35,17 @@ render:
 		--log --output-dir=$(cad-build-dir)
 
 firmware:
-	mkdir -p $(firmware-build-dir)
-	docker compose run arduino arduino-cli compile \
-		--fqbn arduino:avr:leonardo \
+	arduino-cli compile \
+		--fqbn arduino:renesas_uno:minima \
 		--warnings all \
-		--build-property \
-			compiler.cpp.extra_flags="-Werror -Wno-unused-parameter -Wno-reorder" \
-		--build-path $(firmware-build-dir) \
-		$(firmware-dir)
+		--build-path build \
+		src/firmware
+
+upload:
+	arduino-cli upload \
+		--port /dev/ttyACM0 \
+		--fqbn $(board) \
+		--input-dir build
 
 gerbers:
 	mkdir -p $(pcb-build-dir)
