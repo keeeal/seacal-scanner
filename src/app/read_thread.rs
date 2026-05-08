@@ -22,6 +22,7 @@ pub fn spawn(port: Arc<Mutex<Option<Box<dyn SerialPort>>>>, sender: Sender<Messa
                 port.clear(ClearBuffer::Input).unwrap();
                 port_name = port.name();
             }
+            port.set_timeout(Duration::from_millis(100)).unwrap();
             read_result = port.read(&mut serial_buffer);
         } else {
             port_name = None;
@@ -41,7 +42,7 @@ pub fn spawn(port: Arc<Mutex<Option<Box<dyn SerialPort>>>>, sender: Sender<Messa
             }
             _ => {
                 // No data available, sleep to avoid busy waiting
-                thread::sleep(Duration::from_millis(10));
+                thread::sleep(Duration::from_millis(100));
             }
         }
         if message_buffer.is_empty() {

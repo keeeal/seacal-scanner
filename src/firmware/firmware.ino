@@ -42,7 +42,10 @@ bool read_serial()
 
     // Respond to ping immediately rather than queueing it
     if (packed->discriminant == message::MessageType::Ping)
+    {
+        GREEN_LED.on();
         message::send(message::MessageType::Pong);
+    }
     else
     {
         MESSAGE_QUEUE.push_back(packed.value());
@@ -81,59 +84,57 @@ void setup()
 
 void home()
 {
-    // ARM_STEPPER.setSpeed(HOMING_SPEED_COARSE);
-    // while (!TOP_LIMIT_SWITCH.pressed())
-    // {
-    //     read_serial();
-    //     ARM_STEPPER.runSpeed();
-    // }
+    ARM_STEPPER.setSpeed(HOMING_SPEED_COARSE);
+    while (!TOP_LIMIT_SWITCH.pressed())
+    {
+        read_serial();
+        ARM_STEPPER.runSpeed();
+    }
 
-    // ARM_STEPPER.setSpeed(HOMING_SPEED_FINE);
-    // ARM_STEPPER.move(-HOMING_RETRACT_STEPS);
-    // while (ARM_STEPPER.run())
-    //     read_serial();
+    ARM_STEPPER.setSpeed(HOMING_SPEED_FINE);
+    ARM_STEPPER.move(-HOMING_RETRACT_STEPS);
+    while (ARM_STEPPER.run())
+        read_serial();
 
-    // ARM_STEPPER.setSpeed(HOMING_SPEED_FINE);
-    // while (TOP_LIMIT_SWITCH.read() != Button::PRESSED)
-    // {
-    //     read_serial();
-    //     ARM_STEPPER.runSpeed();
-    // }
-    // TOP_LIMIT = ARM_STEPPER.currentPosition();
+    ARM_STEPPER.setSpeed(HOMING_SPEED_FINE);
+    while (TOP_LIMIT_SWITCH.read() != Button::PRESSED)
+    {
+        read_serial();
+        ARM_STEPPER.runSpeed();
+    }
+    TOP_LIMIT = ARM_STEPPER.currentPosition();
 
-    // ARM_STEPPER.setSpeed(-HOMING_SPEED_COARSE);
-    // while (!BOTTOM_LIMIT_SWITCH.pressed())
-    // {
-    //     read_serial();
-    //     ARM_STEPPER.runSpeed();
-    // }
+    ARM_STEPPER.setSpeed(-HOMING_SPEED_COARSE);
+    while (!BOTTOM_LIMIT_SWITCH.pressed())
+    {
+        read_serial();
+        ARM_STEPPER.runSpeed();
+    }
 
-    // ARM_STEPPER.setSpeed(-HOMING_SPEED_FINE);
-    // ARM_STEPPER.move(HOMING_RETRACT_STEPS);
-    // while (ARM_STEPPER.run())
-    //     read_serial();
+    ARM_STEPPER.setSpeed(-HOMING_SPEED_FINE);
+    ARM_STEPPER.move(HOMING_RETRACT_STEPS);
+    while (ARM_STEPPER.run())
+        read_serial();
 
-    // ARM_STEPPER.setSpeed(-HOMING_SPEED_FINE);
-    // while (BOTTOM_LIMIT_SWITCH.read() != Button::PRESSED)
-    // {
-    //     read_serial();
-    //     ARM_STEPPER.runSpeed();
-    // }
-    // BOTTOM_LIMIT = ARM_STEPPER.currentPosition();
-    TOP_LIMIT = 1000;
-    BOTTOM_LIMIT = 0;
+    ARM_STEPPER.setSpeed(-HOMING_SPEED_FINE);
+    while (BOTTOM_LIMIT_SWITCH.read() != Button::PRESSED)
+    {
+        read_serial();
+        ARM_STEPPER.runSpeed();
+    }
+    BOTTOM_LIMIT = ARM_STEPPER.currentPosition();
 }
 
 void loop()
 {
     read_serial();
 
-    // if (STOP_BUTTON.read() == HIGH)
-    // {
-    //     STEPPER_SETTINGS.reset();
-    //     RED_LED.on();
-    //     return;
-    // }
+    if (STOP_BUTTON.read() == HIGH)
+    {
+        STEPPER_SETTINGS.reset();
+        RED_LED.on();
+        return;
+    }
 
     if (!ARM_STEPPER.run() && !BASE_STEPPER.run() && !MOVE_COMPLETE)
     {
