@@ -34,6 +34,7 @@ bool MOVE_COMPLETE = true;
 // Call as frequently as possible
 bool read_serial()
 {
+    RED_LED.on();
 
     std::optional<message::PackedMessage> packed =
         message::serial_receive(SERIAL_BUFFER);
