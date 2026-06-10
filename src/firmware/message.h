@@ -2,8 +2,6 @@
 
 #include <MsgPack.h>
 
-#include "settings.h"
-
 namespace message
 {
 
@@ -11,15 +9,26 @@ namespace message
 
 enum MessageType
 {
+    // Handshake
     Ping = 0x00,
     Pong = 0x01,
-    SetSpeed = 0x10,
-    MoveTo = 0x11,
-    MoveComplete = 0x12,
-    ZeroBase = 0x13,
+
+    // Control
+    MoveTo = 0x10,
+    MoveComplete = 0x11,
+    ZeroBase = 0x12,
+    DisableSteppers = 0x13,
+    SetSpeed = 0x14,
+
+    // Buttons
     StartPressed = 0x20,
     StopPressed = 0x21,
+    StopReleased = 0x22,
+
+    // Status
     UnexpectedMsg = 0x30,
+    HomingInProgress = 0x31,
+    HomingError = 0x32,
 };
 
 struct PackedMessage
@@ -47,6 +56,7 @@ std::optional<PackedMessage> serial_receive(std::vector<uint8_t> &buffer)
     uint8_t discriminant;
     uint32_t parameter_0;
     uint32_t parameter_1;
+
     if (unpacker.from_array(discriminant, parameter_0, parameter_1))
     {
         buffer.clear();

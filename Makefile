@@ -1,22 +1,8 @@
+# board = arduino:renesas_uno:unor4wifi
 board = arduino:renesas_uno:minima
 # board = arduino:avr:leonardo
 
-cad-build-dir ?= build/parts
-firmware-build-dir ?= build/firmware
-pcb-build-dir ?= build/gerbers
-
-cad-root-dir := src/cad/scanner
-firmware-dir := src/firmware
-render-config := src/cad/render.yaml
-pcb-file := src/pcb/seacal-scanner.kicad_pcb
-sch-file := src/pcb/seacal-scanner.kicad_sch
-layers-config := src/pcb/layers.csv
-
-cad-root-files := $(shell find $(cad-root-dir) -type f -name "*.scad")
-firmware-files := $(shell \
-	find $(firmware-dir) -type f -name "*.ino" -o -name "*.cpp" -o -name "*.h" \
-)
-pcb-layers := $(shell cat $(layers-config) | tr -s '[:space:]' ',')
+all: app firmware cad pcb
 
 app:
 	cargo build
@@ -24,19 +10,9 @@ app:
 run:
 	cargo run
 
-main.scad: $(cad-root-files)
-	docker compose run openscad openscad-build write-main $(cad-root-dir) main.scad
-
-render:
-	mkdir -p $(cad-build-dir)
-	docker compose run openscad openscad-build render \
-		$(render-config) \
-		$(if $(render-quality),--render-quality=$(render-quality),) \
-		--log --output-dir=$(cad-build-dir)
-
 firmware:
 	arduino-cli compile \
-		--fqbn arduino:renesas_uno:minima \
+		--fqbn $(board) \
 		--warnings all \
 		--build-path build \
 		src/firmware
@@ -47,46 +23,39 @@ upload:
 		--fqbn $(board) \
 		--input-dir build
 
-gerbers:
-	mkdir -p $(pcb-build-dir)
-	docker compose run kicad sh -c \
-		'kicad-cli pcb export gerbers \
-			--layers $(pcb-layers) \
-			--output $(pcb-build-dir) \
-			$(pcb-file) && \
+pcb:
+	for pcb in $$(basename -a src/pcb/*/); do \
+		kicad-cli pcb export gerbers \
+			--layers $$(cat src/pcb/layers.txt | tr -s '[:space:]' ',') \
+			--output gerbers/$$pcb \
+			src/pcb/$$pcb/$$pcb.kicad_pcb; \
 		kicad-cli pcb export drill \
-			--output $(pcb-build-dir)/ \
-			$(pcb-file) && \
-		kicad-cli pcb drc \
-			--severity-error \
-			--output $(pcb-build-dir)/drc.rpt \
-			$(pcb-file) && \
-		kicad-cli sch erc \
-			--severity-error \
-			--output $(pcb-build-dir)/erc.rpt \
-			$(sch-file)'
+			--output gerbers/$$pcb \
+			src/pcb/$$pcb/$$pcb.kicad_pcb; \
+	done
 
-format:
-	docker compose run dev sh -c \
-		'clang-format $(if $(check),--dry-run --Werror,) -i $(firmware-files) && \
-		openscad-format $(if $(check),--dry-run --Werror,) -i $(cad-root-files) && \
-		isort $(if $(check),--check,) tests && \
-		black $(if $(check),--check,) tests'
+format: format-app format-firmware
 
 format-app:
 	cargo fmt $(if $(check),--check,)
 
-test-cad:
-	docker compose run dev pytest tests/cad
+format-firmware:
+	clang-format $(if $(check),--dry-run --Werror,-i) src/firmware/*.ino src/firmware/*.h
+
+test: test-app test-firmware test-cad test-pcb
+
+test-app:
+	cargo clippy -- --deny warnings && \
+	cargo test
 
 test-firmware:
 	docker compose run dev pytest tests/firmware
 
+test-cad:
+	docker compose run dev pytest tests/cad
+
 test-pcb:
 	docker compose run dev pytest tests/pcb
-
-test:
-	docker compose run dev pytest tests
 
 clean:
 	git clean -Xdf

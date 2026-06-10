@@ -1,23 +1,7 @@
-use std::collections::HashMap;
-use std::path::PathBuf;
-use std::time::{Duration, Instant};
-
-use chrono::Local;
-use directories::UserDirs;
 use eframe::egui;
 use egui::Color32;
-use egui_file_dialog::FileDialog;
-use nokhwa::utils::{ApiBackend, CameraIndex, CameraInfo};
 
-use crate::App;
-
-#[derive(Debug, Clone)]
-pub enum LogLevel {
-    Error,
-    Warning,
-    Info,
-    Success,
-}
+use crate::{App, CaptureState, LogLevel};
 
 impl LogLevel {
     fn color(&self) -> Color32 {
@@ -30,83 +14,10 @@ impl LogLevel {
     }
 }
 
-pub struct State {
-    pub object_name: String,
-    pub all_cameras: HashMap<CameraIndex, CameraInfo>,
-    pub selected_camera: Option<CameraIndex>,
-    pub test_clicked: bool,
-    pub refresh_clicked: bool,
-    pub num_photos: u32,
-    pub num_revolutions: u32,
-    pub spiral_pattern: bool,
-    pub arm_speed: u8,
-    pub invert_arm: bool,
-    pub base_speed: u8,
-    pub invert_base: bool,
-    pub start_height: u8,
-    pub save_directory_dialog: FileDialog,
-    pub save_directory: PathBuf,
-    pub capture_clicked: bool,
-    pub progress: f32,
-    pub log_message: String,
-    pub log_level: LogLevel,
-    pub log_time: Option<Instant>,
-}
-
-impl Default for State {
-    fn default() -> Self {
-        Self {
-            object_name: Local::now().format("%Y-%m-%d-%H-%M-%S").to_string(),
-            all_cameras: nokhwa::query(ApiBackend::Auto)
-                .unwrap()
-                .iter()
-                .map(|info| (info.index().clone(), info.clone()))
-                .collect(),
-            selected_camera: None,
-            test_clicked: false,
-            refresh_clicked: false,
-            num_photos: 100,
-            num_revolutions: 5,
-            spiral_pattern: false,
-            arm_speed: 100,
-            invert_arm: false,
-            base_speed: 100,
-            invert_base: false,
-            start_height: 0,
-            save_directory_dialog: FileDialog::new(),
-            save_directory: UserDirs::new()
-                .unwrap()
-                .picture_dir()
-                .unwrap()
-                .to_path_buf(),
-            capture_clicked: false,
-            progress: 0.0,
-            log_message: String::new(),
-            log_level: LogLevel::Info,
-            log_time: None,
-        }
-    }
-}
-
-impl State {
-    pub fn log(&mut self, level: LogLevel, message: String) {
-        println!("[{}] {:?}: {}", Local::now(), level, message);
-        self.log_message = message;
-        self.log_level = level;
-        self.log_time = Some(Instant::now());
-    }
-
-    pub fn log_if_quiet_for(&mut self, duration: Duration, level: LogLevel, message: String) {
-        if self.log_time.is_none() || duration < Instant::now() - self.log_time.unwrap() {
-            self.log(level, message);
-        }
-    }
-}
-
 pub fn options() -> eframe::NativeOptions {
     eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
-            .with_inner_size([700.0, 450.0])
+            .with_inner_size([700.0, 480.0])
             .with_resizable(false),
         ..Default::default()
     }
@@ -144,9 +55,8 @@ impl eframe::App for App {
                 .show(ui, |ui| {
                     ui.label("Object name:");
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Min), |ui| {
-                        if ui.button("NOW").clicked() {
-                            self.state.lock().unwrap().object_name =
-                                Local::now().format("%Y-%m-%d-%H-%M-%S").to_string();
+                        if ui.button("USE CURRENT TIME").clicked() {
+                            self.state.lock().unwrap().reset_object_name();
                         }
                         ui.with_layout(egui::Layout::top_down_justified(egui::Align::Min), |ui| {
                             ui.text_edit_singleline(&mut self.state.lock().unwrap().object_name);
@@ -264,6 +174,21 @@ impl eframe::App for App {
                         );
                     });
                     ui.end_row();
+                    ui.label("Photos per position (delay):");
+                    ui.with_layout(egui::Layout::left_to_right(egui::Align::Min), |ui| {
+                        ui.add(egui::Slider::new(
+                            &mut self.state.lock().unwrap().photos_per_position,
+                            1..=10,
+                        ));
+                        ui.add(
+                            egui::Slider::new(
+                                &mut self.state.lock().unwrap().shutter_delay,
+                                0..=3000,
+                            )
+                            .suffix("ms"),
+                        );
+                    });
+                    ui.end_row();
                     ui.label("Save directory:");
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Min), |ui| {
                         let mut state = self.state.lock().unwrap();
@@ -291,10 +216,22 @@ impl eframe::App for App {
                     },
                 ));
                 ui.add_space(10.0);
-                if ui.button("CAPTURE").clicked() {
-                    println!("CLICK");
-                    self.state.lock().unwrap().capture_clicked = true;
-                }
+                let mut enabled: bool = true;
+                let capture_text = match self.state.lock().unwrap().capture_state {
+                    CaptureState::Idle => "START SCAN",
+                    CaptureState::InProgress => "PAUSE",
+                    CaptureState::Paused => "RESUME",
+                    CaptureState::Stopped => {
+                        enabled = false;
+                        "START SCAN"
+                    }
+                };
+                ui.add_enabled_ui(enabled, |ui| {
+                    if ui.button(capture_text).clicked() {
+                        println!("CLICK");
+                        self.state.lock().unwrap().capture_clicked = true;
+                    }
+                });
                 ui.add_space(10.0);
                 ui.separator();
                 ui.add_space(20.0);

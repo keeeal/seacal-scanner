@@ -5,27 +5,44 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 pub enum Message {
     Ping,
     Pong,
-    SetSpeed((u32, u32)),
     MoveTo((u32, u32)),
     MoveComplete((u32, u32)),
     ZeroBase,
+    DisableSteppers,
+    SetSpeed((u8, u8)),
+    SetReversed((bool, bool)),
     StartPressed,
     StopPressed,
+    StopReleased,
     UnexpectedMsg(u32),
+    HomingInProgress,
+    HomingError,
 }
 
 impl Message {
     fn discriminant(&self) -> u8 {
         match self {
+            // Handshake
             Self::Ping => 0x00,
             Self::Pong => 0x01,
-            Self::SetSpeed(_) => 0x10,
-            Self::MoveTo(_) => 0x11,
-            Self::MoveComplete(_) => 0x12,
-            Self::ZeroBase => 0x13,
+
+            // Control
+            Self::MoveTo(_) => 0x10,
+            Self::MoveComplete(_) => 0x11,
+            Self::ZeroBase => 0x12,
+            Self::DisableSteppers => 0x13,
+            Self::SetSpeed(_) => 0x14,
+            Self::SetReversed(_) => 0x15,
+
+            // Buttons
             Self::StartPressed => 0x20,
             Self::StopPressed => 0x21,
+            Self::StopReleased => 0x22,
+
+            // Status
             Self::UnexpectedMsg(_) => 0x30,
+            Self::HomingInProgress => 0x31,
+            Self::HomingError => 0x32,
         }
     }
 }
@@ -36,13 +53,18 @@ impl TryFrom<u8> for Message {
         for message in [
             Self::Ping,
             Self::Pong,
-            Self::SetSpeed((0, 0)),
             Self::MoveTo((0, 0)),
             Self::MoveComplete((0, 0)),
             Self::ZeroBase,
+            Self::DisableSteppers,
+            Self::SetSpeed((0, 0)),
+            Self::SetReversed((false, false)),
             Self::StartPressed,
             Self::StopPressed,
+            Self::StopReleased,
             Self::UnexpectedMsg(0),
+            Self::HomingInProgress,
+            Self::HomingError,
         ] {
             if message.discriminant() == discriminant {
                 return Ok(message);
@@ -71,11 +93,6 @@ impl From<Message> for PackedMessage {
                 discriminant,
                 ..Default::default()
             },
-            Message::SetSpeed((x, y)) => Self {
-                discriminant,
-                parameter_0: x,
-                parameter_1: y,
-            },
             Message::MoveTo((x, y)) => Self {
                 discriminant,
                 parameter_0: x,
@@ -90,6 +107,20 @@ impl From<Message> for PackedMessage {
                 discriminant,
                 ..Default::default()
             },
+            Message::DisableSteppers => Self {
+                discriminant,
+                ..Default::default()
+            },
+            Message::SetSpeed((x, y)) => Self {
+                discriminant,
+                parameter_0: x as u32,
+                parameter_1: y as u32,
+            },
+            Message::SetReversed((x, y)) => Self {
+                discriminant,
+                parameter_0: x as u32,
+                parameter_1: y as u32,
+            },
             Message::StartPressed => Self {
                 discriminant,
                 ..Default::default()
@@ -98,9 +129,21 @@ impl From<Message> for PackedMessage {
                 discriminant,
                 ..Default::default()
             },
+            Message::StopReleased => Self {
+                discriminant,
+                ..Default::default()
+            },
             Message::UnexpectedMsg(x) => Self {
                 discriminant,
                 parameter_0: x,
+                ..Default::default()
+            },
+            Message::HomingInProgress => Self {
+                discriminant,
+                ..Default::default()
+            },
+            Message::HomingError => Self {
+                discriminant,
                 ..Default::default()
             },
         }
@@ -113,15 +156,26 @@ impl TryFrom<PackedMessage> for Message {
         match Self::try_from(packed.discriminant)? {
             Self::Ping => Ok(Self::Ping),
             Self::Pong => Ok(Self::Pong),
-            Self::SetSpeed(_) => Ok(Self::MoveTo((packed.parameter_0, packed.parameter_1))),
             Self::MoveTo(_) => Ok(Self::MoveTo((packed.parameter_0, packed.parameter_1))),
             Self::MoveComplete(_) => {
                 Ok(Self::MoveComplete((packed.parameter_0, packed.parameter_1)))
             }
             Self::ZeroBase => Ok(Self::ZeroBase),
+            Self::DisableSteppers => Ok(Self::DisableSteppers),
+            Self::SetSpeed(_) => Ok(Self::SetSpeed((
+                packed.parameter_0.try_into().unwrap(),
+                packed.parameter_1.try_into().unwrap(),
+            ))),
+            Self::SetReversed(_) => Ok(Self::SetReversed((
+                packed.parameter_0 != 0,
+                packed.parameter_1 != 0,
+            ))),
             Self::StartPressed => Ok(Self::StartPressed),
             Self::StopPressed => Ok(Self::StopPressed),
+            Self::StopReleased => Ok(Self::StopReleased),
             Self::UnexpectedMsg(_) => Ok(Self::UnexpectedMsg(packed.parameter_0)),
+            Self::HomingInProgress => Ok(Self::HomingInProgress),
+            Self::HomingError => Ok(Self::HomingError),
         }
     }
 }
