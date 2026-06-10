@@ -230,9 +230,8 @@ pub fn spawn(state: Arc<Mutex<State>>, context: egui::Context) {
                         if let Some(ref mut camera) = camera {
                             let save_directory = state.lock().unwrap().save_directory.clone();
                             let object_name = state.lock().unwrap().object_name.clone();
-                            let photos_per_position =
-                                state.lock().unwrap().photos_per_position.clone();
-                            let shutter_delay = state.lock().unwrap().shutter_delay.clone();
+                            let photos_per_position = state.lock().unwrap().photos_per_position;
+                            let shutter_delay = state.lock().unwrap().shutter_delay;
                             if object_directory.is_none() {
                                 object_directory = Some(
                                     format!("{}/{}", save_directory.to_str().unwrap(), object_name)
@@ -317,10 +316,10 @@ pub fn spawn(state: Arc<Mutex<State>>, context: egui::Context) {
                 state.lock().unwrap().capture_clicked = false;
                 let capture_state = state.lock().unwrap().capture_state.clone();
                 let selected_camera = state.lock().unwrap().selected_camera.clone();
-                let num_photos = state.lock().unwrap().num_photos.clone();
-                let num_revolutions = state.lock().unwrap().num_revolutions.clone();
-                let spiral_pattern = state.lock().unwrap().spiral_pattern.clone();
-                let start_height = state.lock().unwrap().start_height.clone();
+                let num_photos = state.lock().unwrap().num_photos;
+                let num_revolutions = state.lock().unwrap().num_revolutions;
+                let spiral_pattern = state.lock().unwrap().spiral_pattern;
+                let start_height = state.lock().unwrap().start_height;
 
                 match capture_state {
                     CaptureState::Idle => {

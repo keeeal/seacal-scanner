@@ -68,7 +68,7 @@ impl eframe::App for App {
                         let all_cameras = self.state.lock().unwrap().all_cameras.clone();
                         let (text, label) = match &self.state.lock().unwrap().selected_camera {
                             Some(index) => {
-                                (all_cameras.get(&index).unwrap().human_name(), String::new())
+                                (all_cameras.get(index).unwrap().human_name(), String::new())
                             }
                             None => ("None".to_string(), "Select one!".to_string()),
                         };
@@ -87,10 +87,10 @@ impl eframe::App for App {
                             if ui.button("REFRESH").clicked() {
                                 self.state.lock().unwrap().refresh_clicked = true;
                             }
-                            if self.state.lock().unwrap().selected_camera.is_some() {
-                                if ui.button("TEST").clicked() {
-                                    self.state.lock().unwrap().test_clicked = true;
-                                }
+                            if self.state.lock().unwrap().selected_camera.is_some()
+                                && ui.button("TEST").clicked()
+                            {
+                                self.state.lock().unwrap().test_clicked = true;
                             }
                         });
                     });
