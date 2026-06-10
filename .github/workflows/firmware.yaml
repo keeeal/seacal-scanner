@@ -35,7 +35,7 @@ jobs:
         name: firmware
         if-no-files-found: error
         path: |
-          build/firmware/firmware.ino.*
+          build/firmware.ino.*
     - name: Run tests
       run: |
         make test-firmware
