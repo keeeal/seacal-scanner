@@ -24,11 +24,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
-    - run: echo "$PWD/bin" >> $GITHUB_PATH
+    # - run: echo "$PWD/bin" >> $GITHUB_PATH
     - name: Install dependencies
       run: make arduino-cli
-    - name: Run tests
-      run: make test-firmware
+    - name: Build firmware
+      run: make firmware
     - name: Archive firmware
       uses: actions/upload-artifact@v7
       with:
@@ -37,5 +37,4 @@ jobs:
         path: |
           build/firmware.ino.*
     - name: Run tests
-      run: |
-        make test-firmware
+      run: make test-firmware
