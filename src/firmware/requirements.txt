@@ -1,3 +1,4 @@
 AccelStepper@1.64.0
 Button@1.0.0
-StateMachine@1.0.13
+ezOutput@1.2.0
+MsgPack@0.4.2

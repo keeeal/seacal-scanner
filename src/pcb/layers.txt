@@ -1,0 +1,9 @@
+F.Cu
+B.Cu
+F.Paste
+B.Paste
+F.Silkscreen
+B.Silkscreen
+F.Mask
+B.Mask
+Edge.Cuts

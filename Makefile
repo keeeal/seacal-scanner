@@ -1,77 +1,81 @@
-cad-build-dir ?= build/parts
-firmware-build-dir ?= build/firmware
-pcb-build-dir ?= build/gerbers
+# board = arduino:renesas_uno:unor4wifi
+board = arduino:renesas_uno:minima
+# board = arduino:avr:leonardo
 
-cad-root-dir := src/cad/scanner
-firmware-dir := src/firmware
-render-config := src/cad/render.yaml
-pcb-file := src/pcb/seacal-scanner.kicad_pcb
-sch-file := src/pcb/seacal-scanner.kicad_sch
-layers-config := src/pcb/layers.csv
+all: app firmware cad pcb
 
-cad-root-files := $(shell find $(cad-root-dir) -type f -name "*.scad")
-firmware-files := $(shell \
-	find $(firmware-dir) -type f -name "*.ino" -o -name "*.cpp" -o -name "*.h" \
-)
-pcb-layers := $(shell cat $(layers-config) | tr -s '[:space:]' ',')
+app:
+	cargo build
 
-main.scad: $(cad-root-files)
-	docker compose run openscad openscad-build write-main $(cad-root-dir) main.scad
-
-render:
-	mkdir -p $(cad-build-dir)
-	docker compose run openscad openscad-build render \
-		$(render-config) \
-		$(if $(render-quality),--render-quality=$(render-quality),) \
-		--log --output-dir=$(cad-build-dir)
+run:
+	cargo run
 
 firmware:
-	mkdir -p $(firmware-build-dir)
-	docker compose run arduino arduino-cli compile \
-		--fqbn arduino:avr:leonardo \
+	arduino-cli compile \
+		--fqbn $(board) \
 		--warnings all \
-		--build-property \
-			compiler.cpp.extra_flags="-Werror -Wno-unused-parameter -Wno-reorder" \
-		--build-path $(firmware-build-dir) \
-		$(firmware-dir)
+		--build-path build \
+		src/firmware
 
-gerbers:
-	mkdir -p $(pcb-build-dir)
-	docker compose run kicad sh -c \
-		'kicad-cli pcb export gerbers \
-			--layers $(pcb-layers) \
-			--output $(pcb-build-dir) \
-			$(pcb-file) && \
+upload:
+	arduino-cli upload \
+		--port /dev/ttyACM0 \
+		--fqbn $(board) \
+		--input-dir build
+
+pcb:
+	for pcb in $$(basename -a src/pcb/*/); do \
+		kicad-cli pcb export gerbers \
+			--layers $$(cat src/pcb/layers.txt | tr -s '[:space:]' ',') \
+			--output gerbers/$$pcb \
+			src/pcb/$$pcb/$$pcb.kicad_pcb; \
 		kicad-cli pcb export drill \
-			--output $(pcb-build-dir)/ \
-			$(pcb-file) && \
-		kicad-cli pcb drc \
-			--severity-error \
-			--output $(pcb-build-dir)/drc.rpt \
-			$(pcb-file) && \
-		kicad-cli sch erc \
-			--severity-error \
-			--output $(pcb-build-dir)/erc.rpt \
-			$(sch-file)'
+			--output gerbers/$$pcb \
+			src/pcb/$$pcb/$$pcb.kicad_pcb; \
+	done
 
-format:
-	docker compose run dev sh -c \
-		'clang-format $(if $(check),--dry-run --Werror,) -i $(firmware-files) && \
-		openscad-format $(if $(check),--dry-run --Werror,) -i $(cad-root-files) && \
-		isort $(if $(check),--check,) tests && \
-		black $(if $(check),--check,) tests'
+format: format-app format-firmware
+
+format-app:
+	cargo fmt $(if $(check),--check,)
+
+format-firmware:
+	clang-format $(if $(check),--dry-run --Werror,-i) src/firmware/*.ino src/firmware/*.h
+
+test: test-app test-firmware test-cad test-pcb
+
+test-app:
+	cargo clippy -- --deny warnings && \
+	cargo test
+
+test-firmware: googletest
+	mkdir -p build && \
+	clang++ -std=gnu++17 -pthread \
+		-Igoogletest/googlemock -Igoogletest/googlemock/include \
+		-Igoogletest/googletest -Igoogletest/googletest/include \
+		$$(find ~/Arduino/libraries -maxdepth 1 -printf '-I%p ') \
+		-Isrc/firmware \
+		googletest/googlemock/src/gmock-all.cc \
+		googletest/googletest/src/gtest-all.cc \
+		tests/firmware/__main__.cpp \
+		-o build/tests && \
+	./build/tests
 
 test-cad:
-	docker compose run dev pytest tests/cad
-
-test-firmware:
-	docker compose run dev pytest tests/firmware
+	pytest tests/cad
 
 test-pcb:
-	docker compose run dev pytest tests/pcb
+	pytest tests/pcb
 
-test:
-	docker compose run dev pytest tests
+install: arduino-cli
+
+arduino-cli:
+	curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+	arduino-cli core install arduino:renesas_uno
+	xargs -a src/firmware/requirements.txt arduino-cli lib install
+
+googletest:
+	git clone --branch v1.17.0  https://github.com/google/googletest
 
 clean:
 	git clean -Xdf

@@ -1,71 +1,170 @@
-#include <AccelStepper.h>
-#include <Button.h>
-#include <StateMachine.h>
-
-#include "camera.h"
-#include "constants.h"
+#include "hardware.h"
 #include "homing.h"
-#include "idle.h"
-#include "output.h"
-#include "scanning.h"
-#include "stepper_settings.h"
-#include "stopped.h"
+#include "message.h"
+#include "settings.h"
+#include "stepper.h"
 
-StepperSettings STEPPER_SETTINGS(ENABLE_PIN, MS1_PIN, MS2_PIN, MS3_PIN,
-                                 RESET_PIN);
-AccelStepper BASE_STEPPER(AccelStepper::DRIVER, BASE_STEP_PIN, BASE_DIR_PIN);
-AccelStepper ARM_STEPPER(AccelStepper::DRIVER, ARM_STEP_PIN, ARM_DIR_PIN);
+std::vector<uint8_t> SERIAL_BUFFER;
+std::deque<message::PackedMessage> MESSAGE_QUEUE;
 
-Button START_BUTTON(START_BUTTON_PIN);
-Button STOP_BUTTON(STOP_BUTTON_PIN);
-Button TOP_LIMIT_SWITCH(TOP_LIMIT_PIN);
-Button BOTTOM_LIMIT_SWITCH(BOTTOM_LIMIT_PIN);
+uint32_t BASE_TARGET = 0;
+uint32_t ARM_TARGET = 0;
+bool BASE_REVERSED = false;
+bool ARM_REVERSED = false;
+bool MOVE_COMPLETE = true;
+bool STOPPED = false;
 
-Camera CAMERA(CAMERA_PIN);
-Output FAN(FAN_PIN);
-Output GREEN_LED(GREEN_LED_PIN);
-Output RED_LED(RED_LED_PIN);
+// Call as frequently as possible
+bool read_serial()
+{
+    std::optional<message::PackedMessage> packed =
+        message::serial_receive(SERIAL_BUFFER);
+    if (!packed.has_value())
+        return false;
 
-StateMachine STATE_MACHINE = StateMachine();
+    // Respond to ping immediately rather than queueing it
+    if (packed->discriminant == message::MessageType::Ping)
+    {
+        // This pulse is a useful visual indicator but the delay also seems to
+        // help when connecting to some (older windows) host devices
+        hardware::green_led.high();
+        delay(100);
+        hardware::green_led.low();
+        message::send(message::MessageType::Pong);
+    }
+    else
+    {
+        MESSAGE_QUEUE.push_back(packed.value());
+        return true;
+    }
+    return false;
+}
 
 void setup()
 {
-    STEPPER_SETTINGS.setup();
-    STEPPER_SETTINGS.setStepMode(StepperSettings::StepMode::THIRTY_SECOND_STEP);
+    // Setup serial
+    SERIAL_BUFFER.reserve(SERIAL_BUFFER_SIZE);
+    Serial.begin(SERIAL_BAUD);
 
-    ARM_STEPPER.setMaxSpeed(MAX_ARM_SPEED);
-    ARM_STEPPER.setAcceleration(MAX_ARM_ACCELERATION);
-    BASE_STEPPER.setMaxSpeed(MAX_BASE_SPEED);
-    BASE_STEPPER.setAcceleration(MAX_BASE_ACCELERATION);
-
-    START_BUTTON.begin();
-    STOP_BUTTON.begin();
-    TOP_LIMIT_SWITCH.begin();
-    BOTTOM_LIMIT_SWITCH.begin();
-
-    CAMERA.setup();
-    FAN.setup();
-    GREEN_LED.setup();
-    RED_LED.setup();
-
-    Homing::setup();
-    Scanning::setup();
-
-    State *idle = STATE_MACHINE.addState(&Idle::run);
-    State *homing = STATE_MACHINE.addState(&Homing::run);
-    State *scanning = STATE_MACHINE.addState(&Scanning::run);
-    State *stopped = STATE_MACHINE.addState(&Stopped::run);
-
-    idle->addTransition(&Stopped::fromAny, stopped);
-    idle->addTransition(&Idle::toHoming, homing);
-    homing->addTransition(&Stopped::fromAny, stopped);
-    homing->addTransition(&Homing::toScanning, scanning);
-    scanning->addTransition(&Stopped::fromAny, stopped);
-    scanning->addTransition(&Scanning::toIdle, idle);
-    stopped->addTransition(&Stopped::toIdle, idle);
+    // Setup hardware
+    hardware::setup();
 }
 
 void loop()
 {
-    STATE_MACHINE.run();
+    read_serial();
+
+    // Handle button behaviour
+    if (hardware::stop_button.read() == HIGH)
+    {
+        hardware::steppers.reset();
+        hardware::red_led.high();
+        message::send(message::MessageType::StopPressed);
+        STOPPED = true;
+        delay(500);
+        return;
+    }
+    else if (STOPPED)
+    {
+        hardware::steppers.disable();
+        hardware::fan.low();
+        hardware::red_led.low();
+        homing::reset();
+        message::send(message::MessageType::StopReleased);
+        MESSAGE_QUEUE.clear();
+        BASE_TARGET = 0;
+        ARM_TARGET = 0;
+        MOVE_COMPLETE = true;
+        STOPPED = false;
+    }
+    if (hardware::start_button.pressed())
+        message::send(message::MessageType::StartPressed);
+
+    // If currently homing, only do that
+    if (homing::run(ARM_REVERSED))
+        return;
+    int32_t num_arm_steps = homing::num_arm_steps();
+    if (homing::is_complete() && num_arm_steps == 0)
+    {
+        message::send(message::MessageType::HomingError);
+        return;
+    }
+
+    // There are 1024 positions per base revolution and 1024 total for the arm
+    int32_t base_position =
+        (BASE_REVERSED ? -1 : 1) * BASE_TARGET * NUM_BASE_STEPS / 1024;
+    int32_t arm_position =
+        (ARM_REVERSED ? -1 : 1) * ARM_TARGET * num_arm_steps / 1024;
+    arm_position = min(max(0, arm_position), num_arm_steps);
+    hardware::base.moveTo(base_position);
+    hardware::arm.moveTo(arm_position);
+
+    // Run steppers towards target location
+    bool arm_moving = hardware::arm.run();
+    bool base_moving = hardware::base.run();
+    if (!arm_moving && !base_moving && !MOVE_COMPLETE)
+    {
+        MOVE_COMPLETE = true;
+        hardware::steppers.reset();
+        message::send(message::MessageType::MoveComplete, BASE_TARGET,
+                      ARM_TARGET);
+    }
+
+    if (MESSAGE_QUEUE.empty())
+        return;
+
+    message::PackedMessage packed = MESSAGE_QUEUE.front();
+    MESSAGE_QUEUE.pop_front();
+
+    switch (packed.discriminant)
+    {
+
+    // Speed parameters are signed integer percentages of the initial speed
+    case message::MessageType::SetSpeed: {
+        int32_t base_speed_percent =
+            min(static_cast<int32_t>(packed.parameter_0), 200);
+        int32_t arm_speed_percent =
+            min(static_cast<int32_t>(packed.parameter_1), 200);
+        int32_t base_speed = base_speed_percent * INIT_BASE_SPEED / 100;
+        int32_t arm_speed = arm_speed_percent * INIT_ARM_SPEED / 100;
+
+        hardware::base.setMaxSpeed(base_speed);
+        hardware::base.setAcceleration(base_speed);
+        hardware::arm.setMaxSpeed(arm_speed);
+        hardware::arm.setAcceleration(arm_speed);
+
+        break;
+    }
+
+    // Target parameters are integers representing a unique position
+    case message::MessageType::MoveTo:
+        MOVE_COMPLETE = false;
+        BASE_TARGET = (BASE_REVERSED ? -1 : 1) * packed.parameter_0;
+        ARM_TARGET = (ARM_REVERSED ? -1 : 1) * packed.parameter_1;
+
+        hardware::fan.high();
+        hardware::steppers.enable();
+        hardware::steppers.cancelReset();
+
+        if (!homing::is_started())
+        {
+            message::send(message::MessageType::HomingInProgress);
+            homing::start();
+        }
+
+        break;
+
+    case message::MessageType::ZeroBase:
+        hardware::base.setCurrentPosition(0);
+        break;
+
+    case message::MessageType::DisableSteppers:
+        hardware::steppers.disable();
+        hardware::fan.low();
+        break;
+
+    default:
+        message::send(message::MessageType::UnexpectedMsg, packed.discriminant);
+        break;
+    }
 }

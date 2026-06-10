@@ -1,0 +1,32 @@
+name: app
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    paths:
+    - .github/workflows/app.yaml
+    - src/app/**/*
+    - tests/app/**/*
+    - Makefile
+
+jobs:
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - name: Check formatting
+      run: make format-app check=true
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y libudev-dev
+    - name: Run tests
+      run: make test-app

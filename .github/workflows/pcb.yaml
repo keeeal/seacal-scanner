@@ -1,43 +1,37 @@
-name: PCB
+name: pcb
 
 on:
   push:
     branches:
-      - main
+    - main
   pull_request:
     paths:
-      - .github/workflows/pcb.yaml
-      - docker-compose.yaml
-      - Makefile
-      - src/pcb/**/*
+    - .github/workflows/pcb.yaml
+    - src/pcb/**/*
+    - tests/pcb/**/*
+    - Makefile
 
 jobs:
-  plot-gerbers:
-    name: Plot gerbers
+
+  test:
     runs-on: ubuntu-latest
     steps:
-
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        submodules: recursive
-
-    - name: Build docker images
+    - uses: actions/checkout@v6
+    - name: Install dependencies
       run: |
-        docker compose build kicad dev
-
-    - name: Plot gerbers
-      run: |
-        make gerbers
-
-    - name: Archive parts
-      uses: actions/upload-artifact@v4
+        sudo add-apt-repository ppa:kicad/kicad-10.0-releases
+        sudo apt update
+        sudo apt install kicad
+    - name: Plot PCBs
+      run: make pcb
+    - uses: actions/upload-artifact@v7
       with:
         name: gerbers
         if-no-files-found: error
-        path: |
-          build/gerbers/*
-
-    - name: Run tests
+        path: gerbers/*/*
+    - name: Install dependencies
       run: |
-        make test-pcb
+        pip install --upgrade pip
+        pip install pytest
+    - name: Run tests
+      run: make test-pcb

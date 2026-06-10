@@ -1,43 +1,39 @@
-name: Firmware
+name: firmware
 
 on:
   push:
     branches:
-      - main
+    - main
   pull_request:
     paths:
-      - .github/workflows/firmware.yaml
-      - docker-compose.yaml
-      - Makefile
-      - src/firmware/**/*
+    - .github/workflows/firmware.yaml
+    - src/firmware/**/*
+    - tests/firmware/**/*
+    - Makefile
 
 jobs:
-  build-firmware:
-    name: Build firmware
+
+  format:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v6
+    - name: Check formatting
+      run: make format-firmware check=true
 
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        submodules: recursive
-
-    - name: Build docker images
-      run: |
-        docker compose build arduino dev
-
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - run: echo "$PWD/bin" >> $GITHUB_PATH
+    - name: Install dependencies
+      run: make arduino-cli
     - name: Build firmware
-      run: |
-        make firmware
-
+      run: make firmware
     - name: Archive firmware
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: firmware
         if-no-files-found: error
-        path: |
-          build/firmware/firmware.ino.*
-
+        path: build/firmware.ino.*
     - name: Run tests
-      run: |
-        make test-firmware
+      run: make test-firmware
