@@ -89,7 +89,8 @@ size_t send(MessageType message_type, uint32_t parameter_0)
 size_t send(MessageType message_type, uint32_t parameter_0,
             uint32_t parameter_1)
 {
-    PackedMessage packed = {static_cast<uint8_t>(message_type), parameter_0, parameter_1};
+    PackedMessage packed = {static_cast<uint8_t>(message_type), parameter_0,
+                            parameter_1};
     return send(packed);
 }
 

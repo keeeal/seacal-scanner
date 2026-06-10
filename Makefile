@@ -49,6 +49,7 @@ test-app:
 	cargo test
 
 test-firmware: googletest
+	mkdir -p build && \
 	clang++ -std=gnu++17 -pthread \
 		-Igoogletest/googlemock -Igoogletest/googlemock/include \
 		-Igoogletest/googletest -Igoogletest/googletest/include \
