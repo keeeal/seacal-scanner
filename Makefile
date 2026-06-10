@@ -49,13 +49,13 @@ test-app:
 	cargo test
 
 test-firmware:
-	docker compose run dev pytest tests/firmware
+	pytest tests/firmware
 
 test-cad:
-	docker compose run dev pytest tests/cad
+	pytest tests/cad
 
 test-pcb:
-	docker compose run dev pytest tests/pcb
+	pytest tests/pcb
 
 clean:
 	git clean -Xdf
