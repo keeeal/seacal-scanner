@@ -57,5 +57,12 @@ test-cad:
 test-pcb:
 	pytest tests/pcb
 
+dependencies: arduino-cli
+
+arduino-cli:
+	curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+	arduino-cli core install arduino:renesas_uno
+	xargs -a src/firmware/requirements.txt arduino-cli lib install
+
 clean:
 	git clean -Xdf
