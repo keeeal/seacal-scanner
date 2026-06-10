@@ -24,10 +24,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
+    - run: echo "$PWD/bin" >> $GITHUB_PATH
     - name: Install dependencies
-      run: |
-        echo "$PWD/bin" >> $GITHUB_PATH
-        make arduino-cli
+      run: make arduino-cli
     - name: Build firmware
       run: make firmware
     - name: Archive firmware
