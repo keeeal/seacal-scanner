@@ -4,6 +4,9 @@ gerbers/
 parts/
 target/
 
+# External dependencies
+googletest/
+
 # Prerequisites
 *.d
 

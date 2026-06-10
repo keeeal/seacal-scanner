@@ -48,8 +48,17 @@ test-app:
 	cargo clippy -- --deny warnings && \
 	cargo test
 
-test-firmware:
-	pytest tests/firmware
+test-firmware: googletest
+	clang++ -std=gnu++17 -pthread \
+		-Igoogletest/googlemock -Igoogletest/googlemock/include \
+		-Igoogletest/googletest -Igoogletest/googletest/include \
+		$$(find ~/Arduino/libraries -maxdepth 1 -printf '-I%p ') \
+		-Isrc/firmware \
+		googletest/googlemock/src/gmock-all.cc \
+		googletest/googletest/src/gtest-all.cc \
+		tests/firmware/__main__.cpp \
+		-o build/tests && \
+	./build/tests
 
 test-cad:
 	pytest tests/cad
@@ -57,12 +66,15 @@ test-cad:
 test-pcb:
 	pytest tests/pcb
 
-dependencies: arduino-cli
+install: arduino-cli
 
 arduino-cli:
 	curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
 	arduino-cli core install arduino:renesas_uno
 	xargs -a src/firmware/requirements.txt arduino-cli lib install
+
+googletest:
+	git clone --branch v1.17.0  https://github.com/google/googletest
 
 clean:
 	git clean -Xdf

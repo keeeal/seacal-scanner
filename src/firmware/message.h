@@ -76,20 +76,20 @@ size_t send(const PackedMessage &packed)
 
 size_t send(MessageType message_type)
 {
-    PackedMessage packed = {message_type, 0, 0};
+    PackedMessage packed = {static_cast<uint8_t>(message_type), 0, 0};
     return send(packed);
 }
 
 size_t send(MessageType message_type, uint32_t parameter_0)
 {
-    PackedMessage packed = {message_type, parameter_0, 0};
+    PackedMessage packed = {static_cast<uint8_t>(message_type), parameter_0, 0};
     return send(packed);
 }
 
 size_t send(MessageType message_type, uint32_t parameter_0,
             uint32_t parameter_1)
 {
-    PackedMessage packed = {message_type, parameter_0, parameter_1};
+    PackedMessage packed = {static_cast<uint8_t>(message_type), parameter_0, parameter_1};
     return send(packed);
 }
 
