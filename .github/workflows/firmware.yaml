@@ -24,9 +24,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
-    # - run: echo "$PWD/bin" >> $GITHUB_PATH
     - name: Install dependencies
-      run: make arduino-cli
+      run: |
+        echo "$PWD/bin" >> $GITHUB_PATH
+        make arduino-cli
     - name: Build firmware
       run: make firmware
     - name: Archive firmware
@@ -34,7 +35,6 @@ jobs:
       with:
         name: firmware
         if-no-files-found: error
-        path: |
-          build/firmware.ino.*
+        path: build/firmware.ino.*
     - name: Run tests
       run: make test-firmware
