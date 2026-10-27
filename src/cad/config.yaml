@@ -1,0 +1,60 @@
+main:
+  class: cad.main.MainAssembly
+frame:
+  class: cad.frame.FrameAssembly
+corner-cover:
+  class: cad.frame.CornerCover
+  export: true
+corner-cover-mirrored:
+  class: cad.frame.CornerCover
+  config:
+    mirrored: true
+  export: true
+apex-cover:
+  class: cad.frame.ApexCover
+  export: 2
+arm-cover:
+  class: cad.frame.ArmCover
+  export: true
+arm-cover-with-pulley:
+  class: cad.frame.ArmCover
+  config:
+    num_teeth: 240
+  export: true
+axle:
+  class: cad.frame.AxlePin
+  export: 2
+end-cover:
+  class: cad.frame.EndCover
+  export: 2
+motor-plate:
+  class: cad.frame.MotorPlate
+  export: true
+limit-switch-plate:
+  class: cad.frame.LimitSwitchPlate
+  export: true
+foot-cover:
+  class: cad.frame.FootCover
+  config:
+    with_foot: true
+  export: 2
+foot-cover-mirrored:
+  class: cad.frame.FootCover
+  config:
+    with_foot: true
+    mirrored: true
+  export: 2
+end-stop:
+  class: cad.frame.EndStop
+pulley:
+  class: cad.frame.Pulley
+  config:
+    num_teeth: 20
+belt:
+  class: cad.frame.Belt
+foot:
+  class: cad.frame.FootAssembly
+corner:
+  class: cad.frame.CornerAssembly
+  config:
+    mirrored: false

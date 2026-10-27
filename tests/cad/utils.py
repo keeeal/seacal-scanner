@@ -6,9 +6,7 @@ from typing import Any
 def read_log_file(log_file: Path) -> dict[str, Any]:
     with open(log_file) as f:
         data = dict(
-            map(str.strip, line.split(":", maxsplit=1))
-            for line in f.readlines()
-            if ":" in line
+            map(str.strip, line.split(":", maxsplit=1)) for line in f if ":" in line
         )
 
     for key, value in data.items():
