@@ -7,18 +7,7 @@ from build123d.topology.shape_core import Shape
 
 from cad.hardware import HexScrew, SlidingTNut
 from cad.utils.color import unset_color
-from cad.utils.env import getenv_float, getenv_int
 from cad.utils.hull import Hull
-
-FRAME_SIZE_X = getenv_float("FRAME_SIZE_X", default=200.0)
-FRAME_SIZE_Y = getenv_float("FRAME_SIZE_Y", default=150.0)
-FRAME_HEIGHT = FRAME_SIZE_Y * sqrt(3) / 2
-ARM_LENGTH = getenv_float("ARM_LENGTH", default=1.5 * FRAME_SIZE_Y)
-ARM_ANGLE = getenv_float("ARM_ANGLE", default=0.0)
-ARM_NUM_TEETH = getenv_int("ARM_NUM_TEETH", default=80)
-MOTOR_NUM_TEETH = getenv_int("ARM_NUM_TEETH", default=20)
-
-print(f"{ARM_LENGTH = }")
 
 SCREW = HexScrew()
 NUT = SlidingTNut()
@@ -824,6 +813,9 @@ class ArmAssembly(Compound):
     def __init__(
         self,
         *,
+        frame_size_x: float = 200.0,
+        arm_length: float = 225.0,
+        arm_num_teeth: int = 80,
         label: str = "",
         color: Color | None = None,
         parent: Compound | None = None,
@@ -831,27 +823,27 @@ class ArmAssembly(Compound):
         children: list[Shape] = []
 
         rails = [
-            VSlotLinearRail("20x20", ARM_LENGTH, align=Align.CENTER).move(
+            VSlotLinearRail("20x20", arm_length, align=Align.CENTER).move(
                 Location(
-                    (-FRAME_SIZE_X / 2 - 20, 0, 0),
+                    (-frame_size_x / 2 - 20, 0, 0),
                     (90, 0, 0),
                 ),
             ),
-            VSlotLinearRail("20x20", ARM_LENGTH, align=Align.CENTER).move(
+            VSlotLinearRail("20x20", arm_length, align=Align.CENTER).move(
                 Location(
                     (
-                        +FRAME_SIZE_X / 2 + 20 + 8.5,
+                        +frame_size_x / 2 + 20 + 8.5,
                         0,
                         0,
                     ),
                     (90, 0, 0),
                 ),
             ),
-            VSlotLinearRail("20x20", FRAME_SIZE_X, align=Align.CENTER).move(
+            VSlotLinearRail("20x20", frame_size_x, align=Align.CENTER).move(
                 Location(
                     (
                         4.25,
-                        ARM_LENGTH / 2 - 10,
+                        arm_length / 2 - 10,
                         0,
                     ),
                     (0, 90, 0),
@@ -866,8 +858,8 @@ class ArmAssembly(Compound):
         corner_a = CornerAssembly().move(
             Location(
                 (
-                    -FRAME_SIZE_X / 2 - 20,
-                    ARM_LENGTH / 2 - 10,
+                    -frame_size_x / 2 - 20,
+                    arm_length / 2 - 10,
                     0,
                 ),
                 (0, 0, -90),
@@ -878,8 +870,8 @@ class ArmAssembly(Compound):
         corner_b = CornerAssembly(mirrored=True).move(
             Location(
                 (
-                    +FRAME_SIZE_X / 2 + 28.5,
-                    ARM_LENGTH / 2 - 10,
+                    +frame_size_x / 2 + 28.5,
+                    arm_length / 2 - 10,
                     0,
                 ),
                 (0, 0, 90),
@@ -892,12 +884,12 @@ class ArmAssembly(Compound):
         end_covers = [
             copy(end_cover).move(
                 Location(
-                    (+FRAME_SIZE_X / 2 + 28.5, -ARM_LENGTH / 2, 0),
+                    (+frame_size_x / 2 + 28.5, -arm_length / 2, 0),
                     (90, 0, 0),
                 ),
             ),
             copy(end_cover).move(
-                Location((-FRAME_SIZE_X / 2 - 20, -ARM_LENGTH / 2, 0), (90, 0, 0)),
+                Location((-frame_size_x / 2 - 20, -arm_length / 2, 0), (90, 0, 0)),
             ),
         ]
         for index, part in enumerate(end_cover):
@@ -907,13 +899,13 @@ class ArmAssembly(Compound):
         screws = [
             copy(SCREW).move(
                 Location(
-                    (+FRAME_SIZE_X / 2 + 28.5, -ARM_LENGTH / 2 - 3, 0),
+                    (+frame_size_x / 2 + 28.5, -arm_length / 2 - 3, 0),
                     (-90, 0, 0),
                 ),
             ),
             copy(SCREW).move(
                 Location(
-                    (-FRAME_SIZE_X / 2 - 20, -ARM_LENGTH / 2 - 3, 0),
+                    (-frame_size_x / 2 - 20, -arm_length / 2 - 3, 0),
                     (-90, 0, 0),
                 ),
             ),
@@ -924,15 +916,15 @@ class ArmAssembly(Compound):
 
         apex_a = ApexAssembly(with_apex=False).move(
             Location(
-                (-FRAME_SIZE_X / 2 + 10, 0, 0),
+                (-frame_size_x / 2 + 10, 0, 0),
                 (0, 0, 180),
             ),
         )
         apex_a.label = "apex-a"
         children.append(apex_a)
-        apex_b = ApexAssembly(with_apex=False, num_teeth=ARM_NUM_TEETH).move(
+        apex_b = ApexAssembly(with_apex=False, num_teeth=arm_num_teeth).move(
             Location(
-                (+FRAME_SIZE_X / 2 - 10, 0, 0),
+                (+frame_size_x / 2 - 10, 0, 0),
             ),
         )
         apex_b.label = "apex-b"
@@ -1042,7 +1034,6 @@ class LimitSwitch(BasePartObject):
         align: Align | tuple[Align, Align, Align] | None = None,
         mode: Mode = Mode.ADD,
     ) -> None:
-        print(f"{pressed = }")
         pressed = min(max(0, pressed), 1)
 
         with BuildPart() as lever:
@@ -1123,6 +1114,7 @@ class LimitSwitchAssembly(Compound):
     def __init__(
         self,
         *,
+        arm_angle: float = 0.0,
         label: str = "",
         color: Color | None = None,
         parent: Compound | None = None,
@@ -1130,7 +1122,7 @@ class LimitSwitchAssembly(Compound):
         children: list[Shape] = []
 
         contact = 85.5
-        switch = LimitSwitch(pressed=(ARM_ANGLE - contact) / (90 - contact)).move(
+        switch = LimitSwitch(pressed=(arm_angle - contact) / (90 - contact)).move(
             Location((-13.25, 0, 10), (90, 0, -90)),
         )
         switch.label = "limit-switch"
@@ -1198,54 +1190,64 @@ class FrameAssembly(Compound):
     def __init__(
         self,
         *,
+        frame_size_x: float = 200.0,
+        frame_size_y: float = 150.0,
+        arm_length: float | None = None,
+        arm_angle: float = 0.0,
+        arm_num_teeth: int = 80,
+        motor_num_teeth: int = 20,
         label: str = "",
         color: Color | None = None,
         parent: Compound | None = None,
     ):
+        frame_height = frame_size_y * sqrt(3) / 2
+        if arm_length is None:
+            arm_length = 1.5 * frame_size_y
+
         children: list[Shape] = []
 
         rails = [
-            VSlotLinearRail("20x20", FRAME_SIZE_X, align=Align.CENTER).move(
-                Location((0, -FRAME_SIZE_Y / 2 - 10, 0), (0, 90, 0)),
+            VSlotLinearRail("20x20", frame_size_x, align=Align.CENTER).move(
+                Location((0, -frame_size_y / 2 - 10, 0), (0, 90, 0)),
             ),
-            VSlotLinearRail("20x20", FRAME_SIZE_X, align=Align.CENTER).move(
-                Location((0, +FRAME_SIZE_Y / 2 + 10, 0), (0, 90, 0)),
+            VSlotLinearRail("20x20", frame_size_x, align=Align.CENTER).move(
+                Location((0, +frame_size_y / 2 + 10, 0), (0, 90, 0)),
             ),
-            VSlotLinearRail("20x20", FRAME_SIZE_Y, align=Align.CENTER).move(
-                Location((-FRAME_SIZE_X / 2 + 10, 0, 0), (90, 0, 0)),
+            VSlotLinearRail("20x20", frame_size_y, align=Align.CENTER).move(
+                Location((-frame_size_x / 2 + 10, 0, 0), (90, 0, 0)),
             ),
-            VSlotLinearRail("20x20", FRAME_SIZE_Y, align=Align.CENTER).move(
-                Location((+FRAME_SIZE_X / 2 - 10, 0, 0), (90, 0, 0)),
+            VSlotLinearRail("20x20", frame_size_y, align=Align.CENTER).move(
+                Location((+frame_size_x / 2 - 10, 0, 0), (90, 0, 0)),
             ),
-            VSlotLinearRail("20x20", FRAME_SIZE_Y)
+            VSlotLinearRail("20x20", frame_size_y)
             .translate((0, 11.5, -0.5))
             .move(
                 Location(
-                    (+FRAME_SIZE_X / 2 - 10, +FRAME_SIZE_Y / 2 - 1.5, 11.5),
+                    (+frame_size_x / 2 - 10, +frame_size_y / 2 - 1.5, 11.5),
                     (30, 0, 0),
                 ),
             ),
-            VSlotLinearRail("20x20", FRAME_SIZE_Y)
+            VSlotLinearRail("20x20", frame_size_y)
             .translate((0, 11.5, -0.5))
             .move(
                 Location(
-                    (-FRAME_SIZE_X / 2 + 10, +FRAME_SIZE_Y / 2 - 1.5, 11.5),
+                    (-frame_size_x / 2 + 10, +frame_size_y / 2 - 1.5, 11.5),
                     (30, 0, 0),
                 ),
             ),
-            VSlotLinearRail("20x20", FRAME_SIZE_Y)
+            VSlotLinearRail("20x20", frame_size_y)
             .translate((0, -11.5, -0.5))
             .move(
                 Location(
-                    (+FRAME_SIZE_X / 2 - 10, -FRAME_SIZE_Y / 2 + 1.5, 11.5),
+                    (+frame_size_x / 2 - 10, -frame_size_y / 2 + 1.5, 11.5),
                     (-30, 0, 0),
                 ),
             ),
-            VSlotLinearRail("20x20", FRAME_SIZE_Y)
+            VSlotLinearRail("20x20", frame_size_y)
             .translate((0, -11.5, -0.5))
             .move(
                 Location(
-                    (-FRAME_SIZE_X / 2 + 10, -FRAME_SIZE_Y / 2 + 1.5, 11.5),
+                    (-frame_size_x / 2 + 10, -frame_size_y / 2 + 1.5, 11.5),
                     (-30, 0, 0),
                 ),
             ),
@@ -1260,25 +1262,25 @@ class FrameAssembly(Compound):
         feet = [
             copy(foot_b).move(
                 Location(
-                    (-FRAME_SIZE_X / 2 + 10, -FRAME_SIZE_Y / 2 - 10, 0),
+                    (-frame_size_x / 2 + 10, -frame_size_y / 2 - 10, 0),
                     (0, 0, -90),
                 ),
             ),
             copy(foot_a).move(
                 Location(
-                    (+FRAME_SIZE_X / 2 - 10, -FRAME_SIZE_Y / 2 - 10, 0),
+                    (+frame_size_x / 2 - 10, -frame_size_y / 2 - 10, 0),
                     (0, 0, 90),
                 ),
             ),
             copy(foot_a).move(
                 Location(
-                    (-FRAME_SIZE_X / 2 + 10, +FRAME_SIZE_Y / 2 + 10, 0),
+                    (-frame_size_x / 2 + 10, +frame_size_y / 2 + 10, 0),
                     (0, 0, -90),
                 ),
             ),
             copy(foot_b).move(
                 Location(
-                    (+FRAME_SIZE_X / 2 - 10, +FRAME_SIZE_Y / 2 + 10, 0),
+                    (+frame_size_x / 2 - 10, +frame_size_y / 2 + 10, 0),
                     (0, 0, 90),
                 ),
             ),
@@ -1289,7 +1291,7 @@ class FrameAssembly(Compound):
 
         apex_a = ApexAssembly(with_arm=False).move(
             Location(
-                (-FRAME_SIZE_X / 2 + 10, 0, FRAME_HEIGHT + 25.5),
+                (-frame_size_x / 2 + 10, 0, frame_height + 25.5),
                 (0, 0, 180),
             ),
         )
@@ -1297,43 +1299,46 @@ class FrameAssembly(Compound):
         children.append(apex_a)
         apex_b = ApexAssembly(with_arm=False).move(
             Location(
-                (+FRAME_SIZE_X / 2 - 10, 0, FRAME_HEIGHT + 25.5),
+                (+frame_size_x / 2 - 10, 0, frame_height + 25.5),
             ),
         )
         apex_b.label = "apex-b"
         children.append(apex_b)
 
-        print(f"{ARM_ANGLE = }")
-        arm = ArmAssembly().move(
-            Location((0, 0, FRAME_HEIGHT + 25.5), (ARM_ANGLE, 0, 0)),
+        arm = ArmAssembly(
+            frame_size_x=frame_size_x,
+            arm_length=arm_length,
+            arm_num_teeth=arm_num_teeth,
+        ).move(
+            Location((0, 0, frame_height + 25.5), (arm_angle, 0, 0)),
         )
         arm.label = "arm"
         children.append(arm)
 
-        motor_rotation = ARM_ANGLE * ARM_NUM_TEETH / MOTOR_NUM_TEETH
-        motor = MotorAssembly(MOTOR_NUM_TEETH, motor_rotation).move(
-            Location((FRAME_SIZE_X / 2, 0, 31.25), (0, 90, 0)),
+        motor_rotation = arm_angle * arm_num_teeth / motor_num_teeth
+        motor = MotorAssembly(motor_num_teeth, motor_rotation).move(
+            Location((frame_size_x / 2, 0, 31.25), (0, 90, 0)),
         )
         motor.label = "motor"
         children.append(motor)
 
-        belt_offset = ARM_ANGLE * arm.pulley_radius * pi / 180
+        belt_offset = arm_angle * arm.pulley_radius * pi / 180
         belt = (
             Belt(
                 pulley_a_location=(-31.25, 0),
                 pulley_a_radius=motor.pulley_radius,
-                pulley_b_location=(-FRAME_HEIGHT - 25.5, 0),
+                pulley_b_location=(-frame_height - 25.5, 0),
                 pulley_b_radius=arm.pulley_radius,
                 offset=belt_offset,
             )
             .rotate(Axis.Y, 90)
-            .translate((FRAME_SIZE_X / 2 + 8.5, 0, 0))
+            .translate((frame_size_x / 2 + 8.5, 0, 0))
         )
         belt.label = "belt"
         children.append(belt)
 
-        switch = LimitSwitchAssembly().move(
-            Location((-FRAME_SIZE_X / 2, 22.5, FRAME_HEIGHT - 49.5)),
+        switch = LimitSwitchAssembly(arm_angle=arm_angle).move(
+            Location((-frame_size_x / 2, 22.5, frame_height - 49.5)),
         )
         switch.label = "limit-switch"
         children.append(switch)
@@ -1341,18 +1346,18 @@ class FrameAssembly(Compound):
         bumper = BumperAssembly()
         bumpers = [
             copy(bumper)
-            .translate((0, -0.25 * FRAME_SIZE_Y - 20, 21.5))
+            .translate((0, -0.25 * frame_size_y - 20, 21.5))
             .move(
                 Location(
-                    (-FRAME_SIZE_X / 2 + 10, +FRAME_SIZE_Y / 2 - 1.5, 11.5),
+                    (-frame_size_x / 2 + 10, +frame_size_y / 2 - 1.5, 11.5),
                     (-60, 0, 0),
                 ),
             ),
             copy(bumper)
-            .translate((0, -0.25 * FRAME_SIZE_Y - 20, 21.5))
+            .translate((0, -0.25 * frame_size_y - 20, 21.5))
             .move(
                 Location(
-                    (+FRAME_SIZE_X / 2 - 10, +FRAME_SIZE_Y / 2 - 1.5, 11.5),
+                    (+frame_size_x / 2 - 10, +frame_size_y / 2 - 1.5, 11.5),
                     (-60, 0, 0),
                 ),
             ),
