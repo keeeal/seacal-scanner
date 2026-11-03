@@ -11,9 +11,9 @@ enum class State
     UP_COARSE,
     UP_RETRACT,
     UP_FINE,
-    DOWN_COARSE,
-    DOWN_RETRACT,
-    DOWN_FINE,
+    // DOWN_COARSE,
+    // DOWN_RETRACT,
+    // DOWN_FINE,
     COMPLETE,
 };
 
@@ -50,6 +50,7 @@ void reset()
 
 void start()
 {
+    hardware::arm.setCurrentPosition(0);
     state = State::UP_COARSE;
 }
 
@@ -81,39 +82,39 @@ bool run(bool reversed)
         if (hardware::top_limit_switch.pressed())
         {
             _num_arm_steps = hardware::arm.currentPosition();
-            state = State::DOWN_COARSE;
-        }
-        else
-            hardware::arm.runSpeed();
-        break;
-
-    case State::DOWN_COARSE:
-        hardware::arm.setSpeed(-direction * HOMING_SPEED_COARSE);
-        if (hardware::bottom_limit_switch.pressed())
-            state = State::DOWN_RETRACT;
-        else
-            hardware::arm.runSpeed();
-        break;
-
-    case State::DOWN_RETRACT:
-        hardware::arm.setSpeed(direction * HOMING_SPEED_FINE);
-        if (hardware::bottom_limit_switch.released())
-            state = State::DOWN_FINE;
-        else
-            hardware::arm.runSpeed();
-        break;
-
-    case State::DOWN_FINE:
-        hardware::arm.setSpeed(-direction * HOMING_SPEED_FINE);
-        if (hardware::bottom_limit_switch.pressed())
-        {
-            _num_arm_steps -= hardware::arm.currentPosition();
-            hardware::arm.setCurrentPosition(0);
             state = State::COMPLETE;
         }
         else
             hardware::arm.runSpeed();
         break;
+
+    // case State::DOWN_COARSE:
+    //     hardware::arm.setSpeed(-direction * HOMING_SPEED_COARSE);
+    //     if (hardware::bottom_limit_switch.pressed())
+    //         state = State::DOWN_RETRACT;
+    //     else
+    //         hardware::arm.runSpeed();
+    //     break;
+
+    // case State::DOWN_RETRACT:
+    //     hardware::arm.setSpeed(direction * HOMING_SPEED_FINE);
+    //     if (hardware::bottom_limit_switch.released())
+    //         state = State::DOWN_FINE;
+    //     else
+    //         hardware::arm.runSpeed();
+    //     break;
+
+    // case State::DOWN_FINE:
+    //     hardware::arm.setSpeed(-direction * HOMING_SPEED_FINE);
+    //     if (hardware::bottom_limit_switch.pressed())
+    //     {
+    //         _num_arm_steps -= hardware::arm.currentPosition();
+    //         hardware::arm.setCurrentPosition(0);
+    //         state = State::COMPLETE;
+    //     }
+    //     else
+    //         hardware::arm.runSpeed();
+    //     break;
 
     default:
         return false;

@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seacal-scanner"
+version = "0.0.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = "~=3.13.0"
+dependencies = [
+    "bd-warehouse",
+    "build123d",
+    "pyyaml",
+    "tqdm",
+]
+[dependency-groups]
+dev = [
+    "ruff",
+]
+vscode = [
+  "ocp-vscode",
+]

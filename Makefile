@@ -19,9 +19,26 @@ firmware:
 
 upload:
 	arduino-cli upload \
-		--port /dev/ttyACM0 \
+		--port /dev/ttyACM1 \
 		--fqbn $(board) \
 		--input-dir build
+
+# usage: make view part=part-name
+view:
+	uv run --group vscode -m cad view \
+		$(if $(part),--part $(part),) \
+		$(if $(screenshot),--screenshot,)
+
+# usage: make stl part=part-name
+stl:
+	uv run -m cad export \
+		$(if $(part),--part $(part),) \
+		--format stl
+
+count:
+	uv run -m cad count \
+		$(if $(part),--part $(part),) \
+		$(if $(parent),--parent $(parent),)
 
 pcb:
 	for pcb in $$(basename -a src/pcb/*/); do \
@@ -41,6 +58,10 @@ format-app:
 
 format-firmware:
 	clang-format $(if $(check),--dry-run --Werror,-i) src/firmware/*.ino src/firmware/*.h
+
+format-cad:
+	uv run ruff check --select ALL $(if $(check),,--fix-only) . && \
+	uv run ruff format $(if $(check),--check,) .
 
 test: test-app test-firmware test-cad test-pcb
 
@@ -70,7 +91,7 @@ test-pcb:
 install: arduino-cli
 
 arduino-cli:
-	curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+# 	curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
 	arduino-cli core install arduino:renesas_uno
 	xargs -a src/firmware/requirements.txt arduino-cli lib install
 
