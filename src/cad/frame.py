@@ -7,14 +7,16 @@ from build123d.topology.shape_core import Shape
 
 from cad.hardware import HexScrew, SlidingTNut
 from cad.utils.color import unset_color
-from cad.utils.env import getenv_float
+from cad.utils.env import getenv_float, getenv_int
 from cad.utils.hull import Hull
 
 FRAME_SIZE_X = getenv_float("FRAME_SIZE_X", default=200.0)
 FRAME_SIZE_Y = getenv_float("FRAME_SIZE_Y", default=150.0)
-ARM_LENGTH = getenv_float("ARM_LENGTH", default=1.5 * FRAME_SIZE_Y)
 FRAME_HEIGHT = FRAME_SIZE_Y * sqrt(3) / 2
+ARM_LENGTH = getenv_float("ARM_LENGTH", default=1.5 * FRAME_SIZE_Y)
 ARM_ANGLE = getenv_float("ARM_ANGLE", default=0.0)
+ARM_NUM_TEETH = getenv_int("ARM_NUM_TEETH", default=80)
+MOTOR_NUM_TEETH = getenv_int("ARM_NUM_TEETH", default=20)
 
 print(f"{ARM_LENGTH = }")
 
@@ -372,6 +374,56 @@ class Pulley(BasePartObject):
         super().__init__(main.part, rotation=rotation, align=align, mode=mode)
 
 
+class Belt(BasePartObject):
+    def __init__(
+        self,
+        pulley_a_location: tuple[float, float],
+        pulley_a_radius: float,
+        pulley_b_location: tuple[float, float],
+        pulley_b_radius: float,
+        height: float = 5,
+        offset: float = 0,
+        *,
+        rotation: RotationLike = (0, 0, 0),
+        align: Align | tuple[Align, Align, Align] | None = None,
+        mode: Mode = Mode.ADD,
+    ):
+        with BuildSketch() as inner:
+            with Locations(tuple(pulley_a_location)):
+                Circle(pulley_a_radius)
+            with Locations(tuple(pulley_b_location)):
+                Circle(pulley_b_radius)
+            make_hull()
+
+        with BuildSketch() as outer:
+            with Locations(tuple(pulley_a_location)):
+                Circle(pulley_a_radius + 0.63)
+            with Locations(tuple(pulley_b_location)):
+                Circle(pulley_b_radius + 0.63)
+            make_hull()
+
+        path = inner.wire()
+
+        with BuildSketch() as teeth:
+            period = 2.0
+            num_teeth = path.length // period
+            for index in range(int(num_teeth)):
+                fraction = (index * period + offset % period) / path.length
+                location = Plane(path @ fraction, x_dir=path % fraction).location
+                with Locations(location):
+                    SlotOverall(1.5, 1.2, 90)
+            insert(outer, mode=Mode.INTERSECT)
+
+        with BuildPart() as main:
+            with BuildSketch():
+                insert(outer)
+                insert(inner, mode=Mode.SUBTRACT)
+                insert(teeth)
+            extrude(amount=height)
+
+        super().__init__(main.part, rotation=rotation, align=align, mode=mode)
+
+
 class ArmCover(BasePartObject):
     def __init__(
         self,
@@ -410,7 +462,10 @@ class ArmCover(BasePartObject):
                 with Locations((0, 0, -1)):
                     Box(100, 100, 30, mode=Mode.INTERSECT)
                 with Locations((0, 0, 11.5)):
-                    Pulley(num_teeth)
+                    pulley = Pulley(num_teeth)
+                self.pulley_radius = pulley.radius
+            else:
+                self.pulley_radius = None
 
             top = main.faces().group_by(Axis.Z)[-1][0]
             with BuildSketch(top.offset(-2.25)):
@@ -500,6 +555,8 @@ class ApexAssembly(Compound):
             arm.move(Location((arm_offset, 0, 0), (0, -90, 0)))
             arm.label = "arm"
             children.append(arm)
+            self.pulley_radius = arm.pulley_radius
+
             axle = AxlePin().move(Location((17.5, 0, 0), (0, -90, 0)))
             axle.label = "axle"
             children.append(axle)
@@ -513,6 +570,8 @@ class ApexAssembly(Compound):
                 copy(NUT).move(Location((arm_offset, 0, -5), (180, 0, 90))),
                 copy(NUT).move(Location((arm_offset, 0, +5), (0, 0, 90))),
             ]
+        else:
+            self.pulley_radius = None
 
         for index, part in enumerate(screws):
             part.label = f"screw-{index}"
@@ -641,11 +700,11 @@ class CornerCover(BasePartObject):
             y = main.faces().group_by(Axis.Y)[-1][0]
             with BuildSketch(y), Locations((-2, 0)):
                 Rectangle(24, 20)
-            extrude(amount=-16-10, mode=Mode.SUBTRACT)
-            with BuildSketch(y.offset(-16-10)):
+            extrude(amount=-16 - 10, mode=Mode.SUBTRACT)
+            with BuildSketch(y.offset(-16 - 10)):
                 Circle(2.75)
             extrude(until=Until.FIRST, mode=Mode.SUBTRACT)
-            with BuildSketch(y.offset(-19-10)):
+            with BuildSketch(y.offset(-19 - 10)):
                 Circle(5)
             extrude(until=Until.FIRST, mode=Mode.SUBTRACT)
             chamfer(main.edges(Select.LAST).group_by(Axis.Y)[0], length=0.5)
@@ -672,13 +731,11 @@ class CornerCover(BasePartObject):
             with BuildSketch(x):
                 Rectangle(20, 20)
             extrude(amount=-40, mode=Mode.SUBTRACT)
-            with BuildSketch(x):
-                with Locations((0, 0), (0, -35)):
-                    Circle(2.75)
+            with BuildSketch(x), Locations((0, 0), (0, -35)):
+                Circle(2.75)
             extrude(until=Until.FIRST, mode=Mode.SUBTRACT)
-            with BuildSketch(x.offset(-43)):
-                with Locations((0, 0), (0, -35)):
-                    Circle(5)
+            with BuildSketch(x.offset(-43)), Locations((0, 0), (0, -35)):
+                Circle(5)
             extrude(until=Until.FIRST, mode=Mode.SUBTRACT)
             chamfer(main.edges(Select.LAST).group_by(Axis.X)[0], length=0.5)
 
@@ -873,13 +930,14 @@ class ArmAssembly(Compound):
         )
         apex_a.label = "apex-a"
         children.append(apex_a)
-        apex_b = ApexAssembly(with_apex=False, num_teeth=80).move(
+        apex_b = ApexAssembly(with_apex=False, num_teeth=ARM_NUM_TEETH).move(
             Location(
                 (+FRAME_SIZE_X / 2 - 10, 0, 0),
             ),
         )
         apex_b.label = "apex-b"
         children.append(apex_b)
+        self.pulley_radius = apex_b.pulley_radius
 
         super().__init__(
             label=label,
@@ -927,6 +985,7 @@ class MotorAssembly(Compound):
     def __init__(
         self,
         num_teeth: int = 20,
+        rotation: float = 0,
         *,
         label: str = "",
         color: Color | None = None,
@@ -939,9 +998,12 @@ class MotorAssembly(Compound):
         motor.label = "stepper-motor"
         children.append(motor)
 
-        pulley = Pulley(num_teeth=num_teeth, axle_radius=2.5).translate((0, 0, 5))
+        pulley = Pulley(
+            num_teeth=num_teeth, axle_radius=2.5, rotation=(0, 0, rotation)
+        ).translate((0, 0, 5))
         pulley.label = "pulley"
         children.append(pulley)
+        self.pulley_radius = pulley.radius
 
         plate = MotorPlate(num_rows=1).rotate(Axis.Z, 90)
         plate.label = "motor-plate"
@@ -1057,102 +1119,79 @@ class LimitSwitchPlate(BasePartObject):
         super().__init__(main.part, rotation=rotation, align=align, mode=mode)
 
 
-# class Belt(BasePartObject):
-#     def __init__(
-#         self,
-#         a_position: tuple[float, float],
-#         a_radius: float,
-#         b_position: tuple[float, float],
-#         b_radius: float,
-#         pitch: float = 2,
-#         height: float = 5,
-#         *,
-#         rotation: RotationLike = (0, 0, 0),
-#         align: Align | tuple[Align, Align, Align] | None = None,
-#         mode: Mode = Mode.ADD,
-#     ) -> None:
-#         with BuildSketch() as profile:
-#             with Locations(tuple(a_position)):
-#                 Circle(a_radius)
-#             with Locations(tuple(b_position)):
-#                 Circle(b_radius)
-#             make_hull()
+class LimitSwitchAssembly(Compound):
+    def __init__(
+        self,
+        *,
+        label: str = "",
+        color: Color | None = None,
+        parent: Compound | None = None,
+    ):
+        children: list[Shape] = []
 
-#         with BuildPart() as main:
-#             with BuildSketch():
-#                 insert(profile)
-#                 with BuildLine
-#             extrude(amount=height)
+        contact = 85.5
+        switch = LimitSwitch(pressed=(ARM_ANGLE - contact) / (90 - contact)).move(
+            Location((-13.25, 0, 10), (90, 0, -90)),
+        )
+        switch.label = "limit-switch"
+        children.append(switch)
 
-#         super().__init__(main.part, rotation=rotation, align=align, mode=mode)
+        switch_plate = LimitSwitchPlate(length=13)
+        switch_plate.label = "limit-switch-plate"
+        children.append(switch_plate)
 
+        screws = [
+            copy(SCREW).move(Location((-3, 18.65, 10.25), (0, 90, 0))),
+            copy(SCREW).move(Location((-3, 13.15, 19.75), (0, 90, 0))),
+        ]
+        for index, part in enumerate(screws):
+            part.label = f"screw-{index}"
+        children.extend(screws)
 
-gt2 = {
-    "p": 2,
-    "r1": 0.15,
-    "r2": 1,
-    "r3": 0.555,
-    "b": 0.4,
-    "H": 1.38,
-    "h": 0.75,
-    "i": 0.63,
-    "pld": 0.254,
-}
+        nuts = [
+            copy(NUT).move(Location((5, 18.65, 10.25), (0, -90, -30))),
+            copy(NUT).move(Location((5, 13.15, 19.75), (0, -90, -30))),
+        ]
+        for index, part in enumerate(nuts):
+            part.label = f"nut-{index}"
+        children.extend(nuts)
 
-
-class Lobe(BaseSketchObject):
-    def __init__(self, dims, mode=Mode.ADD):
-        with BuildSketch() as sketch:
-            with BuildLine() as profile:
-                l1 = Line(
-                    (-dims["p"] / 2, dims["pld"]),
-                    (dims["p"] / 2, -dims["pld"]),
-                    mode=Mode.PRIVATE,
-                )
-                c3 = CenterArc(
-                    (0, -(dims["h"] + dims["pld"]) + dims["r3"]),
-                    dims["r3"],
-                    180,
-                    180,
-                    mode=Mode.PRIVATE,
-                )
-                c2 = CenterArc(
-                    (dims["b"], -dims["pld"]), dims["r2"], 150, 120, mode=Mode.PRIVATE
-                )
-                _, x1, _ = c2.distance_to_with_closest_points(c3)
-                x10 = Vector(-x1.X, x1.Y)
-                _, x2, _ = c2.distance_to_with_closest_points(l1)
-                add(c3.trim(x1, x10))
-                c20 = add(c2.trim(x1, x2))
-                mirror(c20, Plane.YZ)
-            make_hull()
-        super().__init__(sketch.sketch, mode=mode)
+        super().__init__(
+            label=label,
+            color=color,
+            parent=parent,
+            children=children,
+        )
 
 
-class Belt(BaseSketchObject):
-    def __init__(self):
-        path = SlotCenterToCenter(20, 10).wire()
-        side = Side.RIGHT
-        dims = gt2
-        with BuildSketch() as belt:
-            trace(
-                path, dims["i"]
-            )  # this is wrong since path should be pld, not centerline
-            x = path.length // dims["p"]
-            sign = -1 if side == Side.LEFT else 1
-            for i in range(int(x)):
-                u = dims["p"] * (i + 1 / 2) / path.length
-                loc = Plane(path @ u, x_dir=sign * (path % u)).location
+class BumperAssembly(Compound):
+    def __init__(
+        self,
+        *,
+        label: str = "",
+        color: Color | None = None,
+        parent: Compound | None = None,
+    ):
+        children: list[Shape] = []
 
-                with Locations(loc):
-                    lobe = Lobe(dims)
-                x = vertices().sort_by(lambda v: v.distance_to(lobe.center()))[4:6]
-                # fillet(vertices().sort_by(lambda v: v.distance_to(lobe.center()))[4:6], dims["r1"])
+        end_stop = EndStop()
+        end_stop.label = "end-stop"
+        children.append(end_stop)
 
-            super().__init__(belt.sketch)
+        screw = copy(SCREW).move(Location((0, 0, 4), (180, 0, 0)))
+        screw.label = "screw"
+        children.append(screw)
 
+        nut = copy(NUT).move(Location((0, 0, -5), (0, 0, 90)))
+        nut.label = "nut"
+        children.append(nut)
 
-# show(Belt(SlotCenterToCenter(20, 10).wire(), Side.RIGHT, gt2))
+        super().__init__(
+            label=label,
+            color=color,
+            parent=parent,
+            children=children,
+        )
 
 
 class FrameAssembly(Compound):
@@ -1271,29 +1310,35 @@ class FrameAssembly(Compound):
         arm.label = "arm"
         children.append(arm)
 
-        motor = MotorAssembly(num_teeth=20).move(
+        motor_rotation = ARM_ANGLE * ARM_NUM_TEETH / MOTOR_NUM_TEETH
+        motor = MotorAssembly(MOTOR_NUM_TEETH, motor_rotation).move(
             Location((FRAME_SIZE_X / 2, 0, 31.25), (0, 90, 0)),
         )
         motor.label = "motor"
         children.append(motor)
 
-        contact = 85.5
-        switch = LimitSwitch(pressed=(ARM_ANGLE - contact) / (90 - contact)).move(
-            Location(
-                (-FRAME_SIZE_X / 2 - 13.5, 22.5, FRAME_HEIGHT - 39.5),
-                (90, 0, -90),
-            ),
+        belt_offset = ARM_ANGLE * arm.pulley_radius * pi / 180
+        belt = (
+            Belt(
+                pulley_a_location=(-31.25, 0),
+                pulley_a_radius=motor.pulley_radius,
+                pulley_b_location=(-FRAME_HEIGHT - 25.5, 0),
+                pulley_b_radius=arm.pulley_radius,
+                offset=belt_offset,
+            )
+            .rotate(Axis.Y, 90)
+            .translate((FRAME_SIZE_X / 2 + 8.5, 0, 0))
+        )
+        belt.label = "belt"
+        children.append(belt)
+
+        switch = LimitSwitchAssembly().move(
+            Location((-FRAME_SIZE_X / 2, 22.5, FRAME_HEIGHT - 49.5)),
         )
         switch.label = "limit-switch"
         children.append(switch)
 
-        switch_plate = LimitSwitchPlate(length=13).move(
-            Location((-FRAME_SIZE_X / 2, 22.5, FRAME_HEIGHT - 49.5)),
-        )
-        switch_plate.label = "limit-switch-plate"
-        children.append(switch_plate)
-
-        bumper = EndStop()
+        bumper = BumperAssembly()
         bumpers = [
             copy(bumper)
             .translate((0, -0.25 * FRAME_SIZE_Y - 20, 21.5))
@@ -1315,42 +1360,6 @@ class FrameAssembly(Compound):
         for index, part in enumerate(bumpers):
             part.label = f"bumper-{index}"
         children.extend(bumpers)
-
-        screws = [
-            copy(SCREW)
-            .translate((0, -0.25 * FRAME_SIZE_Y - 20, -25.5))
-            .move(
-                Location(
-                    (-FRAME_SIZE_X / 2 + 10, +FRAME_SIZE_Y / 2 - 1.5, 11.5),
-                    (-60, 180, 0),
-                ),
-            ),
-            copy(SCREW)
-            .translate((0, -0.25 * FRAME_SIZE_Y - 20, -25.5))
-            .move(
-                Location(
-                    (+FRAME_SIZE_X / 2 - 10, +FRAME_SIZE_Y / 2 - 1.5, 11.5),
-                    (-60, 180, 0),
-                ),
-            ),
-        ]
-        for index, part in enumerate(screws):
-            part.label = f"screw-{index}"
-        children.extend(screws)
-
-        nuts = [
-            copy(NUT)
-            .translate((0, -0.25 * FRAME_SIZE_Y - 20, 21.5))
-            .move(
-                Location(
-                    (-FRAME_SIZE_X / 2 + 10, +FRAME_SIZE_Y / 2 - 1.5, 11.5),
-                    (-60, 0, 0),
-                ),
-            ),
-        ]
-        for index, part in enumerate(nuts):
-            part.label = f"nut-{index}"
-        children.extend(nuts)
 
         super().__init__(
             label=label,

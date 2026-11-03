@@ -5,9 +5,8 @@ from itertools import count as iter_count
 from pathlib import Path
 from typing import Any
 
-from build123d import Compound, export_obj, export_step, export_stl, export_gltf
+from build123d import Compound, export_gltf, export_obj, export_step, export_stl
 from build123d.topology.shape_core import Shape
-from ocp_vscode import save_screenshot, show
 from yaml import safe_load
 
 EXPORT_FUNCTIONS: dict[str, Callable[[Shape, Path], None]] = {
@@ -23,7 +22,7 @@ def load_config(path: Path) -> dict[str, dict[str, Any]]:
         config = safe_load(file) or {}
 
     if not isinstance(config, dict):
-        raise ValueError(f"Config at {path} must be a mapping of part names to definitions.")
+        raise ValueError
 
     return config
 
@@ -62,6 +61,8 @@ def view(
     part_name: str,
     screenshot: bool = False,
 ) -> None:
+    from ocp_vscode import save_screenshot, show
+
     config = load_config(config_path)
     part = build_part(config, part_name)
     show(part)

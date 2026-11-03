@@ -30,8 +30,8 @@ end-cover:
 motor-plate:
   class: cad.frame.MotorPlate
   export: true
-limit-switch-plate:
-  class: cad.frame.LimitSwitchPlate
+limit-switch:
+  class: cad.frame.LimitSwitchAssembly
   export: true
 foot-cover:
   class: cad.frame.FootCover
@@ -52,9 +52,16 @@ pulley:
     num_teeth: 20
 belt:
   class: cad.frame.Belt
+  config:
+    pulley_a_location: [0, 0]
+    pulley_a_radius: 20
+    pulley_b_location: [100, 0]
+    pulley_b_radius: 40
 foot:
   class: cad.frame.FootAssembly
 corner:
   class: cad.frame.CornerAssembly
   config:
     mirrored: false
+bumper:
+  class: cad.frame.BumperAssembly
